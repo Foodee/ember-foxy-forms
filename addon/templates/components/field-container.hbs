@@ -1,0 +1,40 @@
+<div class="field {{if errors.length 'error'}}">
+  {{#if label}}
+    <label>{{label}}</label>
+  {{/if}}
+
+
+  {{#if hasBlock}}
+    {{yield (hash
+              control= (component control
+                value=(readonly _value)
+
+                onChange=(action handleChange)
+              )
+            )
+    }}
+  {{else}}
+    {{component control
+                value=(readonly _value)
+
+                onChange=(action handleChange)
+    }}
+  {{/if}}
+
+  {{#unless autoCommit}}
+
+    {{#if dirty}}
+      <div class="commit-cancel">
+        <button type="button" {{action commit}}>✔</button>
+        <button type="button" {{action cancel}}>✘</button>
+      </div>
+    {{/if}}
+
+  {{/unless}}
+
+  <div class="errors">
+    {{#each errors as |error|}}
+      <div class="error">{{error}}</div>
+    {{/each}}
+  </div>
+</div>
