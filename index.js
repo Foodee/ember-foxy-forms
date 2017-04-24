@@ -6,8 +6,6 @@ module.exports = {
 
   preBuild: function (result) {
 
-    console.log('Hello from prebuild');
-    console.log(JSON.stringify(result))
 
   }
 };
