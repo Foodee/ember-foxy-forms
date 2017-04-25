@@ -2,6 +2,7 @@
 'use strict';
 
 const TransformFilter = require('./lib/transform-filter');
+const fs = require('fs');
 
 module.exports = {
   name: 'ember-form-for',
@@ -9,12 +10,15 @@ module.exports = {
   included(app) {
     this._super.included.apply(this, arguments);
 
+    var controlsDirectory = `${app.project.root}/addon/templates/components/controls`;
+    var controlFileList = fs.readdirSync(controlsDirectory);
+
     this.options = {
       targets: [
         {
           pattern: 'components/example-component.hbs',
           transform: (content, originalPath) => {
-            return buildYield();
+            return buildTemplate(controlFileList);
           }
         }
       ],
@@ -27,7 +31,13 @@ module.exports = {
   }
 };
 
+function buildTemplate(controlFileList) {
+  var template = controlFileList.reduce((content, controlFileName) => {
+    var controlName = controlFileName.slice(0, -4);
+    var keyName = controlName.replace('-control', '');
 
-function buildYield() {
-  return '{{yield (hash foo="It works!")}}';
+    return `${content} ${keyName}=(component "controls/${controlName}")`;
+  }, '{{yield (hash ') + ')}}';
+
+  return template;
 }
