@@ -32,12 +32,12 @@ module.exports = {
 };
 
 function buildTemplate(controlFileList) {
-  var template = controlFileList.reduce((content, controlFileName) => {
+  var hash = controlFileList.reduce((content, controlFileName) => {
     var controlName = controlFileName.slice(0, -4);
     var keyName = controlName.replace('-control', '');
 
     return `${content} ${keyName}=(component "controls/${controlName}")`;
-  }, '{{yield (hash ') + ')}}';
+  }, '');
 
-  return template;
+  return `{{yield (hash ${hash})}}`;
 }
