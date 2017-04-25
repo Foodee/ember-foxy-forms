@@ -1,35 +1,36 @@
-<div class="field {{if errors.length 'error'}}">
+<div class="{{config.fieldClasses}} {{if errors.length 'error'}}">
   {{#if label}}
     <label>{{label}}</label>
   {{/if}}
 
-
   {{#if hasBlock}}
     {{yield (hash
-              control= (component control
+              control= (component _control
                 value=(readonly _value)
+                isDisabled=isDisabled
+                isReadonly=isReadonly
 
                 onChange=(action handleChange)
               )
             )
     }}
   {{else}}
-    {{component control
+    {{component _control
                 value=(readonly _value)
+                isDisabled=isDisabled
+                isReadonly=isReadonly
 
                 onChange=(action handleChange)
     }}
   {{/if}}
 
   {{#unless autoCommit}}
-
     {{#if dirty}}
-      <div class="commit-cancel">
-        <button type="button" {{action commit}}>✔</button>
-        <button type="button" {{action cancel}}>✘</button>
-      </div>
+      {{commit-buttons
+        commit=(action commit)
+        cancel=(action cancel)
+      }}
     {{/if}}
-
   {{/unless}}
 
   <div class="errors">

@@ -1,9 +1,16 @@
 import Ember from 'ember';
 import layout from '../templates/components/form-for';
+import config from '../config/environment';
+
+const {
+  inject: { service }
+} = Ember;
 
 const FormFor = Ember.Component.extend({
 
   layout,
+
+  config: config,
 
   tagName: '',
 

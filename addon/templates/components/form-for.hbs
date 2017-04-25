@@ -1,3 +1,11 @@
-<div class="form">
+<div class="{{config.formClasses}}">
+  {{yield (hash
+            field-for=(component 'field-for'
+              form=this
+
+              commitValue=updateValue
+            )
+          )
+  }}
 </div>
 

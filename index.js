@@ -6,38 +6,15 @@ const fs = require('fs');
 
 module.exports = {
   name: 'ember-form-for',
-
-  included(app) {
-    this._super.included.apply(this, arguments);
-
-    const controlsDirectory = `${__dirname}/../../app/templates/components/controls`;
-    const controlFileList = fs.readdirSync(controlsDirectory);
-
-    this.options = {
-      targets: [
-        {
-          pattern: 'components/example-component.hbs',
-          transform: (content, originalPath) => {
-            return buildTemplate(controlFileList);
-          }
-        }
-      ],
-      extensions: ['hbs']
-    };
-  },
-
-  treeForAddonTemplates: function (tree) {
-    return new TransformFilter(tree, this.options);
-  }
 };
 
 function buildTemplate(controlFileList) {
-  var hash = controlFileList.reduce((content, controlFileName) => {
-    var controlName = controlFileName.slice(0, -4);
-    var keyName = controlName.replace('-control', '');
+  const hash = controlFileList.reduce((content, controlFileName) => {
+    const controlName = controlFileName.slice(0, -4);
+    const keyName = controlName.replace('-control', '');
 
-    return `${content} ${keyName}=(component "controls/${controlName}")`;
+    return `${content} ${keyName}=(component "field-container" control="controls/${controlName}" form=this commitValue=updateValue)`;
   }, '');
 
-  return `{{yield (hash ${hash})}}`;
+  return `<div class="form">{{yield (hash ${hash})}}</div>`;
 }

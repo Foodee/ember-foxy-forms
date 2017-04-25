@@ -1,7 +1,7 @@
 import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 
-moduleForComponent('controls/input-control', 'Integration | Component | controls/input control', {
+moduleForComponent('commit-buttons', 'Integration | Component | commit buttons', {
   integration: true
 });
 
@@ -10,15 +10,15 @@ test('it renders', function(assert) {
   // Set any properties with this.set('myProperty', 'value');
   // Handle any actions with this.on('myAction', function(val) { ... });
 
-  this.render(hbs`{{controls/input-control}}`);
+  this.render(hbs`{{commit-buttons}}`);
 
   assert.equal(this.$().text().trim(), '');
 
   // Template block usage:
   this.render(hbs`
-    {{#controls/input-control}}
+    {{#commit-buttons}}
       template block text
-    {{/controls/input-control}}
+    {{/commit-buttons}}
   `);
 
   assert.equal(this.$().text().trim(), 'template block text');

@@ -1,1 +1,0 @@
-export { default } from 'ember-form-for/components/controls/checkbox-control';

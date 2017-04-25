@@ -1,12 +1,16 @@
 import Ember from 'ember';
-import layout from '../templates/components/field-container';
+import layout from '../templates/components/field-for';
+import config from '../config/environment';
 
 const {
   defineProperty,
-  computed
+  computed,
+  assert
 } = Ember;
 
-const FieldContainer = Ember.Component.extend({
+const FieldFor = Ember.Component.extend({
+
+  config: config,
 
   layout,
 
@@ -22,7 +26,13 @@ const FieldContainer = Ember.Component.extend({
 
   form: null,
 
+  using: '-input',
+
   autoCommit: computed.oneWay('form.autoCommit'),
+
+  _control: computed('using', 'value', function () {
+    return `form-controls/${this.get('using')}-control`;
+  }),
 
   dirty: computed('_value', 'value', function () {
     return this.get('_value') !== this.get('value');
@@ -52,6 +62,8 @@ const FieldContainer = Ember.Component.extend({
 
     const key = this.get('key');
 
+    assert(!!key, 'The field for component must have a key in order to be used');
+
     defineProperty(this, 'errors', computed.oneWay(`form.model.errors.${key}`));
     defineProperty(this, 'value', computed.oneWay(`form.model.${key}`));
 
@@ -66,8 +78,8 @@ const FieldContainer = Ember.Component.extend({
   }
 });
 
-FieldContainer.reopenClass({
-  positionalParams: ['key']
+FieldFor.reopenClass({
+  positionalParams: ['key', 'control']
 });
 
-export default FieldContainer;
+export default FieldFor;
