@@ -10,8 +10,8 @@ module.exports = {
   included(app) {
     this._super.included.apply(this, arguments);
 
-    var controlsDirectory = `${__dirname}/addon/templates/components/controls`;
-    var controlFileList = fs.readdirSync(controlsDirectory);
+    const controlsDirectory = `${__dirname}/../../app/templates/components/controls`;
+    const controlFileList = fs.readdirSync(controlsDirectory);
 
     this.options = {
       targets: [
