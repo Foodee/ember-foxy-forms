@@ -2,10 +2,5 @@
 'use strict';
 
 module.exports = {
-  name: 'ember-form-for',
-
-  preBuild: function (result) {
-
-
-  }
+  name: 'ember-form-for'
 };
