@@ -1,11 +1,26 @@
-<div class="{{config.formClasses}}">
+<div class="{{config.formClasses}} {{strip-class-names classNames}}">
   {{yield (hash
             field-for=(component 'field-for'
               form=this
 
               commitValue=updateValue
             )
+            submit=(component 'form-button'
+              text="Submit"
+              isActing=isSubmitting
+              classNames=config.submitButtonClasses
+
+              onClick=(action doSubmit)
+            )
+            reset=(component 'form-button'
+              text="Reset"
+              isActing=isResetting
+              classNames=config.resetButtonClasses
+
+              onClick=(action doReset)
+            )
           )
+          this
   }}
 </div>
 
