@@ -1,5 +1,11 @@
-<div class="commit-cancel">
-  <button type="button" {{action commit}}>✔</button>
-  <button type="button" {{action cancel}}>✘</button>
-</div>
+{{#if visible}}
+  {{#if config.customCommitCancelComponent}}
+    {{component config.customCommitCancelComponent commit=commit cancel=cancel }}
+  {{else}}
+    <div class="commit-cancel {{strip-class-names classNames}}">
+      <button class="{{config.buttonClasses}}" type="button" {{action commit}}>✔</button>
+      <button class="{{config.buttonClasses}}" type="button" {{action cancel}}>✘</button>
+    </div>
+  {{/if}}
+{{/if}}
 

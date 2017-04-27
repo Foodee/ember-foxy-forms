@@ -3,8 +3,19 @@
 
 module.exports = function (/* environment, appConfig */) {
   return {
-    fieldClasses: 'field',
-    formClasses: 'form',
-    popOverClass: ''
+    APP: {
+      'ember-form-for': {
+        fieldClasses: 'field',
+        formClasses: 'form',
+        popOverClass: '',
+
+        buttonClasses: '',
+        submitButtonClasses: '',
+        resetButtonClasses: '',
+
+        customCommitCancelComponent: null,
+        customErrorComponent: null
+      }
+    }
   };
 };
