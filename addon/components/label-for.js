@@ -12,7 +12,7 @@ export default Ember.Component.extend({
    *
    * @property label
    * @type String
-   * @default null
+   * @default ''
    * @public
    */
   label: '',
@@ -21,7 +21,7 @@ export default Ember.Component.extend({
    * Id for the control that this label is tied to
    * @property controlId
    * @type String
-   * @default null
+   * @default ''
    * @public
    */
   controlId: ''

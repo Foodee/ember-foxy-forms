@@ -83,7 +83,7 @@ const FieldFor = Ember.Component.extend({
    * @default 'form-controls/-input-control'
    * @private
    */
-  _control: computed('using', 'value', function () {
+  _control: computed('using', function () {
     return `form-controls/${this.get('using')}-control`;
   }),
 
@@ -117,7 +117,7 @@ const FieldFor = Ember.Component.extend({
    * @param {*} _value
    * @public
    */
-  commitValue(/*_propertyPath, _value*/) {
+  commitValue(_propertyPath, _value) {
   },
 
   /**
@@ -159,7 +159,7 @@ const FieldFor = Ember.Component.extend({
 
     const propertyPath = this.get('propertyPath');
 
-    assert(!!propertyPath, '{{field-for}} Requires a propertyPath to to bind to');
+    assert(!!propertyPath, '{{field-for}} Requires a propertyPath to bind to');
 
     // bind to errors
     defineProperty(this, 'errors', computed.oneWay(`form.model.errors.${propertyPath}`));

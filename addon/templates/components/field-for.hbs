@@ -10,8 +10,8 @@
 
               control= (component _control
                 value=(readonly _value)
-                isdisabled=isdisabled
-                isreadonly=isreadonly
+                isdisabled=isDisabled
+                isreadonly=isReadonly
                 controlId=controlId
 
                 onChange=(action handleChange)
@@ -28,7 +28,8 @@
                 errors=errors
               )
 
-            ) this
+            )
+            this
     }}
   {{else}}
 

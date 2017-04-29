@@ -16,11 +16,28 @@ export default Ember.Component.extend({
     return get(Ember.getOwner(this).resolveRegistration('config:environment'), 'APP.ember-form-for');
   }),
 
+  /**
+   * Errors to be rendered by this component
+   * @property visible
+   * @type boolean
+   * @default false
+   * @public
+   */
   visible: false,
 
+  /**
+   * Override function for custom behavior on commit
+   * @method commit
+   * @public
+   */
   commit(){
   },
 
+  /**
+   * Override function for custom behavior on cancel
+   * @method commit
+   * @public
+   */
   cancel(){
   }
 });
