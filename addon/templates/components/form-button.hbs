@@ -1,4 +1,4 @@
-<button class="{{config.buttonClasses}} {{if isActing 'is-acting'}} {{strip-class-names classNames}} " {{action onClick}}>
+<button class="{{config.buttonClasses}} {{if isActing 'is-acting'}} {{strip-class-names classNames}} " onclick={{action onClick}}>
   {{#if hasBlock}}
     {{yield}}
   {{else}}

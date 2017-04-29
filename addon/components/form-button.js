@@ -13,5 +13,7 @@ export default Ember.Component.extend({
     return get(Ember.getOwner(this).resolveRegistration('config:environment'), 'APP.ember-form-for');
   }),
 
-  tagName: ''
+  tagName: '',
+
+  onClick() {}
 });
