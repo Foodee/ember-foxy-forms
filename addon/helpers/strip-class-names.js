@@ -15,7 +15,7 @@ export function stripClassNames([classNames = []]) {
     classNames = classNames.split(',');
   }
 
-  return classNames.filter(_ => _ !== 'ember-view').join(' ');
+  return classNames.filter(_ => _ !== 'ember-view').join(' ').trim();
 }
 
 export default Ember.Helper.helper(stripClassNames);

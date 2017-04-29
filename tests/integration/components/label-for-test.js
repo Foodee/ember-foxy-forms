@@ -1,25 +1,30 @@
-import { moduleForComponent, test } from 'ember-qunit';
+import {moduleForComponent, test} from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 
 moduleForComponent('label-for', 'Integration | Component | label for', {
   integration: true
 });
 
-test('it renders', function(assert) {
+test('binds label "for" works', function(assert) {
+  assert.expect(1);
 
-  // Set any properties with this.set('myProperty', 'value');
-  // Handle any actions with this.on('myAction', function(val) { ... });
+  this.render(hbs`{{label-for controlId="foo" label="foo"}}`);
 
-  this.render(hbs`{{label-for}}`);
+  assert.equal(this.$('label').attr('for'), 'foo');
+});
 
-  assert.equal(this.$().text().trim(), '');
+test('displays provided label', function(assert) {
+  assert.expect(1);
 
-  // Template block usage:
-  this.render(hbs`
-    {{#label-for}}
-      template block text
-    {{/label-for}}
-  `);
+  this.render(hbs`{{label-for controlId="foo" label="foo"}}`);
 
-  assert.equal(this.$().text().trim(), 'template block text');
+  assert.equal(this.$('label').text().trim(), 'foo');
+});
+
+test('hides label element when no label defined', function(assert) {
+  assert.expect(1);
+
+  this.render(hbs`{{label-for controlId="foo"}}`);
+
+  assert.strictEqual(this.$('label').length, 0, 'label element should not be present');
 });
