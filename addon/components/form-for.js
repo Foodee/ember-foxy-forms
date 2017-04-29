@@ -22,7 +22,7 @@ const FormFor = Ember.Component.extend({
    * Collection of all child field registered with this form
    * @property fields
    * @type FieldFor[]
-   * @default []
+   * @default null
    * @public
    */
   fields: null,
@@ -41,7 +41,7 @@ const FormFor = Ember.Component.extend({
    * the model
    * @property requireConfirm
    * @type boolean
-   * @default true
+   * @default false
    * @public
    */
   requireConfirm: false,
@@ -51,11 +51,11 @@ const FormFor = Ember.Component.extend({
    * validation
    * @method willSubmit
    * @param {Object} model
-   * @returns boolean
+   * @return {boolean}
    * @public
    */
-  willSubmit(/*model*/){
-    return true;
+  willSubmit(model){
+    return true
   },
 
   /**
@@ -64,18 +64,18 @@ const FormFor = Ember.Component.extend({
    * @param {Object} model
    * @public
    */
-  didNotSubmit(/*model*/){
+  didNotSubmit(model){
   },
 
   /**
    * Called when the submit action is called
    * @method onSubmit
    * @param {Object} model
-   * @returns {Promise.<Object>}
+   * @return {Promise.<Object>}
    * @public
    */
   onSubmit(model){
-    return Promise.resolve(model);
+    return Promise.resolve(model)
   },
 
   /**
@@ -84,7 +84,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} model
    * @public
    */
-  didSubmit(/*model*/){
+  didSubmit(model){
   },
 
   /**
@@ -93,12 +93,12 @@ const FormFor = Ember.Component.extend({
    * @param {Object} reason
    * @public
    */
-  failedSubmit(/*reason*/){
+  failedSubmit(reason){
   },
 
   /**
    * Action that actual does the submitting
-   * @method submit
+   * @method doSubmit
    * @public
    */
   doSubmit(){
@@ -111,7 +111,7 @@ const FormFor = Ember.Component.extend({
       this.onSubmit(model)
         .then(_ => this.didSubmit(_))
         .catch(reason => this.failedSubmit(reason))
-        .finally(() => this.set('isSubmitting', false));
+        .finally(_ => this.set('isSubmitting', false))
     }
   },
 
@@ -119,11 +119,11 @@ const FormFor = Ember.Component.extend({
    * Called before the form resets
    * @method willReset
    * @param {Object} model
-   * @returns boolean
+   * @return boolean
    * @public
    */
-  willReset(/*model*/){
-    return true;
+  willReset(model){
+    return true
   },
 
   /**
@@ -132,18 +132,18 @@ const FormFor = Ember.Component.extend({
    * @param {Object} model
    * @public
    */
-  didNotReset(/*model*/){
+  didNotReset(model){
   },
 
   /**
    * Called when the reset action is called
    * @method onReset
    * @param {Object} model
-   * @returns {Promise.<Object>}
+   * @return {Promise.<Object>}
    * @public
    */
   onReset(model){
-    return Promise.resolve(model);
+    return Promise.resolve(model)
   },
 
   /**
@@ -152,7 +152,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} model
    * @public
    */
-  didReset(/*model*/){
+  didReset(model){
   },
 
   /**
@@ -161,12 +161,12 @@ const FormFor = Ember.Component.extend({
    * @param {Object} reason
    * @public
    */
-  failedReset(/*reason*/){
+  failedReset(reason){
   },
 
   /**
    * Action that actual does the resetting
-   * @method submit
+   * @method doReset
    * @public
    */
   doReset(){
@@ -178,9 +178,9 @@ const FormFor = Ember.Component.extend({
     if (this.willReset(model)) {
 
       this.onReset(model)
-        .then(() => this.didReset())
+        .then(_ => this.didReset())
         .catch(_ => this.failedReset(_))
-        .finally(() => this.set('isResetting', true));
+        .finally(_ => this.set('isResetting', true))
     }
   },
 

@@ -14,6 +14,6 @@ export default Ember.Component.extend({
 
   onBlur(){},
 
-  onChange(/*value*/){}
+  onChange(value){}
 
 });
