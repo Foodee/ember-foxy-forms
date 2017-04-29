@@ -54,8 +54,8 @@ const FormFor = Ember.Component.extend({
    * @returns boolean
    * @public
    */
-  willSubmit(model){
-    return true
+  willSubmit(/*model*/){
+    return true;
   },
 
   /**
@@ -64,7 +64,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} model
    * @public
    */
-  didNotSubmit(model){
+  didNotSubmit(/*model*/){
   },
 
   /**
@@ -75,7 +75,7 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   onSubmit(model){
-    return Promise.resolve(model)
+    return Promise.resolve(model);
   },
 
   /**
@@ -84,7 +84,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} model
    * @public
    */
-  didSubmit(model){
+  didSubmit(/*model*/){
   },
 
   /**
@@ -93,7 +93,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} reason
    * @public
    */
-  failedSubmit(reason){
+  failedSubmit(/*reason*/){
   },
 
   /**
@@ -111,7 +111,7 @@ const FormFor = Ember.Component.extend({
       this.onSubmit(model)
         .then(_ => this.didSubmit(_))
         .catch(reason => this.failedSubmit(reason))
-        .finally(_ => this.set('isSubmitting', false))
+        .finally(() => this.set('isSubmitting', false));
     }
   },
 
@@ -122,8 +122,8 @@ const FormFor = Ember.Component.extend({
    * @returns boolean
    * @public
    */
-  willReset(model){
-    return true
+  willReset(/*model*/){
+    return true;
   },
 
   /**
@@ -132,7 +132,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} model
    * @public
    */
-  didNotReset(model){
+  didNotReset(/*model*/){
   },
 
   /**
@@ -143,7 +143,7 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   onReset(model){
-    return Promise.resolve(model)
+    return Promise.resolve(model);
   },
 
   /**
@@ -152,7 +152,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} model
    * @public
    */
-  didReset(model){
+  didReset(/*model*/){
   },
 
   /**
@@ -161,7 +161,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} reason
    * @public
    */
-  failedReset(reason){
+  failedReset(/*reason*/){
   },
 
   /**
@@ -178,9 +178,9 @@ const FormFor = Ember.Component.extend({
     if (this.willReset(model)) {
 
       this.onReset(model)
-        .then(_ => this.didReset())
+        .then(() => this.didReset())
         .catch(_ => this.failedReset(_))
-        .finally(_ => this.set('isResetting', true))
+        .finally(() => this.set('isResetting', true));
     }
   },
 
