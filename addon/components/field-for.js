@@ -117,7 +117,7 @@ const FieldFor = Ember.Component.extend({
    * @param {*} _value
    * @public
    */
-  commitValue(_propertyPath, _value) {
+  commitValue(/*_propertyPath, _value*/) {
   },
 
   /**
