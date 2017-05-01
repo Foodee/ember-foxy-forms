@@ -55,7 +55,8 @@ const FieldFor = Ember.Component.extend({
    * @default true
    * @public
    */
-  requireConfirm: computed.oneWay('form.requireConfirm'),
+  ['require-confirm']: computed.oneWay('form.requireConfirm'),
+  requireConfirm: computed.readOnly('require-confirm'),
 
   /**
    * Whether or not this field currently requires confirmation
@@ -74,7 +75,9 @@ const FieldFor = Ember.Component.extend({
    * @default '-input'
    * @public
    */
-  using: '-input',
+  using: computed(function () {
+    return this.get('_hasCompositeValue') ? '-multiple-input' : '-input';
+  }),
 
   /**
    * The fully qualified path to the control for this component
@@ -107,8 +110,29 @@ const FieldFor = Ember.Component.extend({
    * @public
    */
   isDirty: computed('_value', 'value', function () {
-    return this.get('_value') !== this.get('value');
+    return JSON.stringify(this.get('_value')) !== JSON.stringify(this.get('value'));
   }),
+
+  /**
+   * Whether or not this field is a composite value, meaning
+   * that it exposes more than one value to the control layer
+   * by way of a pojo mapping keys to values
+   * @property _hasCompositeValue
+   * @type Boolean
+   * @default false
+   * @private
+   */
+  _hasCompositeValue: computed.gt('params.length', 1),
+
+  /**
+   * The with mapping hash, provides a mapping from model space
+   * to control space when using composite values
+   * @property withMapping
+   * @type Object
+   * @default null
+   * @public
+   */
+  withMapping: computed.readOnly('with-mapping'),
 
   /**
    * Override this function to perform custom actions on commit
@@ -141,7 +165,20 @@ const FieldFor = Ember.Component.extend({
    * @public
    */
   commit(){
-    this.commitValue(this.get('propertyPath'), this.get('_value'));
+    const params = this.get('params');
+
+    if (this.get('_hasCompositeValue')) {
+      const _value = this.get('_value');
+      const withMapping = this.get('withMapping') || {};
+
+      params.forEach(param => {
+        const key = withMapping[param] || param;
+        this.commitValue(param, _value[key]);
+      });
+    }
+    else {
+      this.commitValue(params[0], this.get('_value'));
+    }
   },
 
   /**
@@ -157,15 +194,41 @@ const FieldFor = Ember.Component.extend({
   init(){
     this._super(...arguments);
 
-    const propertyPath = this.get('propertyPath');
+    const params = this.get('params');
 
-    assert(!!propertyPath, '{{field-for}} Requires a propertyPath to bind to');
+    if (this.get('_hasCompositeValue')) {
+      // property paths to watch
+      const propertyPaths = params.join(',');
+      const withMapping = this.get('withMapping') || {};
 
-    // bind to errors
-    defineProperty(this, 'errors', computed.oneWay(`form.model.errors.${propertyPath}`));
+      // bind to the value
+      defineProperty(this, 'value', computed(`form.model.{${propertyPaths}}`, function () {
 
-    // bind to the value
-    defineProperty(this, 'value', computed.oneWay(`form.model.${propertyPath}`));
+        return params.reduce((acc, param) => {
+          // we either use the key map provided by the user, or the
+          // default key value
+          const key = withMapping[param] || param;
+          acc[key] = this.get(`form.model.${param}`);
+
+          return acc;
+        }, {});
+
+      }));
+
+      const errorPaths = params.map(_ => `form.model.errors.${_}`);
+      defineProperty(this, 'errors', computed.union(...errorPaths));
+    }
+    else {
+      const propertyPath = params[0];
+
+      assert(!!propertyPath, '{{field-for}} Requires a propertyPath to bind to');
+
+      // bind to the value
+      defineProperty(this, 'value', computed.oneWay(`form.model.${propertyPath}`));
+
+      // bind to errors
+      defineProperty(this, 'errors', computed.oneWay(`form.model.errors.${propertyPath}`));
+    }
 
     // define _value such that we either use the intermediary value that
     // is set by way of the onChange handler or new values received from the value binding
@@ -183,7 +246,10 @@ const FieldFor = Ember.Component.extend({
 });
 
 FieldFor.reopenClass({
-  positionalParams: ['propertyPath']
+  // Setting the positional params to 'params' makes all positional params available to
+  // the component at runtime under the key 'params' we use this to allow the component
+  // to take a variable number of params thus supporting single value or composite value mode
+  positionalParams: 'params'
 });
 
 export default FieldFor;
