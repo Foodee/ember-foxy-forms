@@ -1,0 +1,9 @@
+{{#each _inputs as |input|}}
+  <input
+    class="input-{{input.id}}"
+    value="{{get value input.key}}"
+    type="text"
+    onchange={{action 'handleValueChange' input.key}}
+    onKeyUp={{action 'handleValueChange' input.key}}
+  />
+{{/each}}
