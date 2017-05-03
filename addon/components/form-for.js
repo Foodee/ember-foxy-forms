@@ -174,7 +174,6 @@ const FormFor = Ember.Component.extend({
 
     this.set('isResetting', true);
 
-
     if (this.willReset(model)) {
 
       this.onReset(model)
@@ -192,7 +191,17 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   updateValue(key, value){
-    this.set(`form.model.${key}`, value);
+    this.set(`model.${key}`, value);
+  },
+
+  /**
+   * Updates a collection of values on the model
+   * @method updateValues
+   * @param {Object} keyValues
+   * @public
+   */
+  updateValues(keyValues){
+    this.get('model').setProperties(keyValues);
   },
 
   /**

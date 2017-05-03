@@ -7,7 +7,7 @@ module.exports = function (/* environment, appConfig */) {
       'ember-form-for': {
         fieldClasses: 'field',
         formClasses: 'form',
-        popOverClass: '',
+        fieldForControlCalloutClasses: 'field-for-control-callout',
 
         buttonClasses: '',
         submitButtonClasses: '',

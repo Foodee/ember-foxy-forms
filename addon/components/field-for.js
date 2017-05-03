@@ -21,13 +21,23 @@ const FieldFor = Ember.Component.extend({
   tagName: '',
 
   /**
-   * The propertyPath that this field gets its value from
-   * @property propertyPath
-   * @type String
+   * The form that this field belongs to
+   * @property form
+   * @type FormFor
    * @default null
    * @public
    */
-  propertyPath: '',
+  form: null,
+
+
+  // --------------------------------------------------------------------------------
+  // This section is where the DSL syntax lives
+  // label
+  // require-confirm
+  // inline-editing
+  // using
+  // with-mapping
+  //
 
   /**
    * The label for this field
@@ -39,33 +49,27 @@ const FieldFor = Ember.Component.extend({
   label: null,
 
   /**
-   * The form that this field belongs to
-   * @property form
-   * @type FormFor
-   * @default null
-   * @public
-   */
-  form: null,
-
-  /**
    * Whether or not this field requires confirmation from the user
    * before it commits its value to the form
-   * @property  requireConfirm
+   * @property  _requireConfirm
    * @type boolean
    * @default true
    * @public
    */
-  ['require-confirm']: computed.oneWay('form.requireConfirm'),
-  requireConfirm: computed.readOnly('require-confirm'),
+  'require-confirm': computed.oneWay('form.require-confirm'),
+  _requireConfirm: computed.readOnly('require-confirm'),
 
   /**
-   * Whether or not this field currently requires confirmation
-   * @property requireConfirm
+   * Whether or not this field is in inline-edit mode, which displays
+   * a value that can be clicked on and then reveal the control useful
+   * for all sorts of layouts
+   * @property inline-editing
    * @type boolean
-   * @default true
+   * @default false
    * @public
    */
-  requiresConfirm: computed.and('requireConfirm', 'isDirty'),
+  'inline-editing': computed.oneWay('form.inline-editing'),
+  inlineEditing: computed.readOnly('inline-editing'),
 
   /**
    * Name of the control that fields, used to define the control
@@ -77,6 +81,52 @@ const FieldFor = Ember.Component.extend({
    */
   using: computed(function () {
     return this.get('_hasCompositeValue') ? '-multiple-input' : '-input';
+  }),
+
+  /**
+   * The with mapping hash, provides a mapping from model space
+   * to control space when using composite values
+   * @property _withMapping
+   * @type Object
+   * @default null
+   * @public
+   */
+  _withMapping: computed.readOnly('with-mapping'),
+
+  /**
+   * Wether or not the fields have control callouts (popups / popovers) when in
+   * inline-edit mode
+   * @property has-control-callout
+   * @type Boolean
+   * @default false
+   * @public
+   */
+  ['has-control-callout']: computed.oneWay('form.has-control-callout'),
+
+
+  /**
+   * The position of the control callout (up to the client to decide how to use this info)
+   * @property control-callout
+   * @type String
+   * @default 'bottom left'
+   * @public
+   */
+  ['callout-position']: 'bottom left',
+
+  // --------------------------------------------------------------------------------
+  // Computed Properties
+  //
+
+
+  /**
+   * Whether or not this field currently requires confirmation
+   * @property __requiresConfirm
+   * @type boolean
+   * @default true
+   * @private
+   */
+  _requiresConfirm: computed('_requireConfirm', 'inlineEditing', 'isDirty', function () {
+    return this.get('_requireConfirm') && this.get('isDirty') || this.get('inlineEditing');
   }),
 
   /**
@@ -113,35 +163,68 @@ const FieldFor = Ember.Component.extend({
     return JSON.stringify(this.get('_value')) !== JSON.stringify(this.get('value'));
   }),
 
+
+  /**
+   * Whether or not the current field mapping has any errors
+   * @property hasErrorsj
+   * @type boolean
+   * @public
+   */
+  hasErrors: computed.notEmpty('errors'),
+
+  /**
+   * Whether or not we show the control component
+   * @property _showControl
+   * @type boolean
+   * @private
+   */
+  _showControl: computed('inlineEditing', 'isEditing', 'hasError', function () {
+    return !this.get('inlineEditing') || this.get('inlineEditing') && this.get('isEditing') || this.get('hasError');
+  }),
+
+  /**
+   * Whether or not we show the value / placeholder component
+   * @property _showValue
+   * @type boolean
+   * @private
+   */
+  _showValue: computed('inlineEditing', 'isEditing', 'hasError', function () {
+    return this.get('inlineEditing') && (!this.get('isEditing') || this.get('has-control-callout'));
+  }),
+
+  /**
+   * Whether or not we show the confirm buttons
+   * @property _showConfirm
+   * @type boolean
+   * @private
+   */
+  _showConfirm: computed(
+    '_requiresConfirm', function () {
+      return this.get('_requiresConfirm');
+    }),
+
   /**
    * Whether or not this field is a composite value, meaning
    * that it exposes more than one value to the control layer
    * by way of a pojo mapping keys to values
    * @property _hasCompositeValue
-   * @type Boolean
+   * @type boolean
    * @default false
    * @private
    */
   _hasCompositeValue: computed.gt('params.length', 1),
 
   /**
-   * The with mapping hash, provides a mapping from model space
-   * to control space when using composite values
-   * @property withMapping
-   * @type Object
-   * @default null
-   * @public
-   */
-  withMapping: computed.readOnly('with-mapping'),
-
-  /**
    * Override this function to perform custom actions on commit
    * @method commitValue
-   * @param {String} _propertyPath
-   * @param {*} _value
+   * @param {String} propertyPath
+   * @param {*} value
    * @public
    */
-  commitValue(/*_propertyPath, _value*/) {
+  commitValue(/*propertyPath, value*/) {
+  },
+
+  commitValues(/*value*/) {
   },
 
   /**
@@ -154,7 +237,7 @@ const FieldFor = Ember.Component.extend({
   handleChange(value) {
     this.set('_value', value);
 
-    if (!this.get('requireConfirm')) {
+    if (!this.get('_requiresConfirm')) {
       this.commit();
     }
   },
@@ -169,16 +252,25 @@ const FieldFor = Ember.Component.extend({
 
     if (this.get('_hasCompositeValue')) {
       const _value = this.get('_value');
-      const withMapping = this.get('withMapping') || {};
+      const _withMapping = this.get('withMapping') || {};
 
-      params.forEach(param => {
-        const key = withMapping[param] || param;
-        this.commitValue(param, _value[key]);
-      });
+      const keyValue = params.reduce((acc, param) => {
+        const key = _withMapping[param] || param;
+        acc[param] = _value[key];
+
+        return acc;
+      }, {});
+
+      this.commitValues(keyValue);
     }
     else {
       this.commitValue(params[0], this.get('_value'));
     }
+
+    if (!this.get('hasErrors')) {
+      this.set('isEditing', false);
+    }
+
   },
 
   /**
@@ -189,6 +281,16 @@ const FieldFor = Ember.Component.extend({
    */
   cancel(){
     this.set('_value', this.get('value'));
+
+    if (!this.get('hasErrors')) {
+      this.set('isEditing', false);
+    }
+  },
+
+  actions: {
+    edit(){
+      this.set('isEditing', true);
+    }
   },
 
   init(){
@@ -199,7 +301,7 @@ const FieldFor = Ember.Component.extend({
     if (this.get('_hasCompositeValue')) {
       // property paths to watch
       const propertyPaths = params.join(',');
-      const withMapping = this.get('withMapping') || {};
+      const _withMapping = this.get('withMapping') || {};
 
       // bind to the value
       defineProperty(this, 'value', computed(`form.model.{${propertyPaths}}`, function () {
@@ -207,7 +309,7 @@ const FieldFor = Ember.Component.extend({
         return params.reduce((acc, param) => {
           // we either use the key map provided by the user, or the
           // default key value
-          const key = withMapping[param] || param;
+          const key = _withMapping[param] || param;
           acc[key] = this.get(`form.model.${param}`);
 
           return acc;
@@ -240,6 +342,9 @@ const FieldFor = Ember.Component.extend({
         return value;
       }
     }));
+
+    // Capture backup value that will allow full roll back if there are errors on cancel
+    // update the backup value after successful commit
 
     this.get('form').registerField(this);
   }

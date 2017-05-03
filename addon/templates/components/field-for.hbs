@@ -1,60 +1,52 @@
 <div class="{{config.fieldClasses}} {{strip-class-names classNames}} {{if errors.length 'error'}}">
 
-  {{#if hasBlock}}
-    {{yield (hash
+  {{label-for
+    label=label
+    controlId=controlId
+  }}
 
-              label= (component 'label-for'
-                label=label
-                controlId=controlId
-              )
+  {{#if _showValue}}
+    <div {{action 'edit' on 'click'}} class="field-for-value-container">
+      {{value}}
+    </div>
+  {{/if}}
 
-              control= (component _control
-                value=(readonly _value)
-                isdisabled=isDisabled
-                isreadonly=isReadonly
-                controlId=controlId
+  {{#if _showControl}}
+    <div class="field-for-control-container {{if has-control-callout
+                                                 config.fieldForControlCalloutClasses}} {{callout-position}}">
+      {{component _control
+                  value=(readonly _value)
+                  controlId=controlId
 
-                onChange=(action handleChange)
-              )
+                  onChange=(action handleChange)
+      }}
 
-              commit-buttons=(component 'commit-buttons'
-                visible=(readonly requiresConfirm)
+      {{#if hasBlock}}
+        {{yield (hash
+                  control= (component _control
+                    value=(readonly _value)
+                    controlId=controlId
 
-                commit=(action commit)
-                cancel=(action cancel)
-              )
+                    onChange=(action handleChange)
+                  )
+                )
 
-              errors= (component 'errors-for'
-                errors=errors
-              )
+                this
+        }}
+      {{else}}
 
-            )
-            this
-    }}
-  {{else}}
+      {{/if}}
 
-    {{label-for
-      label=label
-      controlId=controlId
-    }}
+      {{commit-buttons
+        visible=_showConfirm
 
-    {{component _control
-                value=(readonly _value)
-                isDisabled=isDisabled
-                isReadonly=isReadonly
-                controlId=controlId
+        commit=(action commit)
+        cancel=(action cancel)
+      }}
 
-                onChange=(action handleChange)
-    }}
+      {{errors-for errors=errors}}
+    </div>
 
-    {{commit-buttons
-      visible=requiresConfirm
-
-      commit=(action commit)
-      cancel=(action cancel)
-    }}
-
-    {{errors-for errors=errors}}
   {{/if}}
 
 

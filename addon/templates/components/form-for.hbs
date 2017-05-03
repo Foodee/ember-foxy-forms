@@ -3,7 +3,8 @@
             field-for=(component 'field-for'
               form=this
 
-              commitValue=updateValue
+              commitValue=(action updateValue)
+              commitValues=(action updateValues)
             )
             submit=(component 'form-button'
               text="Submit"
