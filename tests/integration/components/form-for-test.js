@@ -201,3 +201,104 @@ test('it propagates the multiple changes to the form model with the mapping', fu
   this.$('input.input-0').change();
   assert.equal(model.get('foo'), newFoo);
 });
+
+
+test('it hides the control when inline-editing', function (assert) {
+
+  const model = Ember.Object.create({foo: 'bar'});
+
+  this.set('model', model);
+
+  this.render(hbs`
+    {{#form-for model as |f|}}
+      {{f.field-for 'foo' inline-editing=true}} 
+    {{/form-for}}
+  `);
+
+  assert.equal(this.$('input')[0], undefined);
+});
+
+test('it shows the control and hides the value when inline-editing and the value is clicked', function (assert) {
+
+  const model = Ember.Object.create({foo: 'bar'});
+
+  this.set('model', model);
+
+  this.render(hbs`
+    {{#form-for model as |f|}}
+      {{f.field-for 'foo' inline-editing=true}} 
+    {{/form-for}}
+  `);
+
+  this.$('.field-for-value-container').click();
+
+  assert.equal(this.$('input').val(), 'bar');
+  assert.equal(this.$('.field-for-value-container')[0], undefined);
+});
+
+test('it hides the control inline-editing when commited or canceled with no errors', function (assert) {
+  const model = Ember.Object.create({foo: 'bar'});
+
+  this.set('model', model);
+
+  this.render(hbs`
+    {{#form-for model as |f|}}
+      {{f.field-for 'foo' inline-editing=true}} 
+    {{/form-for}}
+  `);
+
+  this.$('.field-for-value-container').click();
+  assert.equal(this.$('input').val(), 'bar');
+  this.$('button.commit').click();
+  assert.equal(this.$('input')[0], undefined);
+
+
+  this.$('.field-for-value-container').click();
+  assert.equal(this.$('input').val(), 'bar');
+  this.$('button.cancel').click();
+  assert.equal(this.$('input')[0], undefined);
+});
+
+
+test('it does not hide the control when inline-editing when there are errors', function (assert) {
+  const model = Ember.Object.create({foo: 'bar', errors: {foo: ['bar']}});
+
+  this.set('model', model);
+
+  this.render(hbs`
+    {{#form-for model as |f|}}
+      {{f.field-for 'foo' inline-editing=true}} 
+    {{/form-for}}
+  `);
+
+  this.$('.field-for-value-container').click();
+  assert.equal(this.$('input').val(), 'bar');
+  this.$('button.commit').click();
+  assert.equal(this.$('input').val(), 'bar');
+
+
+  this.$('.field-for-value-container').click();
+  assert.equal(this.$('input').val(), 'bar');
+  this.$('button.cancel').click();
+  assert.equal(this.$('input').val(), 'bar');
+});
+
+test('it shows the control and the value when inline-editing and has-control-callout and the value is clicked', function (assert) {
+
+  const model = Ember.Object.create({foo: 'bar'});
+
+  this.set('model', model);
+
+  this.render(hbs`
+    {{#form-for model as |f|}}
+      {{f.field-for 'foo' inline-editing=true has-control-callout=true}} 
+    {{/form-for}}
+  `);
+
+  this.$('.field-for-value-container').click();
+
+  assert.equal(this.$('input').val(), 'bar');
+  assert.notEqual(this.$('.field-for-value-container')[0], undefined);
+});
+
+
