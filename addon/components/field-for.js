@@ -2,6 +2,7 @@ import Ember from 'ember';
 import layout from '../templates/components/field-for';
 
 const {
+  isArray,
   computed,
   defineProperty,
   assert,
@@ -28,7 +29,6 @@ const FieldFor = Ember.Component.extend({
    * @public
    */
   form: null,
-
 
   // --------------------------------------------------------------------------------
   // This section is where the DSL syntax lives
@@ -103,7 +103,6 @@ const FieldFor = Ember.Component.extend({
    */
   ['has-control-callout']: computed.oneWay('form.has-control-callout'),
 
-
   /**
    * The position of the control callout (up to the client to decide how to use this info)
    * @property control-callout
@@ -112,6 +111,53 @@ const FieldFor = Ember.Component.extend({
    * @public
    */
   ['callout-position']: 'bottom left',
+
+  /**
+   * Optional array of values to be delegated down to the control, useful
+   * for selects or radio groups.
+   * @property values
+   * @type Array
+   * @default null
+   * @public
+   */
+  values: null,
+
+  /**
+   * Either delegate the values down to the control, or transform them
+   * using the values extractor function
+   * @property values
+   * @type Array|String
+   * @default null
+   * @public
+   */
+  _values: computed('values', function () {
+    const values = this.get('values');
+    let ret = values;
+
+    if (values && !isArray(values)) {
+      // if the values provided is not an array but in fact a string
+      // we transform it into a POJO
+      return values.split(',').map(this['values-extractor']);
+    }
+
+    return ret;
+  }),
+
+  /**
+   * This method extracts a value for the values array in the
+   * event of a string being passed.
+   *
+   * The expected format is id:value:icon
+   * @method values-extractor
+   * @param value
+   * @returns {{id: String, label: String, icon: String}}
+   */
+  'values-extractor'(value){
+    const chunks = value.split(':');
+    const [id, label, icon] = chunks;
+
+    return {id, label, icon};
+  },
 
   // --------------------------------------------------------------------------------
   // Computed Properties

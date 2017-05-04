@@ -16,6 +16,7 @@
                                                  config.fieldForControlCalloutClasses}} {{callout-position}}">
       {{component _control
                   value=(readonly _value)
+                  values=(readonly _values)
                   controlId=controlId
 
                   onChange=(action handleChange)
@@ -25,6 +26,7 @@
         {{yield (hash
                   control= (component _control
                     value=(readonly _value)
+                    values=(readonly _values)
                     controlId=controlId
 
                     onChange=(action handleChange)
