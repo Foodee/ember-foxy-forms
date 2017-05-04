@@ -117,6 +117,16 @@ const FieldFor = Ember.Component.extend({
   // Computed Properties
   //
 
+  /**
+   * A class which will be appended to the field for testing purpose (not styling purposes)
+   * @property _testingClass
+   * @type String
+   * @default '--field-for__<params>'
+   * @private
+   */
+  _testingClass: computed(function () {
+    return `--field-for__${this.get('params').join('__')}`;
+  }),
 
   /**
    * Whether or not this field currently requires confirmation
