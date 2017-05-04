@@ -1,6 +1,7 @@
 import {moduleForComponent, test} from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 import Ember from 'ember';
+import DS from 'ember-data';
 
 import faker from 'faker';
 
@@ -302,3 +303,53 @@ test('it shows the control and the value when inline-editing and has-control-cal
 });
 
 
+test('it should use the model name to build the testing class', function (assert) {
+  const modelName = faker.lorem.word();
+
+  this.set('model', {});
+  this.set('modelName', modelName);
+
+  this.render(hbs`
+    {{#form-for model model-name=modelName as |f|}}
+      {{f.field-for 'foo' inline-editing=true has-control-callout=true}} 
+    {{/form-for}}
+  `);
+  assert.notEqual(this.$(`.--form-for__${modelName}`)[0], undefined);
+});
+
+test('it should use the ember data model name to build the testing class', function (assert) {
+  const modelName = faker.lorem.word();
+
+  const modelClass = DS.Model.extend({});
+  this.register(`model:${modelName}`, modelClass);
+  let model = null;
+  Ember.run(() => {
+    model = this.container.lookup('service:store').createRecord(modelName);
+  });
+
+  this.set('model', model);
+
+  this.render(hbs`
+    {{#form-for model as |f|}}
+      {{f.field-for 'foo' inline-editing=true has-control-callout=true}} 
+    {{/form-for}}
+  `);
+
+  assert.notEqual(this.$(`.--form-for__${modelName}`)[0], undefined);
+});
+
+
+test('it should use the object model name to build the testing class', function (assert) {
+  const modelName = faker.lorem.word();
+
+  this.set('model', {
+    modelName: modelName
+  });
+
+  this.render(hbs`
+    {{#form-for model  as |f|}}
+    {{/form-for}}
+  `);
+
+  assert.notEqual(this.$(`.--form-for__${modelName}`)[0], undefined);
+});

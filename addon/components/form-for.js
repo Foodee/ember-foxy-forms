@@ -36,6 +36,29 @@ const FormFor = Ember.Component.extend({
    */
   model: null,
 
+  'model-name': null,
+
+  /**
+   * A class which will be appended to the form for testing purpose (not styling purposes)
+   * @property _testingClass
+   * @type String
+   * @default '--field-for__<model-name>'
+   * @private
+   */
+  _testingClass: computed('model', function () {
+    const model = this.get('model');
+    let modelName = 'object';
+
+    if (model) {
+      modelName = this.get('model-name') ||
+        get(model, 'modelName') ||
+        get(model, '_internalModel.modelName') ||
+        'object';
+    }
+
+    return `--form-for__${modelName}`;
+  }),
+
   /**
    * Whether or not this form requires confirmation to apply values to
    * the model
@@ -44,7 +67,7 @@ const FormFor = Ember.Component.extend({
    * @default false
    * @public
    */
-  requireConfirm: false,
+  'require-confirm': false,
 
   /**
    * Called before the form submits, this is where we do
