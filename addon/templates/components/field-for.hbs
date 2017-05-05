@@ -1,4 +1,8 @@
-<div class="{{config.fieldClasses}} {{strip-class-names classNames}} {{if errors.length 'error'}} {{_testingClass}}">
+<div class="field-for {{config.fieldClasses}} {{strip-class-names classNames}}
+  {{if errors.length 'error'}}
+  {{if errors.disabled 'disabled'}}
+  {{if errors.readonly 'readonly'}}
+  {{_testingClass}} {{using}}-field">
 
   {{label-for
     label=label
@@ -6,27 +10,27 @@
   }}
 
   {{#if _showValue}}
-    <div {{action 'edit' on 'click'}} class="field-for-value-container">
-      {{value}}
+    <div {{action 'edit' on 'click'}} class="field-for-value-container" data-tooltip="{{value-tooltip}}">
+      {{#if value}}
+        {{display-value}}
+      {{else}}
+        <span class="field-for-placeholder">{{placeholder}}</span>
+      {{/if}}
+
     </div>
   {{/if}}
 
   {{#if _showControl}}
     <div class="field-for-control-container {{if has-control-callout
                                                  config.fieldForControlCalloutClasses}} {{callout-position}}">
-      {{component _control
-                  value=(readonly _value)
-                  values=(readonly _values)
-                  controlId=controlId
-
-                  onChange=(action handleChange)
-      }}
-
       {{#if hasBlock}}
         {{yield (hash
                   control= (component _control
                     value=(readonly _value)
                     values=(readonly _values)
+                    placeholder=placeholder
+                    readonly=readonly
+                    disabled=disabled
                     controlId=controlId
 
                     onChange=(action handleChange)
@@ -36,11 +40,21 @@
                 this
         }}
       {{else}}
+        {{component _control
+                    value=(readonly _value)
+                    values=(readonly _values)
+                    placeholder=placeholder
+                    readonly=readonly
+                    disabled=disabled
+                    controlId=controlId
 
+                    onChange=(action handleChange)
+        }}
       {{/if}}
 
       {{commit-buttons
         visible=_showConfirm
+        isActing=form.isSubmitting
 
         commit=(action commit)
         cancel=(action cancel)

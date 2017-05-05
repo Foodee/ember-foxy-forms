@@ -7,7 +7,8 @@ const {
   defineProperty,
   assert,
   get,
-  guidFor
+  guidFor,
+  run
 } = Ember;
 
 const FieldFor = Ember.Component.extend({
@@ -47,6 +48,24 @@ const FieldFor = Ember.Component.extend({
    * @public
    */
   label: null,
+
+  /**
+   * Whether or not this field is disabled
+   * @property disabled
+   * @type boolean
+   * @default false
+   * @public
+   */
+  disabled: computed.oneWay('form.disabled'),
+
+  /**
+   * Whether or not this field is readonly
+   * @property readonly
+   * @type boolean
+   * @default false
+   * @public
+   */
+  readonly: computed.oneWay('form.readonly'),
 
   /**
    * Whether or not this field requires confirmation from the user
@@ -158,6 +177,38 @@ const FieldFor = Ember.Component.extend({
 
     return {id, label, icon};
   },
+
+
+  /**
+   * Function for formatting the value override for custom behavior
+   * @method format-value
+   * @param {Object} value
+   * @returns string
+   */
+  'format-value'(value) {
+    return value;
+  },
+
+
+  /**
+   * The result of applying the format-value function to the value
+   * @property _formattedValue
+   * @type String
+   * @default value
+   * @private
+   */
+  'display-value': computed('value', function () {
+    return this['format-value'](this.get('value'));
+  }),
+
+  /**
+   * Tooltip to append to the value when inline editing
+   * @property value-tooltip
+   * @type String
+   * @default null
+   * @private
+   */
+  'value-tooltip': null,
 
   // --------------------------------------------------------------------------------
   // Computed Properties
@@ -306,6 +357,8 @@ const FieldFor = Ember.Component.extend({
   commit(){
     const params = this.get('params');
 
+    let commitPromise = null;
+
     if (this.get('_hasCompositeValue')) {
       const _value = this.get('_value');
       const _withMapping = this.get('withMapping') || {};
@@ -317,15 +370,17 @@ const FieldFor = Ember.Component.extend({
         return acc;
       }, {});
 
-      this.commitValues(keyValue);
+      commitPromise = this.commitValues(keyValue);
     }
     else {
-      this.commitValue(params[0], this.get('_value'));
+      commitPromise = this.commitValue(params[0], this.get('_value'));
     }
 
-    if (!this.get('hasErrors')) {
-      this.set('isEditing', false);
-    }
+    commitPromise.finally(() => {
+      if (!this.get('hasErrors')) {
+        this.set('isEditing', false);
+      }
+    });
 
   },
 
@@ -346,6 +401,12 @@ const FieldFor = Ember.Component.extend({
   actions: {
     edit(){
       this.set('isEditing', true);
+      run.next(() => {
+
+        if (this.get('_showControl')) {
+          Ember.$(`#${this.get('controlId')}`).focus();
+        }
+      });
     }
   },
 

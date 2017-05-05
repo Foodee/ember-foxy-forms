@@ -1,27 +1,32 @@
-<div class="{{config.formClasses}} {{strip-class-names classNames}} {{_testingClass}}">
-  {{yield (hash
-            field-for=(component 'field-for'
-              form=this
+{{yield (hash
+          field-for=(component 'field-for'
+            form=this
 
-              commitValue=(action updateValue)
-              commitValues=(action updateValues)
-            )
-            submit=(component 'form-button'
-              text="Submit"
-              isActing=isSubmitting
-              classNames=config.submitButtonClasses
-
-              onClick=(action doSubmit)
-            )
-            reset=(component 'form-button'
-              text="Reset"
-              isActing=isResetting
-              classNames=config.resetButtonClasses
-
-              onClick=(action doReset)
-            )
+            commitValue=(action updateValue)
+            commitValues=(action updateValues)
           )
-          this
-  }}
-</div>
+          submit=(component 'form-button'
+            text="Submit"
+            isActing=isSubmitting
+            classNames=config.submitButtonClasses
+
+            onClick=(action doSubmit)
+          )
+          reset=(component 'form-button'
+            text="Reset"
+            isActing=isResetting
+            classNames=config.resetButtonClasses
+
+            onClick=(action doReset)
+          )
+          destroy=(component 'form-button'
+            text="Delete"
+            isActing=isDestroyingRecord
+            classNames=config.destroyButtonClasses
+
+            onClick=(action confirmDestroy model)
+          )
+        )
+        this
+}}
 
