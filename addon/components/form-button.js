@@ -15,5 +15,7 @@ export default Ember.Component.extend({
 
   tagName: '',
 
+  icon: null,
+
   onClick() {}
 });
