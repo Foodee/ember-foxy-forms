@@ -1,1 +1,1 @@
-export { default } from 'ember-form-for/services/form-for';
+export { default } from 'ember-foxy-forms/services/form-for';

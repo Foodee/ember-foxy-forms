@@ -5,7 +5,7 @@ const TransformFilter = require('./lib/transform-filter');
 const fs = require('fs');
 
 module.exports = {
-  name: 'ember-form-for',
+  name: 'ember-foxy-forms',
 };
 
 function buildTemplate(controlFileList) {

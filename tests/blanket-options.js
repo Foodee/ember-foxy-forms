@@ -1,8 +1,8 @@
 /* globals blanket, module */
 
 var options = {
-  modulePrefix: 'ember-form-for',
-  filter: '//.*ember-form-for/.*/',
+  modulePrefix: 'ember-foxy-forms',
+  filter: '//.*ember-foxy-forms/.*/',
   antifilter: '//.*(tests|template).*/',
   loaderExclusions: [],
   lcovOptions: {

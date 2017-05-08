@@ -1,1 +1,1 @@
-export { default } from 'ember-form-for/components/label-for';
+export { default } from 'ember-foxy-forms/components/label-for';

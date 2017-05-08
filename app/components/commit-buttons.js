@@ -1,1 +1,1 @@
-export { default } from 'ember-form-for/components/commit-buttons';
+export { default } from 'ember-foxy-forms/components/commit-buttons';

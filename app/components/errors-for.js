@@ -1,1 +1,1 @@
-export { default } from 'ember-form-for/components/errors-for';
+export { default } from 'ember-foxy-forms/components/errors-for';

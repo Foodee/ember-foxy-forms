@@ -1,1 +1,1 @@
-export { default } from 'ember-form-for/components/form-button';
+export { default } from 'ember-foxy-forms/components/form-button';

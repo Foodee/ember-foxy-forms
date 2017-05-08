@@ -1,1 +1,1 @@
-export { default } from 'ember-form-for/models/giftbit-errors';
+export { default } from 'ember-foxy-forms/models/giftbit-errors';
