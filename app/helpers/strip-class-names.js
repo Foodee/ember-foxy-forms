@@ -1,2 +1,2 @@
-export { default, stripClassNames } from 'ember-form-for/helpers/strip-class-names';
+export { default, stripClassNames } from 'ember-foxy-forms/helpers/strip-class-names';
 

@@ -16,7 +16,7 @@ const FieldFor = Ember.Component.extend({
   layout,
 
   config: computed(function () {
-    return get(Ember.getOwner(this).resolveRegistration('config:environment'), 'APP.ember-form-for');
+    return get(Ember.getOwner(this).resolveRegistration('config:environment'), 'APP.ember-foxy-forms');
   }),
 
   // remove tags, so we don't interfere with styles that use direct inheritance

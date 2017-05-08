@@ -21,7 +21,7 @@ test('can configure custom error component', function (assert) {
 
   this.register('config:environment', {
     APP: {
-      'ember-form-for': {
+      'ember-foxy-forms': {
         customErrorComponent: 'custom-errors-for'
       }
     }

@@ -4,7 +4,7 @@
 module.exports = function (/* environment, appConfig */) {
   return {
     APP: {
-      'ember-form-for': {
+      'ember-foxy-forms': {
         fieldClasses: 'field',
         formClasses: 'form',
         fieldForControlCalloutClasses: 'field-for-control-callout',

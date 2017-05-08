@@ -1,1 +1,1 @@
-export { default } from 'ember-form-for/components/field-for';
+export { default } from 'ember-foxy-forms/components/field-for';
