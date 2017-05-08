@@ -231,7 +231,7 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   onSubmit(model){
-    return model.save ? model.save() : Promise.resolve(model);;
+    return model.save ? model.save() : Promise.resolve(model);
   },
 
   /**
