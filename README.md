@@ -5,16 +5,97 @@
 
 Not just forms, Foxy Forms.
 
-
-This addon allows you to build simple declarative forms with some snazy features.
+This addon allows you to build simple declarative forms with some snazy features. It is UI framework agnostic and generates 
+minimal dom, so as to not interfere with what ever UI framework you might be using.
 
 More documentation to come.
 
 ## FormFor
 
-A form controls a single model.
+A form controls a single model, it exposes two context variables, the form component builder, and the form itself.
 
-Coming soon
+The form component builder exposes 4 components:
+
+- field_for: a container for form controls mapped to one or more model field values
+- submit: a button which triggers the submit process on the form (calls validate on the mode, and tries to save it)
+- reset: a button which triggers the reset process on the form (current doesn't do much)
+- destroy: a button which triggers the destroy process on the form
+
+
+### Configuration Values
+
+
+```javascript
+const FormFor = {
+  // Whether or not this form is disabled, delegated to all fields
+  disabled: false,
+ 
+  // Whether or not this form is readonly, delegated to all fields
+  readonly: false,
+ 
+  // Whether or not this form uses inline editing by default
+  // in this mode the form will display text values, which can be
+  // clicked to edit
+  'inline-editing': false,
+  
+   // Whether or not all of the fields on this form require confirm before 
+   // committing their values to the model
+  'require-confirm': false,
+  
+   // Whether or not this form auto submits on commit of a value (useful for inline editing)
+  'auto-submit': false,
+ 
+  // Whether or not you want notifications on success or failure
+  'notify-of-success': true,
+  'notify-of-error': true,
+  
+  'submit-success-message': null,
+  'submit-error-message': null,
+  
+  'reset-success-message': null,
+  'reset-error-message': null,
+  
+  'destroy-success-message': null,
+  'destroy-error-message': null,
+ 
+  // options passed to the validation method if present
+  'validation-options': {} 
+}
+```
+
+### Life Cycle Events
+
+#### willSubmit
+
+Called at the beginning of the submit process, expected to be a function which returns a boolean.
+
+#### didNotSubmit
+
+Called when the willSubmit function returns false
+
+#### onSubmit
+
+Called when the willSubmit function returns true, does the actual submission, in the case of ED models calls save. 
+
+#### didSubmit
+
+Called when the onSubmit function successfully runs 
+ 
+#### failedSubmit
+
+Called when the onSubmit function fails to runs
+
+### confirmDestroy
+
+Called when the destroy button is pressed, by default runs the code found in the form-for service to confirm the destruction
+of the model.
+
+```handlebars
+
+{{#form-for model as |f form|}}
+
+{{/form-for}}
+```
 
 ## FieldFor
 
@@ -34,6 +115,8 @@ Multiple values can be extracted by providing multiple keys to the field-for hel
 {{#form-for model as |f|}}
 
   {{f.field-for 'startDate' 'endDate' using='date-range' label='Date Range'}}
+  
+  {{f.submit}}
 
 {{/form-for}}
 ```
@@ -49,11 +132,11 @@ Alternatively you can use the with-mapping property to provide value mapping. Th
   {{f.field-for 'foo' 'bar' using='date-range' with-mapping=(hash foo='start-date' bar='end-date') label='Date Range'}}
   
   {{f.field-for 'baz' 'quz' using='date-range' with-mapping=(hash baz='start-date' qux='end-date') label='Date Range'}}
+  
+  {{f.submit}}
 
 {{/form-for}}
 ```
-
-TODO: more stuff on the various configurations
 
 # FormControls
 
