@@ -127,30 +127,30 @@ const FormFor = Ember.Component.extend({
 
   /**
    * The message to send on submit success
-   * @property submit-success-message
+   * @property successful-submit-message
    * @type String
    * @default null
    * @public
    */
-  'submit-success-message': null,
+  'successful-submit-message': null,
 
   /**
    * The message to send on submit error
-   * @property submit-error-message
+   * @property failed-submit-message
    * @type String
    * @default null
    * @public
    */
-  'submit-error-message': null,
+  'failed-submit-message': null,
 
   /**
    * The message to send on reset success
-   * @property reset-success-message
+   * @property successful-reset-message
    * @type String
    * @default null
    * @public
    */
-  'reset-success-message': null,
+  'successful-reset-message': null,
 
   /**
    * The message to send on reset error
@@ -159,25 +159,25 @@ const FormFor = Ember.Component.extend({
    * @default null
    * @public
    */
-  'reset-error-message': null,
+  'failed-reset-message': null,
 
   /**
    * The message to send on destroy success
-   * @property destroy-success-message
+   * @property successful-destroy-message
    * @type String
    * @default null
    * @public
    */
-  'destroy-success-message': null,
+  'successful-destroy-message': null,
 
   /**
    * The message to send on destroy error
-   * @property destroy-error-message
+   * @property failed-destroy-message
    * @type String
    * @default null
    * @public
    */
-  'destroy-error-message': null,
+  'failed-destroy-message': null,
 
   /**
    * Whether or not the form automatically submits on value changes

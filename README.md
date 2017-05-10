@@ -46,17 +46,20 @@ const FormFor = {
   'auto-submit': false,
  
   // Whether or not you want notifications on success or failure
+  
+
   'notify-of-success': true,
   'notify-of-error': true,
   
-  'submit-success-message': null,
-  'submit-error-message': null,
+  'successful-submit-message': null,
+  'failed-submit-message': null,
   
-  'reset-success-message': null,
-  'reset-error-message': null,
+  'successful-reset-message': null,
+  'failed-reset-message': null,
   
-  'destroy-success-message': null,
-  'destroy-error-message': null,
+  'successful-destroy-message': null,
+  'failed-destroy-message': null,
+
  
   // options passed to the validation method if present
   'validation-options': {} 
