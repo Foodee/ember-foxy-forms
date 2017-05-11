@@ -145,19 +145,38 @@ Alternatively you can use the with-mapping property to provide value mapping. Th
 
 A form control is any component which implements the following interface.
 
-TODO: more stuff on the various configurations
-
+```javascript
+const FormControl = {
+  value: *, // current value of the control
+  values: [], // optional list of values to select from (handy for buidling selects)
+  controlId: '', // passed in by the field layer to identify your control
+  placeholder: '', // optional placeholder text
+  disabled: true | false, // whether or not this control is disabled
+  readonly: true | false, // whether or not this control is readonly
+  
+  onChange(){} // callback function when the values controlled by this control is changed
+}
 ```
-value: *, // current value of the control
-values: [], // optional list of values to select from (handy for buidling selects)
-controlId: '', // passed in by the field layer to identify your control
-placeholder: '', // optional placeholder text
-disabled: true | false, // whether or not this control is disabled
-readonly: true | false, // whether or not this control is readonly
 
-onChange(){} // callback function when the values controlled by this control is changed
+If you follow this convention values will be seamlessly managed by the field / form layers.
+
+## Custom Control Configurations
+
+Sometimes you might want to add custom behaviors or configurations to your form control, some examples of this include
+min / max values, icons, etc. To do this without delegateing all the bindings through the field layer, simply yield the
+control out of the field-for.
+
+```handlebars
+{{#form-for model as |f|}}
+
+  {{#f.field-for 'foo' using='input' as |ff|}}  
+    {{ff.control leftIcon='cake' min=5 max=10 }}
+  {{/f.field-for}}
+  
+  {{f.submit}}
+
+{{/form-for}}
 ```
-
 
 ## Installation
 
