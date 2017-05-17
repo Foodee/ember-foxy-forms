@@ -390,7 +390,7 @@ const FormFor = Ember.Component.extend({
   },
 
   notifyError(message){
-    if (message && this.get('notify-of-failure')) {
+    if (message && this.get('notify-of-error')) {
       this.get('formFor').notifyError(message);
     }
   },
