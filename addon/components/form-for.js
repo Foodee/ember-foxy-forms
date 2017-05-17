@@ -370,7 +370,7 @@ const FormFor = Ember.Component.extend({
       .confirmDestroy(model)
       .then(() => this.notifySuccess(this.get('successful-destroy-message')))
       .catch(() => this.notifyError(this.get('failed-destroy-message')))
-      .finally(() => this.set('isDestroyingRecord', false));
+      .finally(() => this && this.set('isDestroyingRecord', false));
   },
 
   notifySuccess(message){
