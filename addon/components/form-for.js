@@ -46,6 +46,15 @@ const FormFor = Ember.Component.extend({
   'model-name': null,
 
   /**
+   * Whether or not any changes have been made to the model
+   * @property isModelDirty
+   * @type boolean
+   * @default false
+   * @public
+   */
+  isModelDirty: false,
+
+  /**
    * A class which will be appended to the form for testing purpose (not styling purposes)
    * @property _testingClass
    * @type String
@@ -271,6 +280,7 @@ const FormFor = Ember.Component.extend({
         .then(() => {
           this.notifySuccess(this.get('successful-submit-message'));
           this.didSubmit();
+          this.set('isModelDirty', false);
         })
         .catch(_ => {
           this.notifyError(this.get('failed-submit-message'));
@@ -404,6 +414,7 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   updateValues(keyValues){
+    this.set('isModelDirty', true);
     this.get('model').setProperties(keyValues);
 
     return this.get('auto-submit') ? this.doSubmit() : Promise.resolve(true);

@@ -1,5 +1,5 @@
 <button class="{{config.buttonClasses}} {{if isActing config.buttonActingClass}} {{if icon 'icon' }} {{strip-class-names
-  classNames}} " onclick={{action onClick}}>
+  classNames}} {{if disabled 'disabled'}}" onclick={{action onClick}}>
 
   {{#if icon}}
     <i class="icon {{icon}}"></i>
