@@ -72,7 +72,7 @@ const FormFor = Ember.Component.extend({
         'object';
     }
 
-    return `--form-for__${modelName}`;
+    return `${config.get('testingClassPrefix')}form-for__${modelName}`;
   }),
 
 

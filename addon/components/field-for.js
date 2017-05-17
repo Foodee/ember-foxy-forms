@@ -222,7 +222,7 @@ const FieldFor = Ember.Component.extend({
    * @private
    */
   _testingClass: computed(function () {
-    return `--field-for__${this.get('params').join('__')}`;
+    return `${this.get('config.testingClassPrefix')}field-for__${this.get('params').join('__')}`;
   }),
 
   /**
