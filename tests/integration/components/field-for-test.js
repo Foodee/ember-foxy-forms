@@ -23,7 +23,7 @@ test('it renders testing classes', function (assert) {
     {{/form-for}}
   `);
 
-  assert.notEqual(this.$(`.--field-for__${key}`)[0], undefined);
+  assert.notEqual(this.$(`.--field-for__object_${key}`)[0], undefined);
 });
 
 

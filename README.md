@@ -178,6 +178,15 @@ control out of the field-for.
 {{/form-for}}
 ```
 
+
+## Testing classes
+
+Form for will automatically generate some testing classes on both the form and the field. They take the following pattern:
+
+forms: '--form-for__model-name'
+
+fields: '--form-for__model-name_key(s)'
+
 ## Installation
 
 * `git clone` this repository

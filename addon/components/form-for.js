@@ -55,13 +55,13 @@ const FormFor = Ember.Component.extend({
   isModelDirty: false,
 
   /**
-   * A class which will be appended to the form for testing purpose (not styling purposes)
-   * @property _testingClass
+   * Computed model name
+   * @property _modelName
    * @type String
-   * @default '--field-for__<model-name>'
-   * @private
+   * @default 'object'
+   * @public
    */
-  _testingClass: computed('model', function () {
+  _modelName: computed('model', 'model-name', function () {
     const model = this.get('model');
     let modelName = 'object';
 
@@ -72,7 +72,18 @@ const FormFor = Ember.Component.extend({
         'object';
     }
 
-    return `${this.get('config.testingClassPrefix')}form-for__${modelName}`;
+    return Ember.String.dasherize(modelName);
+  }),
+
+  /**
+   * A class which will be appended to the form for testing purpose (not styling purposes)
+   * @property _testingClass
+   * @type String
+   * @default '--field-for__<model-name>'
+   * @private
+   */
+  _testingClass: computed('model', function () {
+    return `${this.get('config.testingClassPrefix')}form-for__${this.get('_modelName')}`;
   }),
 
 
