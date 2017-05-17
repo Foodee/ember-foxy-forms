@@ -17,5 +17,17 @@ export default Ember.Component.extend({
 
   icon: null,
 
-  onClick() {}
+  onClick() {
+  },
+
+  actions: {
+
+    handleClick(){
+      if (!this.get('isActing')) {
+        this.onClick();
+      }
+    }
+
+  }
+
 });
