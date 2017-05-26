@@ -115,7 +115,7 @@ const FieldFor = Ember.Component.extend({
   /**
    * Wether or not the fields have control callouts (popups / popovers) when in
    * inline-edit mode
-   * @property has-control-callout
+   * @property hsekkas-control-callout
    * @type Boolean
    * @default false
    * @public
@@ -407,6 +407,14 @@ const FieldFor = Ember.Component.extend({
           Ember.$(`#${this.get('controlId')}`).focus();
         }
       });
+    },
+
+    doSubmit(){
+      return this.get('form').doSubmit();
+    },
+
+    doReset(){
+      return this.get('form').doReset();
     }
   },
 
