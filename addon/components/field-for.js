@@ -410,7 +410,12 @@ const FieldFor = Ember.Component.extend({
     },
 
     doSubmit(){
-      return this.get('form').doSubmit();
+      if (this.get('_requiresConfirm')) {
+        this.commit();
+      }
+      else {
+        return this.get('form').doSubmit();
+      }
     },
 
     doReset(){

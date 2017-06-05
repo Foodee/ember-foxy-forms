@@ -87,6 +87,22 @@ const FormFor = Ember.Component.extend({
   }),
 
 
+  /**
+   * Base errors for the model
+   * @property errors
+   * @type Error[]
+   * @default []
+   * @public
+   */
+  errors: computed('model.errors.base', function () {
+    return (this.get('model.errors.base') || [])
+      .map(error => {
+        error.message = error.message.replace(/base - /i, '');
+
+        return error;
+      });
+  }),
+
   // --------------------------------------------------------------------------------
   // This section is where the DSL syntax lives
 

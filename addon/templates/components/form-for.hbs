@@ -29,8 +29,10 @@
 
             onClick=(action confirmDestroy model)
           )
+          errors=(component 'errors-for'
+            errors=errors
+          )
           self=this
         )
         this
 }}
-
