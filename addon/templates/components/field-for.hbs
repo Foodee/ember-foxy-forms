@@ -1,7 +1,7 @@
 <div class="field-for {{config.fieldClasses}} {{strip-class-names classNames}}
   {{if errors.length 'error'}}
-  {{if errors.disabled 'disabled'}}
-  {{if errors.readonly 'readonly'}}
+  {{if disabled 'disabled'}}
+  {{if readonly 'readonly'}}
   {{_testingClass}} {{using}}-field">
 
   {{label-for
