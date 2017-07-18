@@ -26,6 +26,15 @@ const FormFor = Ember.Component.extend({
   classNameBindings: ['config.formClasses', '_testingClass'],
 
   /**
+   * Whether or not this form is linked to all other forms with the same model
+   * @property is-linked
+   * @type boolean
+   * @default false
+   * @public
+   */
+  'is-linked': false,
+
+  /**
    * Collection of all child field registered with this form
    * @property fields
    * @type FieldFor[]
@@ -233,6 +242,17 @@ const FormFor = Ember.Component.extend({
    */
   'validation-options': {},
 
+  /**
+   * Returns the guid of the model
+   * @property modelGuid
+   * @type string
+   * @default Ember.guidFor(this.get('model'))
+   * @public
+   */
+  modelGuid: computed('model', function () {
+    return Ember.guidFor(this.get('model'));
+  }),
+
   // --------------------------------------------------------------------------------
   // Methods
   //
@@ -307,7 +327,7 @@ const FormFor = Ember.Component.extend({
         .then(() => {
           this.notifySuccess(this.get('successful-submit-message'));
           this.didSubmit();
-          this.set('isModelDirty', false);
+          this._markClean();
         })
         .catch(_ => {
           this.notifyError(this.get('failed-submit-message'));
@@ -441,10 +461,40 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   updateValues(keyValues){
-    this.set('isModelDirty', true);
+    this._markDirty();
     this.get('model').setProperties(keyValues);
 
     return this.get('auto-submit') ? this.doSubmit() : Promise.resolve(true);
+  },
+
+  /**
+   * Marks the form as dirty
+   * @method _markDirty
+   * @private
+   */
+  _markDirty(){
+    if (this.get('is-linked')) {
+      // if we are linked use the service to share dirty state
+      this.get('formFor').markDirty(this.get('modelGuid'));
+    }
+    else {
+      this.set('isModelDirty', true);
+    }
+  },
+
+  /**
+   * Marks the form as clean
+   * @method _markClean
+   * @private
+   */
+  _markClean(){
+    if (this.get('is-linked')) {
+      // if we are linked use the service to share dirty state
+      this.get('formFor').markClean(this.get('modelGuid'));
+    }
+    else {
+      this.set('isModelDirty', false);
+    }
   },
 
   /**
@@ -457,6 +507,25 @@ const FormFor = Ember.Component.extend({
     const fields = this.get('fields') || [];
     fields.push(field);
     this.set('fields', fields);
+  },
+
+
+  init(){
+    this._super(...arguments);
+
+
+    if (this.get('is-linked')) {
+      // establish the model dirtiness binding
+      const modelGuid = this.get('modelGuid');
+
+      defineProperty(this, 'isModelDirty', computed.oneWay(`formFor.${modelGuid}IsDirty`));
+      this.get('formFor').registerGuid(modelGuid)
+    }
+
+  },
+
+  willDestroyElement(){
+    this.get('formFor').unregisterGuid(this.get('modelGuid'))
   },
 
   actions: {
