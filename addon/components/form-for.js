@@ -415,6 +415,25 @@ const FormFor = Ember.Component.extend({
     }
   },
 
+
+  /**
+   * Called when the onDestroy is fulfilled
+   * @method didDestroy
+   * @public
+   */
+  didDestroy(){
+  },
+
+
+  /**
+   * Called when the onDestroy is fulfilled
+   * @method failedDestroy
+   * @param {Object} reason
+   * @public
+   */
+  failedDestroy(/* reason */){
+  },
+
   /**
    * Called to confirm the destruction of the model
    * @method confirmDestroy
@@ -425,9 +444,15 @@ const FormFor = Ember.Component.extend({
 
     this.set('isDestroyingRecord', true);
     this.get('formFor')
-      .confirmDestroy(model)
-      .then(() => this.notifySuccess(this.get('successful-destroy-message')))
-      .catch(() => this.notifyError(this.get('failed-destroy-message')))
+      .confirmDestroy(model, this.get('successful-destroy-message'))
+      .then(() => {
+        this.notifySuccess(this.get('successful-destroy-message'));
+        this.didDestroy();
+      })
+      .catch((_) => {
+        this.notifyError(this.get('failed-destroy-message'));
+        this.failedDestroy(_);
+      })
       .finally(() => !this.get('isDestroyed') && this.set('isDestroyingRecord', false));
   },
 
