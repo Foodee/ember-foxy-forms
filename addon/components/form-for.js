@@ -208,6 +208,15 @@ const FormFor = Ember.Component.extend({
   'failed-reset-message': null,
 
   /**
+   * The message displayed to confirm destruction
+   * @property confirm-destroy-message
+   * @type String
+   * @default null
+   * @public
+   */
+  'confirm-destroy-message': null,
+
+  /**
    * The message to send on destroy success
    * @property successful-destroy-message
    * @type String
@@ -444,7 +453,7 @@ const FormFor = Ember.Component.extend({
 
     this.set('isDestroyingRecord', true);
     this.get('formFor')
-      .confirmDestroy(model, this.get('successful-destroy-message'))
+      .confirmDestroy(model, this.get('confirm-destroy-message'))
       .then(() => {
         this.notifySuccess(this.get('successful-destroy-message'));
         this.didDestroy();
