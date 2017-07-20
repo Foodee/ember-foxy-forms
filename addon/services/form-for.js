@@ -14,9 +14,9 @@ export default Ember.Service.extend({
    * @param {Object} model
    * @public
    */
-  confirmDestroy(model){
+  confirmDestroy(model, message = 'Are you sure you want to destroy this?'){
     let ret = Promise.resolve(model);
-    if (confirm('Are you sure you want to destroy this?')) {
+    if (confirm(message)) {
       if (model.destroyRecord) {
         ret = model.destroyRecord();
       }
