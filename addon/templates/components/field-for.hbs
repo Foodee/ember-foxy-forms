@@ -23,48 +23,51 @@
   {{#if _showControl}}
     <div class="field-for-control-container {{if has-control-callout
                                                  config.fieldForControlCalloutClasses}} {{callout-position}}">
-      {{#if hasBlock}}
-        {{yield (hash
-                  control=(component _control
-                    value=(readonly _value)
-                    values=(readonly _values)
-                    placeholder=placeholder
-                    readonly=readonly
-                    disabled=disabled
-                    controlId=controlId
 
-                    doSubmit=(action 'doSubmit')
-                    doReset=(action 'doReset')
-                    onChange=(action handleChange)
+      <div class="field-for-control-and-commit-buttons">
+        {{#if hasBlock}}
+          {{yield (hash
+                    control=(component _control
+                      value=(readonly _value)
+                      values=(readonly _values)
+                      placeholder=placeholder
+                      readonly=readonly
+                      disabled=disabled
+                      controlId=controlId
+
+                      doSubmit=(action 'doSubmit')
+                      doReset=(action 'doReset')
+                      onChange=(action handleChange)
+                    )
+                    self=this
                   )
-                  self=this
-                )
 
-                this
+                  this
+          }}
+        {{else}}
+          {{component _control
+                      value=(readonly _value)
+                      values=(readonly _values)
+                      placeholder=placeholder
+                      readonly=readonly
+                      disabled=disabled
+                      controlId=controlId
+
+                      doSubmit=(action 'doSubmit')
+                      doReset=(action 'doReset')
+                      onChange=(action handleChange)
+          }}
+
+        {{/if}}
+
+        {{commit-buttons
+          visible=_showConfirm
+          isActing=form.isSubmitting
+
+          commit=(action commit)
+          cancel=(action cancel)
         }}
-      {{else}}
-        {{component _control
-                    value=(readonly _value)
-                    values=(readonly _values)
-                    placeholder=placeholder
-                    readonly=readonly
-                    disabled=disabled
-                    controlId=controlId
-
-                    doSubmit=(action 'doSubmit')
-                    doReset=(action 'doReset')
-                    onChange=(action handleChange)
-        }}
-
-      {{/if}}
-
-      {{commit-buttons
-        visible=_showConfirm
-        isActing=form.isSubmitting
-
-        commit=(action commit)
-        cancel=(action cancel)
-      }}
+      </div>
 
       {{errors-for errors=errors}}
     </div>
