@@ -171,7 +171,7 @@ const FieldFor = Ember.Component.extend({
    * @param value
    * @returns {{id: String, label: String, icon: String}}
    */
-  'values-extractor'(value){
+  'values-extractor'(value) {
     const chunks = value.split(':');
     const [id, label, icon] = chunks;
 
@@ -354,13 +354,13 @@ const FieldFor = Ember.Component.extend({
    * @method commit
    * @public
    */
-  commit(){
+  commit() {
     const params = this.get('params');
 
     let commitPromise = null;
+    const _value = this.get('_value');
 
     if (this.get('_hasCompositeValue')) {
-      const _value = this.get('_value');
       const _withMapping = this.get('withMapping') || {};
 
       const keyValue = params.reduce((acc, param) => {
@@ -370,10 +370,10 @@ const FieldFor = Ember.Component.extend({
         return acc;
       }, {});
 
-      commitPromise = this.commitValues(keyValue);
+      commitPromise = this.commitValues(keyValue).then(_ => this.didCommitValues(keyValue))
     }
     else {
-      commitPromise = this.commitValue(params[0], this.get('_value'));
+      commitPromise = this.commitValue(params[0], _value).then(_ => this.didCommitValue())
     }
 
     commitPromise.finally(() => {
@@ -385,12 +385,32 @@ const FieldFor = Ember.Component.extend({
   },
 
   /**
+   * Triggered after the commit method is called
+   * @method commit
+   * @param {*} value
+   * @public
+   */
+  didCommitValue(/* value */) {
+
+  },
+
+  /**
+   * Triggered after the commit method is called for multiple values
+   * @method commit
+   * @param {Object} values
+   * @public
+   */
+  didCommitValues(/* values */) {
+
+  },
+
+  /**
    * Cancels the current intermediary value, only really useful
    * when not autoCommitting
    * @method cancel
    * @public
    */
-  cancel(){
+  cancel() {
     this.set('_value', this.get('value'));
 
     if (!this.get('hasErrors')) {
@@ -399,7 +419,7 @@ const FieldFor = Ember.Component.extend({
   },
 
   actions: {
-    edit(){
+    edit() {
       this.set('isEditing', true);
       run.next(() => {
 
@@ -409,7 +429,7 @@ const FieldFor = Ember.Component.extend({
       });
     },
 
-    doSubmit(){
+    doSubmit() {
       if (this.get('_requiresConfirm')) {
         this.commit();
       }
@@ -418,12 +438,12 @@ const FieldFor = Ember.Component.extend({
       }
     },
 
-    doReset(){
+    doReset() {
       return this.get('form').doReset();
     }
   },
 
-  init(){
+  init() {
     this._super(...arguments);
 
     const params = this.get('params');
@@ -465,10 +485,10 @@ const FieldFor = Ember.Component.extend({
     // define _value such that we either use the intermediary value that
     // is set by way of the onChange handler or new values received from the value binding
     defineProperty(this, '_value', computed('value', {
-      get() {
+      get () {
         return this.get('value');
       },
-      set(key, value) {
+      set (key, value) {
         return value;
       }
     }));
