@@ -270,6 +270,9 @@ const FieldFor = Ember.Component.extend({
     return JSON.stringify(this.get('_value')) !== JSON.stringify(this.get('value'));
   }),
 
+  isReallyDirty: computed('_lastValidValue', 'value', function () {
+    return JSON.stringify(this.get('_lastValidValue')) !== JSON.stringify(this.get('value'));
+  }),
 
   /**
    * Whether or not the current field mapping has any errors
@@ -349,31 +352,37 @@ const FieldFor = Ember.Component.extend({
     }
   },
 
+  _extractKeyValueMapping(_value) {
+    const params = this.get('params');
+    const _withMapping = this.get('withMapping') || {};
+
+    const keyValues = params.reduce((acc, param) => {
+      const key = _withMapping[param] || param;
+      acc[param] = _value[key];
+
+      return acc;
+    }, {});
+
+    return keyValues;
+  },
+
   /**
    * Triggers the commitValue action
    * @method commit
    * @public
    */
   commit() {
-    const params = this.get('params');
 
     let commitPromise = null;
     const _value = this.get('_value');
 
     if (this.get('_hasCompositeValue')) {
-      const _withMapping = this.get('withMapping') || {};
-
-      const keyValue = params.reduce((acc, param) => {
-        const key = _withMapping[param] || param;
-        acc[param] = _value[key];
-
-        return acc;
-      }, {});
-
+      const keyValue = this._extractKeyValueMapping(_value);
       commitPromise = this.commitValues(keyValue).then(_ => this.didCommitValues(keyValue))
     }
     else {
-      commitPromise = this.commitValue(params[0], _value).then(_ => this.didCommitValue())
+      const params = this.get('params');
+      commitPromise = this.commitValue(params[0], _value).then(_ => this.didCommitValue(_value))
     }
 
     commitPromise.finally(() => {
@@ -412,10 +421,44 @@ const FieldFor = Ember.Component.extend({
    */
   cancel() {
     this.set('_value', this.get('value'));
+    this._resetField();
+    this.set('isEditing', false);
+  },
 
-    if (!this.get('hasErrors')) {
-      this.set('isEditing', false);
+  /**
+   * Callback for when the form submits
+   * @method formDidSubmit
+   * @public
+   */
+  formDidSubmit() {
+    this.set('_lastValidValue', this.get('value'));
+  },
+
+  /**
+   * Callback for when the form resets
+   * @method formDidReset
+   * @public
+   */
+  formDidReset() {
+    this._resetField();
+  },
+
+  /**
+   * Resets the field to the backup value by re-committing the value
+   * @method _resetField
+   * @private
+   */
+  _resetField() {
+    let form = this.get('form');
+
+    if (this.get('_hasCompositeValue')) {
+      form.resetValues(this._extractKeyValueMapping(this.get('_lastValidValue')));
     }
+    else {
+      form.resetValue(this.get('params')[0], this.get('_lastValidValue'));
+    }
+
+    form.runValidations();
   },
 
   actions: {
@@ -497,6 +540,10 @@ const FieldFor = Ember.Component.extend({
     // update the backup value after successful commit
 
     this.get('form').registerField(this);
+  },
+
+  didInsertElement() {
+    this.set('_lastValidValue', this.get('value'));
   }
 });
 

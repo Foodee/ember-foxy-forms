@@ -178,6 +178,9 @@ control out of the field-for.
 {{/form-for}}
 ```
 
+## Preventing Navigation
+
+If you set a form-for to prevent-navigation it will intercept page reloads and router events if the model is dirty.
 
 ## Testing classes
 

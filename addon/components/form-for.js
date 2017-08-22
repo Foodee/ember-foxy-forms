@@ -15,6 +15,8 @@ const FormFor = Ember.Component.extend({
 
   formFor: service(),
 
+  router: Ember.inject.service('-routing'),
+
   config: computed(function () {
     return get(Ember.getOwner(this).resolveRegistration('config:environment'), 'APP.ember-foxy-forms');
   }),
@@ -25,15 +27,6 @@ const FormFor = Ember.Component.extend({
   classNames: ['form-for'],
 
   classNameBindings: ['config.formClasses', '_testingClass'],
-
-  /**
-   * Whether or not this form is linked to all other forms with the same model
-   * @property is-linked
-   * @type boolean
-   * @default false
-   * @public
-   */
-  'is-linked': false,
 
   /**
    * Collection of all child field registered with this form
@@ -244,6 +237,15 @@ const FormFor = Ember.Component.extend({
   'auto-submit': false,
 
   /**
+   * Whether or not the form automatically prevents navigation when the model is dirty
+   * @property prevents-navigation
+   * @type Boolean
+   * @default false
+   * @public
+   */
+  'prevents-navigation': false,
+
+  /**
    * Options to be passed to the validation if using validators
    * @property validation-options
    * @type Object
@@ -252,20 +254,21 @@ const FormFor = Ember.Component.extend({
    */
   'validation-options': {},
 
-  /**
-   * Returns the guid of the model
-   * @property modelGuid
-   * @type string
-   * @default Ember.guidFor(this.get('model'))
-   * @public
-   */
-  modelGuid: computed('model', function () {
-    return Ember.guidFor(this.get('model'));
-  }),
 
   // --------------------------------------------------------------------------------
   // Methods
   //
+
+  /**
+   * Runs model validations if they are present
+   * @method runValidations
+   * @return {boolean}
+   * @public
+   */
+  runValidations: function () {
+    const model = this.get('model');
+    return model.validate ? model.validate(this.get('validation-options')) : true;
+  },
 
   /**
    * Called before the form submits, this is where we do
@@ -275,9 +278,8 @@ const FormFor = Ember.Component.extend({
    * @return {boolean}
    * @public
    */
-  willSubmit(model){
-    const validationOptions = this.get('validation-options');
-    return model.validate ? model.validate(validationOptions) : true;
+  willSubmit(model) {
+    return this.runValidations();
   },
 
   /**
@@ -286,7 +288,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} model
    * @public
    */
-  didNotSubmit(/*model*/){
+  didNotSubmit(/*model*/) {
   },
 
   /**
@@ -296,7 +298,7 @@ const FormFor = Ember.Component.extend({
    * @return {Promise.<Object>}
    * @public
    */
-  onSubmit(model){
+  onSubmit(model) {
     return model.save ? model.save() : Promise.resolve(model);
   },
 
@@ -306,7 +308,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} model
    * @public
    */
-  didSubmit(/*model*/){
+  didSubmit(/*model*/) {
   },
 
   /**
@@ -315,7 +317,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} reason
    * @public
    */
-  failedSubmit(/*reason*/){
+  failedSubmit(/*reason*/) {
   },
 
   /**
@@ -323,7 +325,7 @@ const FormFor = Ember.Component.extend({
    * @method doSubmit
    * @public
    */
-  doSubmit(){
+  doSubmit() {
 
     const model = this.get('model');
     const isSaving = get(model, 'isSaving');
@@ -360,7 +362,7 @@ const FormFor = Ember.Component.extend({
    * @return boolean
    * @public
    */
-  willReset(/*model*/){
+  willReset(/*model*/) {
     return true;
   },
 
@@ -370,7 +372,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} model
    * @public
    */
-  didNotReset(/*model*/){
+  didNotReset(/*model*/) {
   },
 
   /**
@@ -380,7 +382,7 @@ const FormFor = Ember.Component.extend({
    * @return {Promise.<Object>}
    * @public
    */
-  onReset(model){
+  onReset(model) {
     return Promise.resolve(model);
   },
 
@@ -390,7 +392,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} model
    * @public
    */
-  didReset(/*model*/){
+  didReset(/*model*/) {
   },
 
   /**
@@ -399,7 +401,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} reason
    * @public
    */
-  failedReset(/*reason*/){
+  failedReset(/*reason*/) {
   },
 
   /**
@@ -407,7 +409,8 @@ const FormFor = Ember.Component.extend({
    * @method doReset
    * @public
    */
-  doReset(){
+  doReset() {
+    console.log('Restting the model')
     const model = this.get('model');
 
     if (this.willReset(model)) {
@@ -418,6 +421,8 @@ const FormFor = Ember.Component.extend({
         .then(() => {
           this.notifySuccess(this.get('successful-reset-message'));
           this.didReset();
+          this._runFieldDidReset();
+          this._markClean();
         })
         .catch(_ => {
           this.notifyError(this.get('failed-reset-message'));
@@ -433,7 +438,7 @@ const FormFor = Ember.Component.extend({
    * @method didDestroy
    * @public
    */
-  didDestroy(){
+  didDestroy() {
   },
 
 
@@ -443,7 +448,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} reason
    * @public
    */
-  failedDestroy(/* reason */){
+  failedDestroy(/* reason */) {
   },
 
   /**
@@ -452,8 +457,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} model
    * @public
    */
-  confirmDestroy(model){
-
+  confirmDestroy(model) {
     this.set('isDestroyingRecord', true);
     this.get('formFor')
       .confirmDestroy(model, this.get('confirm-destroy-message'))
@@ -468,13 +472,13 @@ const FormFor = Ember.Component.extend({
       .finally(() => !this.get('isDestroyed') && this.set('isDestroyingRecord', false));
   },
 
-  notifySuccess(message){
+  notifySuccess(message) {
     if (message && this.get('notify-of-success')) {
       this.get('formFor').notifySuccess(message);
     }
   },
 
-  notifyError(message){
+  notifyError(message) {
     if (message && this.get('notify-of-error')) {
       this.get('formFor').notifyError(message);
     }
@@ -487,7 +491,7 @@ const FormFor = Ember.Component.extend({
    * @param {*} value
    * @public
    */
-  updateValue(key, value){
+  updateValue(key, value) {
     // better code reuse this way
     return this.updateValues({[key]: value});
   },
@@ -498,8 +502,8 @@ const FormFor = Ember.Component.extend({
    * @param {Object} keyValues
    * @public
    */
-  updateValues(keyValues){
-    this._markDirty();
+  updateValues(keyValues) {
+    this._checkClean();
     this.get('model').setProperties(keyValues);
 
     if (this.get('_hasFailedToSubmit')) {
@@ -538,14 +542,8 @@ const FormFor = Ember.Component.extend({
    * @method _markDirty
    * @private
    */
-  _markDirty(){
-    if (this.get('is-linked')) {
-      // if we are linked use the service to share dirty state
-      this.get('formFor').markDirty(this.get('modelGuid'));
-    }
-    else {
-      this.set('isModelDirty', true);
-    }
+  _markDirty() {
+    this.set('isModelDirty', true);
   },
 
   /**
@@ -553,15 +551,28 @@ const FormFor = Ember.Component.extend({
    * @method _markClean
    * @private
    */
-  _markClean(){
-    if (this.get('is-linked')) {
-      // if we are linked use the service to share dirty state
-      this.get('formFor').markClean(this.get('modelGuid'));
-    }
-    else {
-      this.set('isModelDirty', false);
-    }
+  _markClean() {
+    this.set('isModelDirty', false);
   },
+
+  /**
+   * Runs the callback for did submit on all of the fields
+   * @method _runFieldDidSubmit
+   * @private
+   */
+  _runFieldDidSubmit() {
+    this.getWithDefault('fields', []).forEach(_ => _.formDidSubmit());
+  },
+
+  /**
+   * Runs the callback for did reset on all of the fields
+   * @method _runFieldDidReset
+   * @private
+   */
+  _runFieldDidReset() {
+    this.getWithDefault('fields', []).forEach(_ => _.formDidReset());
+  },
+
 
   /**
    * Registers a field with the form
@@ -569,7 +580,7 @@ const FormFor = Ember.Component.extend({
    * @param {FieldFor} field
    * @public
    */
-  registerField(field){
+  registerField(field) {
     const fields = this.get('fields') || [];
     fields.push(field);
     this.set('fields', fields);
@@ -603,25 +614,25 @@ const FormFor = Ember.Component.extend({
     }
   },
 
-  willDestroyElement(){
-    this.get('formFor').unregisterGuid(this.get('modelGuid'))
+  willDestroyElement() {
+    window.onbeforeunload = null;
   },
 
   actions: {
 
-    submit(){
+    submit() {
       this.doSubmit();
     },
 
-    reset(){
+    reset() {
       this.doReset();
     },
 
-    updateValue(key, value){
+    updateValue(key, value) {
       return this.updateValue(key, value);
     },
 
-    updateValues(keyValues){
+    updateValues(keyValues) {
       return this.updateValues(keyValues);
     }
 
