@@ -338,6 +338,8 @@ const FormFor = Ember.Component.extend({
           this.notifySuccess(this.get('successful-submit-message'));
           this.didSubmit();
           this._markClean();
+          this._runFieldDidSubmit();
+          this.set('_hasFailedToSubmit', false);
         })
         .catch(_ => {
           this.notifyError(this.get('failed-submit-message'));
@@ -346,6 +348,7 @@ const FormFor = Ember.Component.extend({
         .finally(() => this.set('isSubmitting', false));
     }
     else {
+      this.set('_hasFailedToSubmit', true);
       return Promise.resolve(true);
     }
   },
@@ -499,7 +502,35 @@ const FormFor = Ember.Component.extend({
     this._markDirty();
     this.get('model').setProperties(keyValues);
 
+    if (this.get('_hasFailedToSubmit')) {
+      Ember.run.next(() => this.runValidations());
+    }
+
     return this.get('auto-submit') ? this.doSubmit() : Promise.resolve(true);
+  },
+
+  _checkClean() {
+    Ember.run.next(() => {
+      const fields = this.get('fields');
+
+      if (fields) {
+        if (this.get('fields').every(_ => !_.get('isReallyDirty'))) {
+          this._markClean();
+        }
+        else {
+          this._markDirty();
+        }
+      }
+    });
+  },
+
+  resetValues(keyValues) {
+    this.get('model').setProperties(keyValues);
+    this._checkClean();
+  },
+
+  resetValue(key, value) {
+    this.resetValues({[key]: value})
   },
 
   /**
@@ -544,19 +575,32 @@ const FormFor = Ember.Component.extend({
     this.set('fields', fields);
   },
 
+  init() {
+    this._super();
 
-  init(){
-    this._super(...arguments);
+    if (this.get('prevents-navigation')) {
 
+      this.get('router')
+        .on('willTransition', (transition) => {
+          if (this.get('isModelDirty')) {
+            if (confirm('You have unsaved changes, are you sure you want to leave?')) {
+              console.log('Confirmed');
+              this.doReset();
+            }
+            else {
+              console.log('Aborting');
+              transition.abort();
+            }
+          }
+        });
 
-    if (this.get('is-linked')) {
-      // establish the model dirtiness binding
-      const modelGuid = this.get('modelGuid');
-
-      defineProperty(this, 'isModelDirty', computed.oneWay(`formFor.${modelGuid}IsDirty`));
-      this.get('formFor').registerGuid(modelGuid)
+      // prevent browser reloads
+      window.onbeforeunload = (e) => {
+        if (this.get('isModelDirty')) {
+          return 'You have unsaved changes, are you sure you want to leave?'
+        }
+      }
     }
-
   },
 
   willDestroyElement(){
