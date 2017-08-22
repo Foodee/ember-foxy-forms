@@ -270,8 +270,21 @@ const FieldFor = Ember.Component.extend({
     return JSON.stringify(this.get('_value')) !== JSON.stringify(this.get('value'));
   }),
 
+  /**
+   * Whether or not this field is has been edited and
+   * committed to the form, but the form has not submited that value
+   * @property isDirty
+   * @type String
+   * @default false
+   * @public
+   */
   isReallyDirty: computed('_lastValidValue', 'value', function () {
-    return JSON.stringify(this.get('_lastValidValue')) !== JSON.stringify(this.get('value'));
+    // initial values on string values may be null which looks the same as an empty value.
+    return JSON.stringify(this.get('_lastValidValue')) !== JSON.stringify(this.get('value'))
+      && !( this.get('_lastValidValue') === null && this.get('value') === ''
+        || this.get('_lastValidValue') === '' && this.get('value') === null
+        || this.get('_lastValidValue') === undefined && this.get('value') === ''
+        || this.get('_lastValidValue') === '' && this.get('value') === undefined);
   }),
 
   /**
