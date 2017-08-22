@@ -410,7 +410,6 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   doReset() {
-    console.log('Restting the model')
     const model = this.get('model');
 
     if (this.willReset(model)) {
@@ -583,6 +582,19 @@ const FormFor = Ember.Component.extend({
   registerField(field) {
     const fields = this.get('fields') || [];
     fields.push(field);
+    this.set('fields', fields);
+  },
+
+
+  /**
+   * Unregisters a field with the form
+   * @method unregisterField
+   * @param {FieldFor} field
+   * @public
+   */
+  unregisterField(field) {
+    const fields = this.get('fields') || [];
+    fields.removeObject(field);
     this.set('fields', fields);
   },
 

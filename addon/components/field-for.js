@@ -557,6 +557,10 @@ const FieldFor = Ember.Component.extend({
 
   didInsertElement() {
     this.set('_lastValidValue', this.get('value'));
+  },
+
+  willDestroyElement() {
+    this.get('form').unregisterField(this);
   }
 });
 
