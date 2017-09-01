@@ -346,6 +346,7 @@ const FormFor = Ember.Component.extend({
         .catch(_ => {
           this.notifyError(this.get('failed-submit-message'));
           this.failedSubmit(_);
+          return Promise.reject(_);
         })
         .finally(() => this.set('isSubmitting', false));
     }
