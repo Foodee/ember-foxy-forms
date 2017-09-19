@@ -561,7 +561,7 @@ const FormFor = Ember.Component.extend({
    * @private
    */
   _runFieldDidSubmit() {
-    this.getWithDefault('fields', []).forEach(_ => _.formDidSubmit());
+    (this.get('fields') || []).forEach(_ => _.formDidSubmit());
   },
 
   /**
@@ -570,7 +570,7 @@ const FormFor = Ember.Component.extend({
    * @private
    */
   _runFieldDidReset() {
-    this.getWithDefault('fields', []).forEach(_ => _.formDidReset());
+    (this.get('fields') || []).forEach(_ => _.formDidReset());
   },
 
 
