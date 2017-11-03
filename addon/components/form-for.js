@@ -604,19 +604,21 @@ const FormFor = Ember.Component.extend({
 
     if (this.get('prevents-navigation')) {
 
-      this.get('router')
-        .on('willTransition', (transition) => {
-          if (this.get('isModelDirty')) {
-            if (confirm('You have unsaved changes, are you sure you want to leave?')) {
-              console.log('Confirmed');
-              this.doReset();
-            }
-            else {
-              console.log('Aborting');
-              transition.abort();
-            }
+      this.handleWilltransition = (transition) => {
+        if (this.get('isModelDirty')) {
+          if (confirm('You have unsaved changes, are you sure you want to leave?')) {
+            console.log('Confirmed');
+            this.doReset();
           }
-        });
+          else {
+            console.log('Aborting');
+            transition.abort();
+          }
+        }
+      };
+
+      this.get('router')
+        .on('willTransition', this.handleWilltransition);
 
       // prevent browser reloads
       window.onbeforeunload = (e) => {
@@ -629,6 +631,8 @@ const FormFor = Ember.Component.extend({
 
   willDestroyElement() {
     window.onbeforeunload = null;
+
+    this.get('router').off('willTransition', this.handleWilltransition);
   },
 
   actions: {
