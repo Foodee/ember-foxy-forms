@@ -265,9 +265,9 @@ const FormFor = Ember.Component.extend({
    * @return {boolean}
    * @public
    */
-  runValidations: function () {
+  runValidations(validationOptions = null) {
     const model = this.get('model');
-    return model.validate ? model.validate(this.get('validation-options')) : true;
+    return model.validate ? model.validate(validationOptions || this.get('validation-options')) : true;
   },
 
   /**
@@ -507,7 +507,7 @@ const FormFor = Ember.Component.extend({
     this.get('model').setProperties(keyValues);
 
     if (this.get('_hasFailedToSubmit')) {
-      Ember.run.next(() => this.runValidations());
+        Ember.run.next(() => this.runValidations());
     }
 
     return this.get('auto-submit') ? this.doSubmit() : Promise.resolve(true);
