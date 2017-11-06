@@ -338,10 +338,10 @@ const FormFor = Ember.Component.extend({
       return this.onSubmit(model)
         .then(() => {
           this.notifySuccess(this.get('successful-submit-message'));
+          this.didSubmit();
           this._markClean();
           this._runFieldDidSubmit();
           this.set('_hasFailedToSubmit', false);
-          this.didSubmit();
         })
         .catch(_ => {
           this.notifyError(this.get('failed-submit-message'));
@@ -420,9 +420,9 @@ const FormFor = Ember.Component.extend({
       this.onReset(model)
         .then(() => {
           this.notifySuccess(this.get('successful-reset-message'));
+          this.didReset();
           this._runFieldDidReset();
           this._markClean();
-          this.didReset();
         })
         .catch(_ => {
           this.notifyError(this.get('failed-reset-message'));
@@ -543,7 +543,9 @@ const FormFor = Ember.Component.extend({
    * @private
    */
   _markDirty() {
-    this.set('isModelDirty', true);
+    if(!this.get('isDestroyed')) {
+      this.set('isModelDirty', true);
+    }
   },
 
   /**
@@ -552,7 +554,9 @@ const FormFor = Ember.Component.extend({
    * @private
    */
   _markClean() {
-    this.set('isModelDirty', false);
+    if(!this.get('isDestroyed')) {
+      this.set('isModelDirty', false);
+    }
   },
 
   /**
