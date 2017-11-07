@@ -621,8 +621,12 @@ const FormFor = Ember.Component.extend({
         }
       };
 
-      this.get('router')
-        .on('willTransition', this.handleWilltransition);
+      // in test environments that are not acceptance, we won't have real router
+      let router = this.get('router');
+      if(router && router.on) {
+        this.get('router')
+          .on('willTransition', this.handleWilltransition);
+      }
 
       // prevent browser reloads
       window.onbeforeunload = (e) => {
@@ -636,7 +640,11 @@ const FormFor = Ember.Component.extend({
   willDestroyElement() {
     window.onbeforeunload = null;
 
-    this.get('router').off('willTransition', this.handleWilltransition);
+    // in test environments that are not acceptance, we won't have real router
+    let router = this.get('router');
+    if(router && router.off) {
+      router.off('willTransition', this.handleWilltransition);
+    }
   },
 
   actions: {
