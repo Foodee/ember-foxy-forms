@@ -267,7 +267,7 @@ const FieldFor = Ember.Component.extend({
    * @public
    */
   isDirty: computed('_value', 'value', function () {
-    return JSON.stringify(this.get('_value')) !== JSON.stringify(this.get('value'));
+    return this._stringify(this.get('_value')) !== this._stringify(this.get('value'));
   }),
 
   /**
@@ -280,12 +280,25 @@ const FieldFor = Ember.Component.extend({
    */
   isReallyDirty: computed('_lastValidValue', 'value', function () {
     // initial values on string values may be null which looks the same as an empty value.
-    return JSON.stringify(this.get('_lastValidValue')) !== JSON.stringify(this.get('value'))
+    return this._stringify(this.get('_lastValidValue')) !== this._stringify(this.get('value'))
       && !( this.get('_lastValidValue') === null && this.get('value') === ''
         || this.get('_lastValidValue') === '' && this.get('value') === null
         || this.get('_lastValidValue') === undefined && this.get('value') === ''
         || this.get('_lastValidValue') === '' && this.get('value') === undefined);
   }),
+
+  /**
+   * Stringifies a value, we can't just use JSON.stringify directly as it can create circular refs
+   * array objects, in those cases we will map recursively.
+   *
+   * @method
+   * @param {*} value
+   * @returns {string}
+   * @private
+   */
+  _stringify(value) {
+    return isArray(value) ? value.map(_ => this._stringify(_)).join(',') : JSON.stringify(value);
+  },
 
   /**
    * Whether or not the current field mapping has any errors
