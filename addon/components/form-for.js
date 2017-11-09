@@ -18,7 +18,7 @@ const FormFor = Ember.Component.extend({
   router: Ember.inject.service('-routing'),
 
   config: computed(function () {
-    return get(Ember.getOwner(this).resolveRegistration('config:environment'), 'APP.ember-foxy-forms');
+    return Object.assign({}, this.container.lookupFactory('config:environment').APP['ember-foxy-forms'])
   }),
 
   // remove tags, so we don't interfere with styles that use direct inheritance
@@ -507,7 +507,7 @@ const FormFor = Ember.Component.extend({
     this.get('model').setProperties(keyValues);
 
     if (this.get('_hasFailedToSubmit')) {
-        Ember.run.next(() => this.runValidations());
+      Ember.run.next(() => this.runValidations());
     }
 
     return this.get('auto-submit') ? this.doSubmit() : Promise.resolve(true);
@@ -543,7 +543,7 @@ const FormFor = Ember.Component.extend({
    * @private
    */
   _markDirty() {
-    if(!this.get('isDestroyed')) {
+    if (!this.get('isDestroyed')) {
       this.set('isModelDirty', true);
     }
   },
@@ -554,7 +554,7 @@ const FormFor = Ember.Component.extend({
    * @private
    */
   _markClean() {
-    if(!this.get('isDestroyed')) {
+    if (!this.get('isDestroyed')) {
       this.set('isModelDirty', false);
     }
   },
@@ -607,15 +607,11 @@ const FormFor = Ember.Component.extend({
     this._super();
 
     if (this.get('prevents-navigation')) {
-
       this.handleWilltransition = (transition) => {
         if (this.get('isModelDirty')) {
           if (confirm('You have unsaved changes, are you sure you want to leave?')) {
-            console.log('Confirmed');
-            this.doReset();
           }
           else {
-            console.log('Aborting');
             transition.abort();
           }
         }
@@ -623,7 +619,7 @@ const FormFor = Ember.Component.extend({
 
       // in test environments that are not acceptance, we won't have real router
       let router = this.get('router');
-      if(router && router.on) {
+      if (router && router.on) {
         this.get('router')
           .on('willTransition', this.handleWilltransition);
       }
@@ -642,7 +638,7 @@ const FormFor = Ember.Component.extend({
 
     // in test environments that are not acceptance, we won't have real router
     let router = this.get('router');
-    if(router && router.off) {
+    if (router && router.off) {
       router.off('willTransition', this.handleWilltransition);
     }
   },

@@ -13,7 +13,7 @@ export default Ember.Component.extend({
   tagName: '',
 
   config: computed(function () {
-    return get(Ember.getOwner(this).resolveRegistration('config:environment'), 'APP.ember-foxy-forms');
+    return Object.assign({}, this.container.lookupFactory('config:environment').APP['ember-foxy-forms'])
   }),
 
   /**
