@@ -44,6 +44,17 @@ export default Ember.Service.extend({
    */
   notifyError(message){
     alert('Error: ' + message);
+  },
+
+
+  /**
+   * In case some people have overridden these in their application space
+   * lets null them to prevent leaks
+   */
+  willDestroy(){
+    this.confirmDestroy = null;
+    this.notifySuccess = null;
+    this.notifyError = null;
   }
 
 });
