@@ -11,10 +11,10 @@
 
   {{#if _showValue}}
     <div {{action 'edit' on 'click'}} class="field-for-value-container" data-tooltip="{{value-tooltip}}">
-      {{#if display-value}}
-        {{display-value}}
-      {{else}}
+      {{#if display-value includeZero=true}}
         <span class="field-for-placeholder">{{placeholder}}</span>
+      {{else}}
+        {{display-value}}
       {{/if}}
 
     </div>

@@ -1,6 +1,6 @@
 {
   "name": "ember-foxy-forms",
-  "version": "1.0.0-pre39",
+  "version": "1.0.0-pre40",
   "description": "An addon for building forms that work with ember data",
   "directories": {
     "doc": "doc",
