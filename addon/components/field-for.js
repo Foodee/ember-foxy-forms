@@ -115,7 +115,7 @@ const FieldFor = Ember.Component.extend({
   /**
    * Wether or not the fields have control callouts (popups / popovers) when in
    * inline-edit mode
-   * @property hsekkas-control-callout
+   * @property has-control-callout
    * @type Boolean
    * @default false
    * @public
@@ -124,12 +124,26 @@ const FieldFor = Ember.Component.extend({
 
   /**
    * The position of the control callout (up to the client to decide how to use this info)
-   * @property control-callout
+   * @property callout-position
    * @type String
-   * @default 'bottom left'
+   * @default null
    * @public
    */
-  ['callout-position']: 'bottom left',
+  ['callout-position']: null,
+
+  /**
+   * The position of the control callout (up to the client to decide how to use this info)
+   * This will default to the site-wide environment value if no override is given for this field
+   * @property _calloutPosition
+   * @type String
+   * @private
+   */
+  _calloutPosition: computed('callout-position', 'config', function() {
+    const calloutPosition = this.get('callout-position');
+    const config = this.get('config');
+
+    return calloutPosition || config && config.fieldForControlCalloutPosition;
+  }),
 
   /**
    * Optional array of values to be delegated down to the control, useful
