@@ -22,7 +22,7 @@
 
   {{#if _showControl}}
     <div class="field-for-control-container {{if has-control-callout
-                                                 config.fieldForControlCalloutClasses}} {{callout-position}}">
+                                                 config.fieldForControlCalloutClasses}} {{if has-control-callout _calloutPosition}}">
 
       <div class="field-for-control-and-commit-buttons">
         {{#if hasBlock}}

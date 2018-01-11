@@ -160,6 +160,33 @@ const FormControl = {
 
 If you follow this convention values will be seamlessly managed by the field / form layers.
 
+# Custom Configurations
+
+## Site-wide `environment.js` overrides
+
+You can customize the way foxy forms handles various options by adding your override to your environment file.
+
+```javascript
+//environment.js
+
+APP: {
+  'ember-foxy-forms': {
+    testingClassPrefix: '--',
+    fieldClasses: 'field',
+    formClasses: 'form',
+    fieldForControlCalloutClasses: 'field-for-control-callout',
+    fieldForControlCalloutPosition: 'bottom left',
+
+    buttonClasses: '',
+    submitButtonClasses: '',
+    resetButtonClasses: '',
+
+    customCommitCancelComponent: null,
+    customErrorComponent: null
+  }
+}
+```
+
 ## Custom Control Configurations
 
 Sometimes you might want to add custom behaviors or configurations to your form control, some examples of this include

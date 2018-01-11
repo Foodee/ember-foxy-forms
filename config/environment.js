@@ -9,6 +9,7 @@ module.exports = function (/* environment, appConfig */) {
         fieldClasses: 'field',
         formClasses: 'form',
         fieldForControlCalloutClasses: 'field-for-control-callout',
+        fieldForControlCalloutPosition: 'bottom left',
 
         buttonClasses: '',
         submitButtonClasses: '',
