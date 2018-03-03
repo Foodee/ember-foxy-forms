@@ -236,7 +236,7 @@ const FieldFor = Ember.Component.extend({
    * @private
    */
   _testingClass: computed(function () {
-    return `${this.get('config.testingClassPrefix')}field-for__${this.get('form._modelName')}_${this.get('params').map(Ember.String.dasherize).join('_').replace(/\./g, '__')}`;
+    return `${this.get('config.testingClassPrefix')}field-for__${this.get('form._modelName')}_${this.get('params').map(_ => _.toString()).map(Ember.String.dasherize).join('_').replace(/\./g, '__')}`;
   }),
 
   /**
