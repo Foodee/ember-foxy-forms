@@ -7,6 +7,7 @@ const {
   computed,
   defineProperty,
   get,
+  setProperties
 } = Ember;
 
 const FormFor = Ember.Component.extend({
@@ -504,7 +505,8 @@ const FormFor = Ember.Component.extend({
    */
   updateValues(keyValues) {
     this._checkClean();
-    this.get('model').setProperties(keyValues);
+
+    setProperties(this.get('model'), keyValues);
 
     if (this.get('_hasFailedToSubmit')) {
       Ember.run.next(() => this.runValidations());
@@ -529,7 +531,7 @@ const FormFor = Ember.Component.extend({
   },
 
   resetValues(keyValues) {
-    this.get('model').setProperties(keyValues);
+    setProperties(this.get('model'), keyValues);
     this._checkClean();
   },
 
@@ -671,5 +673,3 @@ FormFor.reopenClass({
 });
 
 export default FormFor;
-
-
