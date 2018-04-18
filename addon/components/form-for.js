@@ -5,9 +5,9 @@ const {
   RSVP: {Promise},
   inject: {service},
   computed,
-  defineProperty,
   get,
-  setProperties
+  getOwner,
+  setProperties,
 } = Ember;
 
 const FormFor = Ember.Component.extend({
@@ -16,10 +16,10 @@ const FormFor = Ember.Component.extend({
 
   formFor: service(),
 
-  router: Ember.inject.service('-routing'),
+  router: service('-routing'),
 
   config: computed(function () {
-    return Object.assign({}, this.container.lookupFactory('config:environment').APP['ember-foxy-forms'])
+    return Object.assign({}, getOwner(this).resolveRegistration('config:environment').APP['ember-foxy-forms']);
   }),
 
   // remove tags, so we don't interfere with styles that use direct inheritance
@@ -275,21 +275,21 @@ const FormFor = Ember.Component.extend({
    * Called before the form submits, this is where we do
    * validation
    * @method willSubmit
-   * @param {Object} model
+   * @param {Object} [model]
    * @return {boolean}
    * @public
    */
-  willSubmit(model) {
+  willSubmit() {
     return this.runValidations();
   },
 
   /**
    * Called when will submit returned false
    * @method didNotSubmit
-   * @param {Object} model
+   * @param {Object} [model]
    * @public
    */
-  didNotSubmit(/*model*/) {
+  didNotSubmit() {
   },
 
   /**
@@ -380,7 +380,7 @@ const FormFor = Ember.Component.extend({
   /**
    * Called when the reset action is called
    * @method onReset
-   * @param {Object} model
+   * @param {Object} [model]
    * @return {Promise.<Object>}
    * @public
    */
@@ -418,7 +418,7 @@ const FormFor = Ember.Component.extend({
 
       this.set('isResetting', true);
 
-      this.onReset(model)
+      this.onReset()
         .then(() => {
           this.notifySuccess(this.get('successful-reset-message'));
           this.didReset();
@@ -536,7 +536,7 @@ const FormFor = Ember.Component.extend({
   },
 
   resetValue(key, value) {
-    this.resetValues({[key]: value})
+    this.resetValues({[key]: value});
   },
 
   /**
@@ -627,11 +627,11 @@ const FormFor = Ember.Component.extend({
       }
 
       // prevent browser reloads
-      window.onbeforeunload = (e) => {
+      window.onbeforeunload = () => {
         if (this.get('isModelDirty')) {
-          return 'You have unsaved changes, are you sure you want to leave?'
+          return 'You have unsaved changes, are you sure you want to leave?';
         }
-      }
+      };
     }
   },
 

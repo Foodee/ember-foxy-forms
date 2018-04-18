@@ -6,7 +6,7 @@ const {
   computed,
   defineProperty,
   assert,
-  get,
+  getOwner,
   guidFor,
   run
 } = Ember;
@@ -16,7 +16,7 @@ const FieldFor = Ember.Component.extend({
   layout,
 
   config: computed(function () {
-    return Object.assign({}, this.container.lookupFactory('config:environment').APP['ember-foxy-forms'])
+    return Object.assign({}, getOwner(this).resolveRegistration('config:environment').APP['ember-foxy-forms']);
   }),
 
   // remove tags, so we don't interfere with styles that use direct inheritance
@@ -294,11 +294,11 @@ const FieldFor = Ember.Component.extend({
    */
   isReallyDirty: computed('_lastValidValue', 'value', function () {
     // initial values on string values may be null which looks the same as an empty value.
-    return this._stringify(this.get('_lastValidValue')) !== this._stringify(this.get('value'))
-      && !( this.get('_lastValidValue') === null && this.get('value') === ''
-        || this.get('_lastValidValue') === '' && this.get('value') === null
-        || this.get('_lastValidValue') === undefined && this.get('value') === ''
-        || this.get('_lastValidValue') === '' && this.get('value') === undefined);
+    return this._stringify(this.get('_lastValidValue')) !== this._stringify(this.get('value')) &&
+      !( this.get('_lastValidValue') === null && this.get('value') === '' ||
+         this.get('_lastValidValue') === '' && this.get('value') === null ||
+         this.get('_lastValidValue') === undefined && this.get('value') === '' ||
+         this.get('_lastValidValue') === '' && this.get('value') === undefined);
   }),
 
   /**
@@ -418,11 +418,10 @@ const FieldFor = Ember.Component.extend({
 
     if (this.get('_hasCompositeValue')) {
       const keyValue = this._extractKeyValueMapping(_value);
-      commitPromise = this.commitValues(keyValue).then(_ => this.didCommitValues(keyValue))
-    }
-    else {
+      commitPromise = this.commitValues(keyValue).then(() => this.didCommitValues(keyValue));
+    } else {
       const params = this.get('params');
-      commitPromise = this.commitValue(params[0], _value).then(_ => this.didCommitValue(_value))
+      commitPromise = this.commitValue(params[0], _value).then(() => this.didCommitValue(_value));
     }
 
     commitPromise.finally(() => {

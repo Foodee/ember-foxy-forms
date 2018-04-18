@@ -2,18 +2,19 @@ import Ember from 'ember';
 import layout from '../templates/components/commit-buttons';
 
 const {
+  Component,
   computed,
-  get
+  getOwner,
 } = Ember;
 
-export default Ember.Component.extend({
+export default Component.extend({
   layout,
 
   // remove tags, so we don't interfere with styles that use direct inheritance
   tagName: '',
 
   config: computed(function () {
-    return Object.assign({}, this.container.lookupFactory('config:environment').APP['ember-foxy-forms'])
+    return Object.assign({}, getOwner(this).resolveRegistration('config:environment').APP['ember-foxy-forms']);
   }),
 
   /**
