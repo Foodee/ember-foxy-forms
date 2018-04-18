@@ -41,7 +41,7 @@ test('it binds the field value down to the control', function (assert) {
 
   this.render(hbs`
     {{#form-for model as |f|}}
-      {{f.field-for 'foo' }} 
+      {{f.field-for 'foo' }}
     {{/form-for}}
   `);
 
@@ -69,7 +69,7 @@ test('it propagates changes to the form model', function (assert) {
 
   this.render(hbs`
     {{#form-for model as |f|}}
-      {{f.field-for 'foo' }} 
+      {{f.field-for 'foo' }}
     {{/form-for}}
   `);
 
@@ -94,7 +94,7 @@ test('it binds the multiple field values down to the control', function (assert)
 
   this.render(hbs`
     {{#form-for model as |f|}}
-      {{f.field-for 'valueOne' 'valueTwo' 'valueThree' }} 
+      {{f.field-for 'valueOne' 'valueTwo' 'valueThree' }}
     {{/form-for}}
   `);
 
@@ -133,7 +133,7 @@ test('it propagates the multiple changes to the form model', function (assert) {
 
   this.render(hbs`
     {{#form-for model as |f|}}
-      {{f.field-for 'valueOne' 'valueTwo' 'valueThree' }} 
+      {{f.field-for 'valueOne' 'valueTwo' 'valueThree' }}
     {{/form-for}}
   `);
 
@@ -155,7 +155,7 @@ test('it binds the multiple field values down to the control with the mapping ',
 
   this.render(hbs`
     {{#form-for model as |f|}}
-      {{f.field-for 'foo' 'bar' 'baz' with-mapping=(hash foo='valueOne' bar='valueTwo' baz='valueThree')}} 
+      {{f.field-for 'foo' 'bar' 'baz' with-mapping=(hash foo='valueOne' bar='valueTwo' baz='valueThree')}}
     {{/form-for}}
   `);
 
@@ -193,7 +193,7 @@ test('it propagates the multiple changes to the form model with the mapping', fu
 
   this.render(hbs`
     {{#form-for model as |f|}}
-      {{f.field-for 'foo' 'bar' 'baz' with-mapping=(hash foo='valueOne' bar='valueTwo' baz='valueThree')}} 
+      {{f.field-for 'foo' 'bar' 'baz' with-mapping=(hash foo='valueOne' bar='valueTwo' baz='valueThree')}}
     {{/form-for}}
   `);
 
@@ -212,7 +212,7 @@ test('it hides the control when inline-editing', function (assert) {
 
   this.render(hbs`
     {{#form-for model as |f|}}
-      {{f.field-for 'foo' inline-editing=true}} 
+      {{f.field-for 'foo' inline-editing=true}}
     {{/form-for}}
   `);
 
@@ -227,7 +227,7 @@ test('it shows the control and hides the value when inline-editing and the value
 
   this.render(hbs`
     {{#form-for model as |f|}}
-      {{f.field-for 'foo' inline-editing=true}} 
+      {{f.field-for 'foo' inline-editing=true}}
     {{/form-for}}
   `);
 
@@ -244,7 +244,7 @@ test('it hides the control inline-editing when commited or canceled with no erro
 
   this.render(hbs`
     {{#form-for model as |f|}}
-      {{f.field-for 'foo' inline-editing=true}} 
+      {{f.field-for 'foo' inline-editing=true}}
     {{/form-for}}
   `);
 
@@ -268,7 +268,7 @@ test('it does not hide the control when inline-editing when there are errors', f
 
   this.render(hbs`
     {{#form-for model as |f|}}
-      {{f.field-for 'foo' inline-editing=true}} 
+      {{f.field-for 'foo' inline-editing=true}}
     {{/form-for}}
   `);
 
@@ -281,7 +281,8 @@ test('it does not hide the control when inline-editing when there are errors', f
   this.$('.field-for-value-container').click();
   assert.equal(this.$('input').val(), 'bar');
   this.$('button.cancel').click();
-  assert.equal(this.$('input').val(), 'bar');
+  assert.equal(this.$('input').length, 0);
+  assert.equal(this.$('.field-for-value-container').text().trim(), 'bar');
 });
 
 test('it shows the control and the value when inline-editing and has-control-callout and the value is clicked', function (assert) {
@@ -292,7 +293,7 @@ test('it shows the control and the value when inline-editing and has-control-cal
 
   this.render(hbs`
     {{#form-for model as |f|}}
-      {{f.field-for 'foo' inline-editing=true has-control-callout=true}} 
+      {{f.field-for 'foo' inline-editing=true has-control-callout=true}}
     {{/form-for}}
   `);
 
@@ -311,7 +312,7 @@ test('it should use the model name to build the testing class', function (assert
 
   this.render(hbs`
     {{#form-for model model-name=modelName as |f|}}
-      {{f.field-for 'foo' inline-editing=true has-control-callout=true}} 
+      {{f.field-for 'foo' inline-editing=true has-control-callout=true}}
     {{/form-for}}
   `);
   assert.notEqual(this.$(`.--form-for__${modelName}`)[0], undefined);
@@ -331,7 +332,7 @@ test('it should use the ember data model name to build the testing class', funct
 
   this.render(hbs`
     {{#form-for model as |f|}}
-      {{f.field-for 'foo' inline-editing=true has-control-callout=true}} 
+      {{f.field-for 'foo' inline-editing=true has-control-callout=true}}
     {{/form-for}}
   `);
 

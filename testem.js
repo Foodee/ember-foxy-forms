@@ -7,7 +7,7 @@ module.exports = {
     "PhantomJS"
   ],
   "launch_in_dev": [
-    "PhantomJS",
-    "Chrome"
+    "Chrome",
+    "PhantomJS"
   ]
 };
