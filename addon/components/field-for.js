@@ -497,7 +497,7 @@ const FieldFor = Ember.Component.extend({
       form.resetValue(this.get('params')[0], this.get('_lastValidValue'));
     }
 
-    form.runValidations();
+    form.clearValidations();
   },
 
   actions: {
