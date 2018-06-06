@@ -272,6 +272,16 @@ const FormFor = Ember.Component.extend({
   },
 
   /**
+   * Clears the validations on the model
+   * @method clearValidations
+   * @public
+   */
+  clearValidations() {
+    const model = this.get('model');
+    return model.validate && model.validate({ only: [] });
+  },
+
+  /**
    * Called before the form submits, this is where we do
    * validation
    * @method willSubmit
@@ -506,7 +516,13 @@ const FormFor = Ember.Component.extend({
   updateValues(keyValues) {
     this._checkClean();
 
-    setProperties(this.get('model'), keyValues);
+    const model = this.get('model');
+    
+    if (model.setProperties) {
+      model.setProperties(keyValues);
+    } else { 
+     setProperties(model, keyValues);
+    }
 
     if (this.get('_hasFailedToSubmit')) {
       Ember.run.next(() => this.runValidations());
@@ -531,7 +547,14 @@ const FormFor = Ember.Component.extend({
   },
 
   resetValues(keyValues) {
-    setProperties(this.get('model'), keyValues);
+    const model = this.get('model');
+    
+    if (model.setProperties) {
+      model.setProperties(keyValues);
+    } else {
+      setProperties(model, keyValues);
+    }
+    
     this._checkClean();
   },
 
