@@ -415,13 +415,15 @@ const FieldFor = Ember.Component.extend({
 
     let commitPromise = null;
     const _value = this.get('_value');
+    const prevValue = this.get('value');
 
     if (this.get('_hasCompositeValue')) {
       const keyValue = this._extractKeyValueMapping(_value);
-      commitPromise = this.commitValues(keyValue).then(() => this.didCommitValues(keyValue));
+      const prevKeyValue = prevValue && this._extractKeyValueMapping(prevValue);
+      commitPromise = this.commitValues(keyValue).then(() => this.didCommitValues(keyValue, prevKeyValue));
     } else {
       const params = this.get('params');
-      commitPromise = this.commitValue(params[0], _value).then(() => this.didCommitValue(_value));
+      commitPromise = this.commitValue(params[0], _value).then(() => this.didCommitValue(_value, prevValue));
     }
 
     commitPromise.finally(() => {
