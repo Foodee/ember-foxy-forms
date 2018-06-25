@@ -184,6 +184,15 @@ const FormFor = Ember.Component.extend({
   'failed-submit-message': null,
 
   /**
+   * The message to send when the model did not submit
+   * @property did-not-submit-message
+   * @type String
+   * @default null
+   * @public
+   */
+  'did-not-submit-message': null,
+
+  /**
    * The message to send on reset success
    * @property successful-reset-message
    * @type String
@@ -200,6 +209,15 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   'failed-reset-message': null,
+
+  /**
+   * The message to send when model did not reset
+   * @property did-not-reset-message
+   * @type String
+   * @default null
+   * @public
+   */
+  'did-not-reset-message': null,
 
   /**
    * The message displayed to confirm destruction
@@ -363,6 +381,9 @@ const FormFor = Ember.Component.extend({
     }
     else {
       this.set('_hasFailedToSubmit', true);
+      this.didNotSubmit(model);
+      this.notifyError(this.get('did-not-submit-message'));
+
       return Promise.resolve(true);
     }
   },
@@ -440,6 +461,9 @@ const FormFor = Ember.Component.extend({
           this.failedReset(_);
         })
         .finally(() => this.set('isResetting', false));
+    } else {
+      this.didNotReset(model);
+      this.notifyError(this.get('did-not-reset-message'));
     }
   },
 
@@ -517,10 +541,10 @@ const FormFor = Ember.Component.extend({
     this._checkClean();
 
     const model = this.get('model');
-    
+
     if (model.setProperties) {
       model.setProperties(keyValues);
-    } else { 
+    } else {
      setProperties(model, keyValues);
     }
 
@@ -548,13 +572,13 @@ const FormFor = Ember.Component.extend({
 
   resetValues(keyValues) {
     const model = this.get('model');
-    
+
     if (model.setProperties) {
       model.setProperties(keyValues);
     } else {
       setProperties(model, keyValues);
     }
-    
+
     this._checkClean();
   },
 
