@@ -653,6 +653,10 @@ const FormFor = Ember.Component.extend({
   },
 
   init() {
+    if (this.tagName === '') {
+      this.classNameBindings = null;
+    }
+
     this._super();
 
     if (this.get('prevents-navigation')) {
