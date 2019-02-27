@@ -17,6 +17,8 @@ export default Ember.Component.extend({
 
   icon: null,
 
+  bubbles: true,
+
   onClick() {
   },
 

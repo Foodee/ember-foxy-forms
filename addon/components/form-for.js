@@ -296,7 +296,7 @@ const FormFor = Ember.Component.extend({
    */
   clearValidations() {
     const model = this.get('model');
-    return model.validate && model.validate({ only: [] });
+    return model.validate && model.validate({only: []});
   },
 
   /**
@@ -545,7 +545,7 @@ const FormFor = Ember.Component.extend({
     if (model.setProperties) {
       model.setProperties(keyValues);
     } else {
-     setProperties(model, keyValues);
+      setProperties(model, keyValues);
     }
 
     if (this.get('_hasFailedToSubmit')) {
@@ -654,7 +654,7 @@ const FormFor = Ember.Component.extend({
 
   init() {
     if (this.tagName === '') {
-      this.classNameBindings = null;
+      this.classNameBindings = [];
     }
 
     this._super();
