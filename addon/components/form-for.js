@@ -58,6 +58,16 @@ const FormFor = Ember.Component.extend({
    */
   isModelDirty: false,
 
+
+  /**
+   * Whether or not to use ember data dirty tracking
+   * @property useEmberDataDirtyTracking
+   * @type boolean
+   * @default false
+   * @public
+   */
+  useEmberDataDirtyTracking: false,
+
   /**
    * Computed model name
    * @property _modelName
@@ -378,8 +388,7 @@ const FormFor = Ember.Component.extend({
           return Promise.reject(_);
         })
         .finally(() => this.set('isSubmitting', false));
-    }
-    else {
+    } else {
       this.set('_hasFailedToSubmit', true);
       this.didNotSubmit(model);
       this.notifyError(this.get('did-not-submit-message'));
@@ -562,8 +571,7 @@ const FormFor = Ember.Component.extend({
       if (fields) {
         if (this.get('fields').every(_ => !_.get('isReallyDirty'))) {
           this._markClean();
-        }
-        else {
+        } else {
           this._markDirty();
         }
       }
@@ -661,10 +669,12 @@ const FormFor = Ember.Component.extend({
 
     if (this.get('prevents-navigation')) {
       this.handleWilltransition = (transition) => {
-        if (this.get('isModelDirty')) {
+
+        const isDirty = this.get('useEmberDataDirtyTracking') && this.get('model.hasDirtyAttributes') || this.get('isModelDirty');
+
+        if (isDirty) {
           if (confirm('You have unsaved changes, are you sure you want to leave?')) {
-          }
-          else {
+          } else {
             transition.abort();
           }
         }
@@ -679,7 +689,9 @@ const FormFor = Ember.Component.extend({
 
       // prevent browser reloads
       window.onbeforeunload = () => {
-        if (this.get('isModelDirty')) {
+        const isDirty = this.get('useEmberDataDirtyTracking') && this.get('model.hasDirtyAttributes') || this.get('isModelDirty');
+
+        if (isDirty) {
           return 'You have unsaved changes, are you sure you want to leave?';
         }
       };
