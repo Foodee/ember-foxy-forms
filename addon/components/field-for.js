@@ -138,7 +138,7 @@ const FieldFor = Ember.Component.extend({
    * @type String
    * @private
    */
-  _calloutPosition: computed('callout-position', 'config', function() {
+  _calloutPosition: computed('callout-position', 'config', function () {
     const calloutPosition = this.get('callout-position');
     const config = this.get('config');
 
@@ -295,10 +295,10 @@ const FieldFor = Ember.Component.extend({
   isReallyDirty: computed('_lastValidValue', 'value', function () {
     // initial values on string values may be null which looks the same as an empty value.
     return this._stringify(this.get('_lastValidValue')) !== this._stringify(this.get('value')) &&
-      !( this.get('_lastValidValue') === null && this.get('value') === '' ||
-         this.get('_lastValidValue') === '' && this.get('value') === null ||
-         this.get('_lastValidValue') === undefined && this.get('value') === '' ||
-         this.get('_lastValidValue') === '' && this.get('value') === undefined);
+      !(this.get('_lastValidValue') === null && this.get('value') === '' ||
+        this.get('_lastValidValue') === '' && this.get('value') === null ||
+        this.get('_lastValidValue') === undefined && this.get('value') === '' ||
+        this.get('_lastValidValue') === '' && this.get('value') === undefined);
   }),
 
   /**
@@ -472,7 +472,8 @@ const FieldFor = Ember.Component.extend({
    * @public
    */
   formDidSubmit() {
-    this.set('_lastValidValue', this.get('value'));
+    const value = this.get('value');
+    this.set('_lastValidValue', isArray(value) ? value.toArray() : value);
   },
 
   /**
@@ -494,8 +495,7 @@ const FieldFor = Ember.Component.extend({
 
     if (this.get('_hasCompositeValue')) {
       form.resetValues(this._extractKeyValueMapping(this.get('_lastValidValue')));
-    }
-    else {
+    } else {
       form.resetValue(this.get('params')[0], this.get('_lastValidValue'));
     }
 
@@ -516,8 +516,7 @@ const FieldFor = Ember.Component.extend({
     doSubmit() {
       if (this.get('_requiresConfirm')) {
         this.commit();
-      }
-      else {
+      } else {
         return this.get('form').doSubmit();
       }
     },
@@ -553,8 +552,7 @@ const FieldFor = Ember.Component.extend({
 
       const errorPaths = params.map(_ => `form.model.errors.${_}`);
       defineProperty(this, 'errors', computed.union(...errorPaths));
-    }
-    else {
+    } else {
       const propertyPath = params[0];
 
       assert(!!propertyPath, '{{field-for}} Requires a propertyPath to bind to');
@@ -569,10 +567,10 @@ const FieldFor = Ember.Component.extend({
     // define _value such that we either use the intermediary value that
     // is set by way of the onChange handler or new values received from the value binding
     defineProperty(this, '_value', computed('value', {
-      get () {
+      get() {
         return this.get('value');
       },
-      set (key, value) {
+      set(key, value) {
         return value;
       }
     }));
@@ -584,7 +582,8 @@ const FieldFor = Ember.Component.extend({
   },
 
   didInsertElement() {
-    this.set('_lastValidValue', this.get('value'));
+    const value = this.get('value');
+    this.set('_lastValidValue', isArray(value) ? value.toArray() : value);
   },
 
   willDestroyElement() {
