@@ -67,8 +67,8 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   useEmberDataDirtyTracking: false,
-  
-  
+
+
   /**
    * The last doSubmit Promise; used to queue multiple submit requests
    * @property lastDoSubmit
@@ -126,10 +126,10 @@ const FormFor = Ember.Component.extend({
         return error;
       });
   }),
-  
+
   /**
    * Denotes when the form or any of it's children are submitting.
-   * Manually recomputed to prevent double setting of isSubmitting while 
+   * Manually recomputed to prevent double setting of isSubmitting while
    * child-forms are registering.
    * @property isSubmitting
    * @type Boolean
@@ -138,7 +138,7 @@ const FormFor = Ember.Component.extend({
   isSubmitting: computed(function() {
     return this.get('_isSubmitting') || (this.get('child-forms') || []).some(_ => _.get('isSubmitting'));
   }),
-  
+
   /**
    * Denotes whether this is the root form.
    * @property isRootForm
@@ -147,7 +147,7 @@ const FormFor = Ember.Component.extend({
   isRootForm: computed('parent-form', function() {
     return !this.get('parent-form');
   }),
-  
+
   /**
    * Denotes when this particular form is submitting, an none of it's children
    * @property _isSubmitting
@@ -155,7 +155,7 @@ const FormFor = Ember.Component.extend({
    * @default false
    */
   _isSubmitting: false,
-  
+
   // --------------------------------------------------------------------------------
   // This section is where the DSL syntax lives
 
@@ -312,9 +312,9 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   'prevents-navigation': false,
-  
-  
-  
+
+
+
   /**
    * Parent form. Used to connect nested form state. Currently used to propagate dirty state to parent.
    * @property parent-form
@@ -323,7 +323,7 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   'parent-form': null,
-  
+
   /**
    * Child form. Used to connect nested form state. Currently used to coalesce dirty state from the children.
    * @property child-forms
@@ -341,7 +341,7 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   'validation-options': {},
-  
+
  /**
   * Allows multiple submit calls to be queued
   * @property allow-submit-enqueue
@@ -350,7 +350,7 @@ const FormFor = Ember.Component.extend({
   * @public
   */
   'allow-submit-queue': false,
-  
+
 
   // --------------------------------------------------------------------------------
   // Methods
@@ -410,6 +410,60 @@ const FormFor = Ember.Component.extend({
   },
 
   /**
+   * Used to inform parent forms that either this form, or one of its children submitted
+   * @method notifyChildFailedSubmit
+   * @param {FormFor} originator
+   * @public
+   */
+  notifyChildDidSubmit(originator) {
+    const parentForm = this.get('parent-form');
+
+    if (this !== originator) {
+      this.childDidSubmit(originator);
+    }
+
+    if(parentForm) {
+      parentForm.notifyChildDidSubmit();
+    }
+  },
+
+  /**
+   * Used to inform parent forms that either this form, or one of its children failed
+   * submission
+   * @method notifyChildFailedSubmit
+   * @param {FormFor} originator
+   * @public
+   */
+  notifyChildFailedSubmit(originator) {
+    const parentForm = this.get('parent-form');
+
+    if (this !== originator) {
+      this.childFailedSubmit(originator);
+    }
+
+    if(parentForm) {
+      parentForm.notifyChildFailedSubmit()
+    }
+  },
+
+  /**
+   * Called when a child of this form's onSubmit is fulfilled
+   * @method didSubmit
+   * @param {Object} model
+   * @public
+   */
+  childDidSubmit(/*model*/) {},
+
+  /**
+   * Called when a child of this form's onSubmit is reject
+   * @method didSubmit
+   * @param {Object} model
+   * @public
+   */
+  childFailedSubmit(/*model*/) {
+  },
+
+  /**
    * Called when the onSubmit is fulfilled
    * @method didSubmit
    * @param {Object} model
@@ -424,7 +478,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} reason
    * @public
    */
-  failedSubmit(/*reason*/) { 
+  failedSubmit(/*reason*/) {
   },
 
   /**
@@ -435,16 +489,16 @@ const FormFor = Ember.Component.extend({
   doSubmit() {
     const lastDoSubmit = this.get('lastDoSubmit');
     const allowSubmitQueue = this.get('allow-submit-queue');
-    
+
     const model = this.get('model');
     const isSaving = get(model, 'isSaving');
-    
+
     // Guard if the model is saving
     if (!isSaving && this.willSubmit(model) || allowSubmitQueue) {
       this._markSubmitting();
 
       const onSubmit = allowSubmitQueue && lastDoSubmit ? lastDoSubmit.then(() => this.onSubmit(model)) : this.onSubmit(model);
-      
+
       const doSubmit = onSubmit
         .then(() => {
           if(this.get('isRootForm')) {
@@ -454,21 +508,24 @@ const FormFor = Ember.Component.extend({
         .then(() => {
           this.notifySuccess(this.get('successful-submit-message'));
           this.didSubmit();
+          this.notifyChildDidSubmit(false);
           this._markClean();
           this._runFieldDidSubmit();
           this.set('_hasFailedToSubmit', false);
+          this.notifyChildDidSubmit(this);
         })
         .catch(_ => {
           this.notifyError(this.get('failed-submit-message'));
           this.failedSubmit(_);
+          this.notifyChildFailedSubmit(this);
           return Promise.reject(_);
         })
         .finally(() => {
-          this._unmarkSubmitting();         
+          this._unmarkSubmitting();
         });
-        
+
         this.set('lastDoSubmit', doSubmit);
-        
+
         return doSubmit;
     } else {
       this.set('_hasFailedToSubmit', true);
@@ -478,33 +535,33 @@ const FormFor = Ember.Component.extend({
       return Promise.resolve(true);
     }
   },
-  
+
 
   /**
    * Breadth first submission down the form tree, ensures that parent forms get submitted before child forms.
    * Only submits forms that are dirty.
    * @method submitChildForms
-   * @param {FormFor[]} childForms 
-   * @param {Promise} parentPromise 
+   * @param {FormFor[]} childForms
+   * @param {Promise} parentPromise
    * @returns {Promise}
    */
   submitChildForms(childForms, parentPromise = Promise.resolve()) {
     childForms = childForms || [];
-    
+
     if(!childForms.length) {
-      return parentPromise; 
+      return parentPromise;
     }
-    
+
     const dirtyChildren = childForms.filter(_ => _.get('isModelDirty') || _.get('model.isDeleted') || _.get('model.isNew'));
-    
+
     const newPromise = parentPromise.then(() =>
       Promise.all(dirtyChildren.map(_ => _.doSubmit()))
     );
-    
+
     const nextDepth = Promise.all(
       childForms.map(_ => this.submitChildForms(_.get('child-forms'), newPromise))
     );
-  
+
     return nextDepth;
   },
 
@@ -556,7 +613,7 @@ const FormFor = Ember.Component.extend({
    */
   failedReset(/*reason*/) {
   },
-  
+
   /**
    * Called when values are updated in the form. Useful for knowing when a field has
    * has changed without having to reach into individual fields or controls.
@@ -566,21 +623,21 @@ const FormFor = Ember.Component.extend({
    */
   onUpdateValues(/*keyValues*/){
   },
-  
+
   /**
    * Called when the form is marked dirty
    * @method onMarkedDirty
    * @public
    */
   onMarkedDirty() {},
-  
+
   /**
    * Called when the form is marked clean
    * @method onMarkedClean
    * @public
    */
   onMarkedClean() {},
-  
+
   /**
    * Action that actual does the resetting
    * @method doReset
@@ -695,7 +752,7 @@ const FormFor = Ember.Component.extend({
     if (this.get('_hasFailedToSubmit')) {
       Ember.run.next(() => this.runValidations());
     }
-    
+
     this.onUpdateValues(keyValues);
 
     return this.get('auto-submit') ? this.doSubmit() : Promise.resolve(true);
@@ -706,17 +763,17 @@ const FormFor = Ember.Component.extend({
       const fields = this.get('fields') || [];
       const childForms = this.get('child-forms') || [];
       const dirtyChildModels = this.get('dirty-child-models') || [];
-      
+
       const cleanFields = fields.every(_ => !_.get('isReallyDirty'));
       const cleanForms = childForms.every(_ => !_.get('isModelDirty'));
       const noDirtyChildModels = !dirtyChildModels.length;
-      
+
       if (cleanFields && cleanForms && noDirtyChildModels) {
         this._markClean();
       } else {
         this._markDirty();
       }
-      
+
       const parentForm = this.get('parentForm');
       if(parentForm) {
         parentForm._checkClean();
@@ -763,9 +820,9 @@ const FormFor = Ember.Component.extend({
       this.onMarkedClean(this.get('model'));
     }
   },
-  
+
   /**
-   * Marks the form as submitting 
+   * Marks the form as submitting
    * @method _markSubmitting
    * @private
    */
@@ -773,9 +830,9 @@ const FormFor = Ember.Component.extend({
     this.set('_isSubmitting', true);
     this._recomputeIsSubmitting();
   },
-  
+
   /**
-   * Unmarks the form as submitting 
+   * Unmarks the form as submitting
    * @method _unmarkSubmitting
    * @private
    */
@@ -783,17 +840,17 @@ const FormFor = Ember.Component.extend({
     this.set('_isSubmitting', false);
     this._recomputeIsSubmitting();
   },
-  
-  /** 
+
+  /**
    * Manual property change notification is required because if
-   * we watch the children's forms child form registration will cause 
-   * isSubmitting to be set twice during a single render. 
+   * we watch the children's forms child form registration will cause
+   * isSubmitting to be set twice during a single render.
    * @method _recomputeIsSubmitting
    * @private
    */
   _recomputeIsSubmitting() {
     this.notifyPropertyChange('isSubmitting');
-    
+
     const parentForm = this.get('parent-form');
     if(parentForm) {
       parentForm._recomputeIsSubmitting();
@@ -830,7 +887,7 @@ const FormFor = Ember.Component.extend({
     fields.push(field);
     this.set('fields', fields);
   },
-  
+
   /**
    * Unregisters a field with the form
    * @method unregisterField
@@ -854,7 +911,7 @@ const FormFor = Ember.Component.extend({
     childForms.push(form);
     this.set('child-forms', childForms);
   },
-  
+
   /**
    * Unregisters a child form with it's parent
    * @method unregisterChildForm
@@ -900,7 +957,7 @@ const FormFor = Ember.Component.extend({
         }
       };
     }
-    
+
     const parentForm = this.get('parent-form');
     if(parentForm) {
       parentForm.registerChildForm(this);
@@ -915,7 +972,7 @@ const FormFor = Ember.Component.extend({
     if (router && router.off) {
       router.off('willTransition', this.handleWilltransition);
     }
-    
+
     const parentForm = this.get('parent-form');
     if(parentForm) {
       parentForm.unregisterChildForm(this);
