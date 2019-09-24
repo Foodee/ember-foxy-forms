@@ -442,7 +442,7 @@ const FormFor = Ember.Component.extend({
     }
 
     if(parentForm) {
-      parentForm.notifyChildFailedSubmit()
+      parentForm.notifyChildFailedSubmit();
     }
   },
 
@@ -945,7 +945,7 @@ const FormFor = Ember.Component.extend({
       let router = this.get('router');
       if (router && router.on) {
         this.get('router')
-          .on('willTransition', this.handleWilltransition);
+          .on('willTransition', this, this.handleWilltransition);
       }
 
       // prevent browser reloads
@@ -970,7 +970,7 @@ const FormFor = Ember.Component.extend({
     // in test environments that are not acceptance, we won't have real router
     let router = this.get('router');
     if (router && router.off) {
-      router.off('willTransition', this.handleWilltransition);
+      router.off('willTransition', this, this.handleWilltransition);
     }
 
     const parentForm = this.get('parent-form');
