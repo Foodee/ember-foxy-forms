@@ -1,0 +1,21 @@
+<input
+  id={{@controlId}}
+  value={{@value}}
+  type={{this.inputType}}
+  placeholder={{@placeholder}}
+  disabled={{@disabled}}
+  readonly={{@readonly}}
+  maxlength={{@maxLength}}
+  max={{@max}}
+  min={{@min}}
+  step={{@step}}
+  ...attributes
+  data-test-ff-control-input
+  {{on "blur" this.handleBlur}}
+  {{on "focus" this.handleFocus}}
+  {{on "click" this.handleClick}}
+  {{on "change" this.handleChange}}
+  {{on "keyup" this.handleKeyUp}}
+  {{on "keydown" this.handleKeyDown}}
+  {{on "cut" this.handleCut}}
+/>

@@ -1,0 +1,29 @@
+{{#if @visible}}
+  {{#if @customCommitCancelComponent}}
+    {{component
+      @customCommitCancelComponent
+      isActing=@isActing
+      commit=(optional @commit)
+      cancel=(optional @cancel)
+    }}
+  {{else}}
+    <div class="commit-cancel" ...attributes data-test-commit-buttons>
+      <button
+        class="{{@buttonClass}} commit"
+        type="button"
+        data-test-commit-buttons-commit
+        {{on "click" (optional @commit)}}
+      >
+        ✔
+      </button>
+      <button
+        class="{{@buttonClass}} cancel"
+        type="button"
+        data-test-commit-buttons-cancel
+        {{on "click" (optional @cancel)}}
+      >
+        ✘
+      </button>
+    </div>
+  {{/if}}
+{{/if}}

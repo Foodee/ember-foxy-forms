@@ -1,0 +1,83 @@
+{{#let (-element (or @tagName "form")) as |Tag|}}
+  <Tag
+    @tagName={{or @tagName "form"}}
+    class="
+    form-for
+    {{if this.formClasses this.formClasses}}
+     {{if this.disabled " disabled"}}
+     {{if this.readonly " readonly"}}
+     {{this._testingClass}}
+    "
+    ...attributes
+    data-test-form-for={{this._modelName}}
+  >
+    {{
+      yield
+      (hash
+        field=(component
+          "field-for"
+          form=this
+          tagName=@fieldTagName
+          disabled=this.disabled
+          readonly=this.readonly
+          inlineEditing=this.inlineEditing
+          requireConfirm=this.requireConfirm
+          commitValue=this.updateValue
+          commitValues=this.updateValues
+          testingClassPrefix=this.testingClassPrefix
+          hasControlCallout=this.hasControlCallout
+          fieldForControlCalloutClasses=this.fieldForControlCalloutClasses
+        )
+        fieldFor=(component
+          "field-for"
+          form=this
+          tagName=@fieldTagName
+          disabled=this.disabled
+          readonly=this.readonly
+          inlineEditing=this.inlineEditing
+          requireConfirm=this.requireConfirm
+          commitValue=this.updateValue
+          commitValues=this.updateValues
+          testingClassPrefix=this.testingClassPrefix
+          hasControlCallout=this.hasControlCallout
+          fieldForControlCalloutClasses=this.fieldForControlCalloutClasses
+        )
+        button=(component
+          "form-button"
+          text="Button"
+          class=this.buttonClasses
+          buttonActingClass=this.buttonActingClass
+        )
+        submit=(component
+          "form-button"
+          text="Submit"
+          class=(concat this.submitButtonClasses " " this.buttonClasses)
+          buttonActingClass=this.buttonActingClass
+          isActing=this.isSubmitting
+          onClick=this.submit
+        )
+        reset=(component
+          "form-button"
+          text="Reset"
+          class=(concat this.resetButtonClasses " " this.buttonClasses)
+          buttonActingClass=this.buttonActingClass
+          isActing=this.isResetting
+          onClick=this.reset
+        )
+        destroy=(component
+          "form-button"
+          text="Delete"
+          class=(concat this.destroyButtonClasses " " this.buttonClasses)
+          buttonActingClass=this.buttonActingClass
+          isActing=this.isDestroyingRecord
+          onClick=(fn this.confirmDestroy this.model)
+        )
+        errors=(component
+          "errors-for" errors=this.errors customErrorComponent=this.customErrorComponent
+        )
+        self=this
+      )
+      this
+    }}
+  </Tag>
+{{/let}}

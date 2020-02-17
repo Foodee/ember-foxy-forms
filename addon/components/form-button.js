@@ -1,35 +1,11 @@
-import Ember from 'ember';
-import layout from '../templates/components/form-button';
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
 
-const {
-  computed,
-  getOwner,
-} = Ember;
-
-export default Ember.Component.extend({
-  layout,
-
-  config: computed(function () {
-    return Object.assign({}, getOwner(this).resolveRegistration('config:environment').APP['ember-foxy-forms']);
-  }),
-
-  tagName: '',
-
-  icon: null,
-
-  bubbles: true,
-
-  onClick() {
-  },
-
-  actions: {
-
-    handleClick(){
-      if (!this.get('isActing')) {
-        this.onClick();
-      }
+export default class FormButtonComponent extends Component {
+  @action
+  handleClick() {
+    if (!this.args.isActing && this.args.onClick) {
+      return this.args.onClick();
     }
-
   }
-
-});
+}

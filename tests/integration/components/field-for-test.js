@@ -1,68 +1,276 @@
-import {moduleForComponent, test} from 'ember-qunit';
+import { module, test } from 'qunit';
+import { setupRenderingTest } from 'ember-qunit';
+import { click, render, findAll, fillIn } from '@ember/test-helpers';
+import { set } from '@ember/object';
+import { run } from '@ember/runloop';
 import hbs from 'htmlbars-inline-precompile';
-
 import faker from 'faker';
+import sinon from 'sinon';
 
-moduleForComponent('field-for', 'Integration | Component | field container', {
-  integration: true
-});
+module('Integration | Component | field container', function (hooks) {
+  setupRenderingTest(hooks);
 
-test('it renders', function (assert) {
-  assert.expect(0);
-});
+  test('it renders', function (assert) {
+    assert.expect(0);
+  });
 
+  test('it renders testing classes', async function (assert) {
+    this.key = faker.lorem.word();
 
-test('it renders testing classes', function (assert) {
+    await render(hbs`
+      <FormFor as |form|>
+        <form.fieldFor @params={{array this.key}} />
+      </FormFor>
+    `);
 
-  const key = faker.lorem.word();
-  this.set('key', key);
+    assert.notEqual(findAll(`.--field-for__object_${this.key}`)[0], undefined);
+  });
 
-  this.render(hbs`
-    {{#form-for as |f|}}
-      {{f.field-for key}} 
-    {{/form-for}}
-  `);
+  test('it delegates the values param to the control', async function (assert) {
+    this.key = faker.lorem.word();
 
-  assert.notEqual(this.$(`.--field-for__object_${key}`)[0], undefined);
-});
+    this.values = [
+      {
+        id: 1,
+        label: faker.lorem.word(),
+      },
+      {
+        id: 2,
+        label: faker.lorem.word(),
+      },
+    ];
 
+    await render(hbs`
+      <FormFor as |form|>
+        <form.fieldFor
+          @params={{array this.key}}
+          @using="select"
+          @values={{this.values}}
+        />
+      </FormFor>
+    `);
 
-test('it delegates the values param to the control', function (assert) {
+    assert.dom('[data-test-ff-control-select-option]').exists({ count: 2 });
+  });
 
-  const key = faker.lorem.word();
-  this.set('key', key);
+  test('it delegates the values param to the control using the string format', async function (assert) {
+    this.key = faker.lorem.word();
 
-  this.set('values', [
-    {
-      id: 1,
-      label: faker.lorem.word()
-    },
-    {
-      id: 2,
-      label: faker.lorem.word()
-    }
-  ]);
+    await render(hbs`
+      <FormFor as |form|>
+        <form.fieldFor @params={{array this.key}} @using="select" @values="1:foo,2:bar" />
+      </FormFor>
+    `);
 
-  this.render(hbs`
-    {{#form-for as |f|}}
-      {{f.field-for key using='-select' values=values}} 
-    {{/form-for}}
-  `);
+    assert.dom('[data-test-ff-control-select-option]').exists({ count: 2 });
+  });
 
-  assert.equal(this.$('option').length, 2);
-});
+  test('it has the ability to change the element type that the form renders as', async function (assert) {
+    this.tagName = 'span';
 
+    this.model = {
+      foo: `1-${faker.lorem.word()}`,
+    };
 
-test('it delegates the values param to the control using the string format', function (assert) {
+    await render(hbs`
+      <FormFor @model={{this.model}} as |f|>
+        <f.fieldFor @params={{array "foo"}} @tagName={{this.tagName}} />
+      </FormFor>
+    `);
 
-  const key = faker.lorem.word();
-  this.set('key', key);
+    assert.dom(`${this.tagName}.field-for`).exists();
 
-  this.render(hbs`
-    {{#form-for as |f|}}
-      {{f.field-for key using='-select' values='1:foo,2:bar'}} 
-    {{/form-for}}
-  `);
+    run(() => {
+      set(this, 'tagName', 'div'); // this is an edge case it needs to be this way
+    });
 
-  assert.equal(this.$('option').length, 2);
+    await render(hbs`
+      <FormFor @model={{this.model}} as |f|>
+        <f.fieldFor @params={{array "foo"}} @tagName={{this.tagName}} />
+      </FormFor>
+    `);
+    assert.dom(`${this.tagName}.field-for`).exists();
+  });
+
+  test('it takes a control name', async function (assert) {
+    this.model = {
+      foo: `1-${faker.lorem.word()}`,
+    };
+
+    await render(hbs`
+      <FormFor @model={{this.model}} as |f|>
+        <f.fieldFor @params={{array "foo"}} @using="custom" />
+      </FormFor>
+    `);
+
+    assert.dom('[data-test-ff-control-custom]').exists();
+  });
+
+  test('it takes a controlId', async function (assert) {
+    this.model = {
+      foo: `1-${faker.lorem.word()}`,
+    };
+
+    this.controlId = faker.lorem.word();
+
+    await render(hbs`
+      <FormFor @model={{this.model}} as |f|>
+        <f.fieldFor @params={{array "foo"}} @label="My Label" @controlId={{this.controlId}} />
+      </FormFor>
+    `);
+
+    assert.dom('[data-test-field-for]').exists();
+    assert.dom('label').hasAttribute('for', this.controlId);
+    assert.dom('input').hasAttribute('id', this.controlId);
+  });
+
+  test('it can be disabled', async function (assert) {
+    this.model = { foo: 'bar' };
+
+    await render(hbs`
+      <FormFor @model={{this.model}} as |f|>
+        <f.fieldFor
+          @disabled={{true}}
+          @params={{array "foo"}}
+        />
+      </FormFor>
+    `);
+
+    assert.dom('[data-test-field-for]').exists();
+    assert.dom('input').hasAttribute('disabled');
+  });
+
+  test('it can be set to readonly', async function (assert) {
+    this.model = { foo: 'bar' };
+
+    await render(hbs`
+      <FormFor @model={{this.model}} as |f|>
+        <f.fieldFor
+          @params={{array "foo"}}
+          @readonly={{true}}
+        />
+      </FormFor>
+    `);
+
+    assert.dom('[data-test-field-for]').exists();
+    assert.dom('input').hasAttribute('readonly');
+  });
+
+  test('it delegates value to the control', async function (assert) {
+    this.model = { foo: 'bar' };
+
+    await render(hbs`
+      <FormFor @model={{this.model}} as |f|>
+        <f.fieldFor
+          @params={{array "foo"}}
+        />
+      </FormFor>
+    `);
+
+    assert.dom('[data-test-field-for]').exists();
+    assert.dom('input').hasValue('bar');
+  });
+
+  test('it delegates values to the control', async function (assert) {
+    this.model = { foo: 'bar' };
+
+    await render(hbs`
+      <FormFor @model={{this.model}} as |form|>
+        <form.field
+          @for="select"
+          @using="select"
+          @label="Select"
+          @values="1:one,2:two,3:three"
+          @valueTooltip="An Select"
+        />
+      </FormFor>
+    `);
+
+    assert.dom('[data-test-field-for]').exists();
+    assert.dom('select').hasValue('1');
+    assert.dom('option').hasValue('1');
+  });
+
+  test('it allows for optionally providing a format function for the value', async function (assert) {
+    this.model = { foo: 'bar' };
+    this.formatValue = sinon.spy();
+    this.valueTooltip = faker.lorem.word();
+
+    await render(hbs`
+      <FormFor @model={{this.model}} as |f|>
+        <f.fieldFor
+          @params={{array "foo"}}
+          @inlineEditing={{true}}
+          @formatValue={{this.formatValue}}
+          @valueTooltip={{this.valueTooltip}}
+        />
+      </FormFor>
+    `);
+
+    assert.dom('[data-test-field-for]').exists();
+    assert.ok(this.formatValue.calledOnce);
+    assert.dom(`[data-tooltip=${this.valueTooltip}]`).exists();
+  });
+
+  test('it allows for appending a tool tip to the value when in inline editing mode', async function (assert) {
+    this.model = { foo: 'bar' };
+    this.valueTooltip = faker.lorem.word();
+
+    await render(hbs`
+      <FormFor @model={{this.model}} as |f|>
+        <f.fieldFor
+          @params={{array "foo"}}
+          @inlineEditing={{true}}
+          @valueTooltip={{this.valueTooltip}}
+        />
+      </FormFor>
+    `);
+
+    assert.dom('[data-test-field-for]').exists();
+    assert.dom(`[data-tooltip=${this.valueTooltip}]`).exists();
+  });
+
+  test('it can be configured to require confirmation before changes are committed', async function (assert) {
+    const initiaValue = faker.lorem.word();
+    const newValue = faker.lorem.word();
+    this.model = { foo: initiaValue };
+
+    await render(hbs`
+      <FormFor @model={{this.model}} @requireConfirm={{true}} as |f|>
+        <f.fieldFor
+          @params={{array "foo"}}
+        />
+      </FormFor>
+    `);
+
+    assert.dom('[data-test-field-for]').exists();
+
+    await fillIn('input', newValue);
+    assert.equal(this.model.foo, initiaValue);
+
+    await click('[data-test-commit-buttons-commit]');
+    assert.equal(this.model.foo, newValue);
+  });
+
+  test('it can be configured to require confirmation before changes are canceled', async function (assert) {
+    const initiaValue = faker.lorem.word();
+    const newValue = faker.lorem.word();
+    this.model = { foo: initiaValue };
+
+    await render(hbs`
+      <FormFor @model={{this.model}} @requireConfirm={{true}} as |f|>
+        <f.fieldFor
+          @params={{array "foo"}}
+        />
+      </FormFor>
+    `);
+
+    assert.dom('[data-test-field-for]').exists();
+
+    await fillIn('input', newValue);
+    assert.equal(this.model.foo, initiaValue);
+
+    await click('[data-test-commit-buttons-cancel]');
+    assert.equal(this.model.foo, initiaValue);
+  });
 });

@@ -1,25 +1,53 @@
-import { moduleForComponent, test } from 'ember-qunit';
+import { module, test } from 'qunit';
+import { setupRenderingTest } from 'ember-qunit';
+import { click, render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
+import faker from 'faker';
+import sinon from 'sinon';
 
-moduleForComponent('form-button', 'Integration | Component | form button', {
-  integration: true
-});
+module('Integration | Component | form button', function (hooks) {
+  setupRenderingTest(hooks);
 
-test('it renders', function(assert) {
+  test('it renders', async function (assert) {
+    await render(hbs`<FormButton />`);
 
-  // Set any properties with this.set('myProperty', 'value');
-  // Handle any actions with this.on('myAction', function(val) { ... });
+    assert.dom('[data-test-form-button]').hasText('');
 
-  this.render(hbs`{{form-button}}`);
-
-  assert.equal(this.$().text().trim(), '');
-
-  // Template block usage:
-  this.render(hbs`
-    {{#form-button}}
+    // Template block usage:
+    await render(hbs`
+    <FormButton>
       template block text
-    {{/form-button}}
-  `);
+    </FormButton>
+    `);
 
-  assert.equal(this.$().text().trim(), 'template block text');
+    assert.dom('[data-test-form-button]').hasText('template block text');
+  });
+
+  test('has a text attribute', async function (assert) {
+    this.text = faker.lorem.word();
+
+    await render(hbs`<FormButton @text={{this.text}} />`);
+
+    assert.dom('[data-test-form-button]').hasText(this.text);
+  });
+
+  test('has a icon attribute', async function (assert) {
+    this.icon = faker.lorem.word();
+
+    await render(hbs`<FormButton @icon={{this.icon}} />`);
+
+    assert.dom('[data-test-form-button-icon]').hasClass(this.icon);
+  });
+
+  test('responds to click events', async function (assert) {
+    this.onClick = sinon.spy();
+
+    await render(hbs`<FormButton @onClick={{this.onClick}} />`);
+
+    assert.ok('[data-test-form-button]');
+
+    await click('[data-test-form-button]');
+
+    assert.ok(this.onClick.calledOnce);
+  });
 });

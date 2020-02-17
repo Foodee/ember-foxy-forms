@@ -1,12 +1,18 @@
-import Ember from 'ember';
+import AddonDocsRouter, { docsRoute } from 'ember-cli-addon-docs/router';
 import config from './config/environment';
 
-const Router = Ember.Router.extend({
-  location: config.locationType,
-  rootURL: config.rootURL
-});
+export default class Router extends AddonDocsRouter {
+  location = config.locationType;
+  rootURL = config.rootURL;
+}
 
-Router.map(function() {
-});
+Router.map(function () {
+  docsRoute(this, function () {
+    this.route('usage');
+    this.route('forms');
+    this.route('fields');
+    this.route('controls');
+  });
 
-export default Router;
+  this.route('not-found', { path: '/*path' });
+});

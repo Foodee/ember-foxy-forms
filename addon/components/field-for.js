@@ -1,159 +1,113 @@
-import Ember from 'ember';
-import layout from '../templates/components/field-for';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+import { arg } from 'ember-arg-types';
+import { array, func, bool, string, object } from 'prop-types';
+import { oneWay, notEmpty, gt, union, readOnly } from '@ember/object/computed';
+import { dasherize } from '@ember/string';
+import { isArray } from '@ember/array';
+import { action, defineProperty, computed } from '@ember/object';
+import { assert } from '@ember/debug';
+import { guidFor } from '@ember/object/internals';
+import { later } from '@ember/runloop';
+import { isBlank } from '@ember/utils';
+import { inject as service } from '@ember/service';
 
-const {
-  isArray,
-  computed,
-  defineProperty,
-  assert,
-  getOwner,
-  guidFor,
-  run
-} = Ember;
+export default class FieldForComponent extends Component {
+  @service formFor;
 
-const FieldFor = Ember.Component.extend({
+  constructor() {
+    super(...arguments);
 
-  layout,
+    if (this._hasCompositeValue) {
+      // property paths to watch
+      const propertyPaths = this.propertyPath;
+      const _withMapping = this.args.withMapping || {};
 
-  config: computed(function () {
-    return Object.assign({}, getOwner(this).resolveRegistration('config:environment').APP['ember-foxy-forms']);
-  }),
+      // bind to the value
+      defineProperty(
+        this,
+        'value',
+        computed(
+          // eslint-disable-next-line ember/use-brace-expansion
+          `args.form.{model,model.${propertyPaths}}`,
+          'args.form.model',
+          'args.{for,params}',
+          'params',
+          function () {
+            return this.params.reduce((acc, param) => {
+              // we either use the key map provided by the user, or the
+              // default key value
+              const key = _withMapping[param] || param;
+              acc[key] = this.args.form.model[param];
 
-  // remove tags, so we don't interfere with styles that use direct inheritance
-  tagName: '',
+              return acc;
+            }, {});
+          }
+        )
+      );
 
-  /**
-   * The form that this field belongs to
-   * @property form
-   * @type FormFor
-   * @default null
-   * @public
-   */
-  form: null,
+      const errorPaths = this.params.map((param) => `args.form.model.errors.${param}`);
+      defineProperty(this, 'errors', union(...errorPaths));
+    } else {
+      const propertyPath = this.propertyPath;
+
+      assert('<FieldFor /> Requires a propertyPath to bind to', !!propertyPath);
+
+      // bind to the value
+      defineProperty(this, 'value', oneWay(`args.form.model.${propertyPath}`));
+
+      // bind to errors
+      defineProperty(this, 'errors', oneWay(`args.form.model.errors.${propertyPath}`));
+    }
+
+    // Capture backup value that will allow full roll back if there are errors on cancel
+    // update the backup value after successful commit
+    this._lastValidValue = isArray(this.value) ? this.value.toArray() : this.value;
+
+    this.args.form.registerField(this);
+
+    // define _value such that we either use the intermediary value that
+    // is set by way of the onChange handler or new values received from the value binding
+    defineProperty(
+      this,
+      '_value',
+      computed('value', {
+        get() {
+          return this.value;
+        },
+        set(key, value) {
+          return value;
+        },
+      })
+    );
+  }
+
+  @tracked isEditing = false;
 
   // --------------------------------------------------------------------------------
-  // This section is where the DSL syntax lives
-  // label
-  // require-confirm
-  // inline-editing
-  // using
-  // with-mapping
+  // Computed Properties
   //
 
-  /**
-   * The label for this field
-   * @property field
-   * @type String
-   * @default null
-   * @public
-   */
-  label: null,
+  @readOnly('formFor.buttonClasses') buttonClasses;
 
   /**
-   * Whether or not this field is disabled
-   * @property disabled
+   * Whether or not this field is a composite value, meaning
+   * that it exposes more than one value to the control layer
+   * by way of a pojo mapping keys to values
+   * @property _hasCompositeValue
    * @type boolean
    * @default false
-   * @public
-   */
-  disabled: computed.oneWay('form.disabled'),
-
-  /**
-   * Whether or not this field is readonly
-   * @property readonly
-   * @type boolean
-   * @default false
-   * @public
-   */
-  readonly: computed.oneWay('form.readonly'),
-
-  /**
-   * Whether or not this field requires confirmation from the user
-   * before it commits its value to the form
-   * @property  _requireConfirm
-   * @type boolean
-   * @default true
-   * @public
-   */
-  'require-confirm': computed.oneWay('form.require-confirm'),
-  _requireConfirm: computed.readOnly('require-confirm'),
-
-  /**
-   * Whether or not this field is in inline-edit mode, which displays
-   * a value that can be clicked on and then reveal the control useful
-   * for all sorts of layouts
-   * @property inline-editing
-   * @type boolean
-   * @default false
-   * @public
-   */
-  'inline-editing': computed.oneWay('form.inline-editing'),
-  inlineEditing: computed.readOnly('inline-editing'),
-
-  /**
-   * Name of the control that fields, used to define the control
-   * that the field wraps
-   * @property using
-   * @type String
-   * @default '-input'
-   * @public
-   */
-  using: computed(function () {
-    return this.get('_hasCompositeValue') ? '-multiple-input' : '-input';
-  }),
-
-  /**
-   * The with mapping hash, provides a mapping from model space
-   * to control space when using composite values
-   * @property _withMapping
-   * @type Object
-   * @default null
-   * @public
-   */
-  _withMapping: computed.readOnly('with-mapping'),
-
-  /**
-   * Wether or not the fields have control callouts (popups / popovers) when in
-   * inline-edit mode
-   * @property has-control-callout
-   * @type Boolean
-   * @default false
-   * @public
-   */
-  ['has-control-callout']: computed.oneWay('form.has-control-callout'),
-
-  /**
-   * The position of the control callout (up to the client to decide how to use this info)
-   * @property callout-position
-   * @type String
-   * @default null
-   * @public
-   */
-  ['callout-position']: null,
-
-  /**
-   * The position of the control callout (up to the client to decide how to use this info)
-   * This will default to the site-wide environment value if no override is given for this field
-   * @property _calloutPosition
-   * @type String
    * @private
    */
-  _calloutPosition: computed('callout-position', 'config', function () {
-    const calloutPosition = this.get('callout-position');
-    const config = this.get('config');
-
-    return calloutPosition || config && config.fieldForControlCalloutPosition;
-  }),
+  @gt('params.length', 1) _hasCompositeValue;
 
   /**
-   * Optional array of values to be delegated down to the control, useful
-   * for selects or radio groups.
-   * @property values
-   * @type Array
-   * @default null
+   * Whether or not the current field mapping has any errors
+   * @property hasErrorsj
+   * @type boolean
    * @public
    */
-  values: null,
+  @notEmpty('errors') hasErrors;
 
   /**
    * Either delegate the values down to the control, or transform them
@@ -163,18 +117,139 @@ const FieldFor = Ember.Component.extend({
    * @default null
    * @public
    */
-  _values: computed('values', function () {
-    const values = this.get('values');
-    let ret = values;
+  get _values() {
+    const ret = this.args.values;
 
-    if (values && !isArray(values)) {
+    if (this.args.values && !isArray(this.args.values)) {
       // if the values provided is not an array but in fact a string
       // we transform it into a POJO
-      return values.split(',').map(this['values-extractor']);
+
+      return this.args.values.split(',').map((value) => this.valuesExtractor(value));
     }
 
     return ret;
-  }),
+  }
+
+  /**
+   * The result of applying the formatValue function to the value
+   * @property _formattedValue
+   * @type String
+   * @default value
+   * @private
+   */
+  get displayValue() {
+    return this.formatValue(this.value);
+  }
+
+  /**
+   * A class which will be appended to the field for testing purpose (not styling purposes)
+   * @property _testingClass
+   * @type String
+   * @default '--field-for__<params>'
+   * @private
+   */
+  get _testingClass() {
+    return `${this.args.testingClassPrefix}field-for__${this._testingSelector}`;
+  }
+
+  get _testingSelector() {
+    return `${this.args.form._modelName}_${this.params
+      .map((_) => _.toString())
+      .map(dasherize)
+      .join('_')
+      .replace(/\./g, '__')}`;
+  }
+
+  /**
+   * Whether or not this field currently requires confirmation
+   * @property __requiresConfirm
+   * @type boolean
+   * @default true
+   * @private
+   */
+  get _requiresConfirm() {
+    return (this.requireConfirm && this.isDirty) || this.inlineEditing;
+  }
+
+  /**
+   * Guid for this field
+   * @property guid
+   * @type String
+   * @default '<guidForField>'
+   * @public
+   */
+  get guid() {
+    return guidFor(this);
+  }
+
+  /**
+   * Whether or not this field is has been edited but not
+   * committed to the form
+   * @property isDirty
+   * @type String
+   * @default false
+   * @public
+   */
+  get isDirty() {
+    return this._stringify(this._value) !== this._stringify(this.value);
+  }
+
+  /**
+   * Whether or not this field is has been edited and
+   * committed to the form, but the form has not submited that value
+   * @property isDirty
+   * @type String
+   * @default false
+   * @public
+   */
+  get isReallyDirty() {
+    return !(this.isDestroyed && this.isDestroying) && this._valueIsDirty && this._valueIsNotBlank;
+  }
+
+  get _valueIsDirty() {
+    return this._stringify(this._lastValidValue) !== this._stringify(this.value);
+  }
+  get _valueIsNotBlank() {
+    return !isBlank(this._lastValidValue) || !isBlank(this.value);
+  }
+
+  /**
+   * Whether or not we show the control component
+   * @property _showControl
+   * @type boolean
+   * @private
+   */
+  get _showControl() {
+    return (
+      !this.inlineEditing ||
+      (this.inlineEditing && this.isEditing) ||
+      (this.hasControlCallout && this.hasErrors)
+    );
+  }
+
+  /**
+   * Whether or not we show the value / placeholder component
+   * @property _showValue
+   * @type boolean
+   * @private
+   */
+  get _showValue() {
+    return (this.inlineEditing && !this.isEditing) || this.hasControlCallout;
+  }
+
+  /**
+   * Whether or not we show the confirm buttons
+   * @property _showConfirm
+   * @type boolean
+   * @private
+   */
+  get _showConfirm() {
+    return this._requiresConfirm;
+  }
+
+  get propertyPath() {
+    return this.params.join(',');
+  }
 
   /**
    * This method extracts a value for the values array in the
@@ -185,121 +260,12 @@ const FieldFor = Ember.Component.extend({
    * @param value
    * @returns {{id: String, label: String, icon: String}}
    */
-  'values-extractor'(value) {
+  valuesExtractor(value) {
     const chunks = value.split(':');
     const [id, label, icon] = chunks;
 
-    return {id, label, icon};
-  },
-
-
-  /**
-   * Function for formatting the value override for custom behavior
-   * @method format-value
-   * @param {Object} value
-   * @returns string
-   */
-  'format-value'(value) {
-    return value;
-  },
-
-
-  /**
-   * The result of applying the format-value function to the value
-   * @property _formattedValue
-   * @type String
-   * @default value
-   * @private
-   */
-  'display-value': computed('value', function () {
-    return this['format-value'](this.get('value'));
-  }),
-
-  /**
-   * Tooltip to append to the value when inline editing
-   * @property value-tooltip
-   * @type String
-   * @default null
-   * @private
-   */
-  'value-tooltip': null,
-
-  // --------------------------------------------------------------------------------
-  // Computed Properties
-  //
-
-  /**
-   * A class which will be appended to the field for testing purpose (not styling purposes)
-   * @property _testingClass
-   * @type String
-   * @default '--field-for__<params>'
-   * @private
-   */
-  _testingClass: computed(function () {
-    return `${this.get('config.testingClassPrefix')}field-for__${this.get('form._modelName')}_${this.get('params').map(_ => _.toString()).map(Ember.String.dasherize).join('_').replace(/\./g, '__')}`;
-  }),
-
-  /**
-   * Whether or not this field currently requires confirmation
-   * @property __requiresConfirm
-   * @type boolean
-   * @default true
-   * @private
-   */
-  _requiresConfirm: computed('_requireConfirm', 'inlineEditing', 'isDirty', function () {
-    return this.get('_requireConfirm') && this.get('isDirty') || this.get('inlineEditing');
-  }),
-
-  /**
-   * The fully qualified path to the control for this component
-   * @property _control
-   * @type String
-   * @default 'form-controls/-input-control'
-   * @private
-   */
-  _control: computed('using', function () {
-    return `form-controls/${this.get('using')}-control`;
-  }),
-
-  /**
-   * Generated ID to tie together the label and the control
-   * @property controlId
-   * @type String
-   * @default 'control-for-<guidForField>'
-   * @public
-   */
-  controlId: computed(function () {
-    return `control-for-${guidFor(this)}`;
-  }),
-
-  /**
-   * Whether or not this field is has been edited but not
-   * committed to the form
-   * @property isDirty
-   * @type String
-   * @default false
-   * @public
-   */
-  isDirty: computed('_value', 'value', function () {
-    return this._stringify(this.get('_value')) !== this._stringify(this.get('value'));
-  }),
-
-  /**
-   * Whether or not this field is has been edited and
-   * committed to the form, but the form has not submited that value
-   * @property isDirty
-   * @type String
-   * @default false
-   * @public
-   */
-  isReallyDirty: computed('_lastValidValue', 'value', function () {
-    // initial values on string values may be null which looks the same as an empty value.
-    return this._stringify(this.get('_lastValidValue')) !== this._stringify(this.get('value')) &&
-      !(this.get('_lastValidValue') === null && this.get('value') === '' ||
-        this.get('_lastValidValue') === '' && this.get('value') === null ||
-        this.get('_lastValidValue') === undefined && this.get('value') === '' ||
-        this.get('_lastValidValue') === '' && this.get('value') === undefined);
-  }),
+    return { id, label, icon };
+  }
 
   /**
    * Stringifies a value, we can't just use JSON.stringify directly as it can create circular refs
@@ -311,90 +277,12 @@ const FieldFor = Ember.Component.extend({
    * @private
    */
   _stringify(value) {
-    return isArray(value) ? value.map(_ => this._stringify(_)).join(',') : JSON.stringify(value);
-  },
-
-  /**
-   * Whether or not the current field mapping has any errors
-   * @property hasErrorsj
-   * @type boolean
-   * @public
-   */
-  hasErrors: computed.notEmpty('errors'),
-
-  /**
-   * Whether or not we show the control component
-   * @property _showControl
-   * @type boolean
-   * @private
-   */
-  _showControl: computed('inlineEditing', 'isEditing', 'hasError', function () {
-    return !this.get('inlineEditing') || this.get('inlineEditing') && this.get('isEditing') || this.get('hasError');
-  }),
-
-  /**
-   * Whether or not we show the value / placeholder component
-   * @property _showValue
-   * @type boolean
-   * @private
-   */
-  _showValue: computed('inlineEditing', 'isEditing', 'hasError', function () {
-    return this.get('inlineEditing') && (!this.get('isEditing') || this.get('has-control-callout'));
-  }),
-
-  /**
-   * Whether or not we show the confirm buttons
-   * @property _showConfirm
-   * @type boolean
-   * @private
-   */
-  _showConfirm: computed(
-    '_requiresConfirm', function () {
-      return this.get('_requiresConfirm');
-    }),
-
-  /**
-   * Whether or not this field is a composite value, meaning
-   * that it exposes more than one value to the control layer
-   * by way of a pojo mapping keys to values
-   * @property _hasCompositeValue
-   * @type boolean
-   * @default false
-   * @private
-   */
-  _hasCompositeValue: computed.gt('params.length', 1),
-
-  /**
-   * Override this function to perform custom actions on commit
-   * @method commitValue
-   * @param {String} propertyPath
-   * @param {*} value
-   * @public
-   */
-  commitValue(/*propertyPath, value*/) {
-  },
-
-  commitValues(/*value*/) {
-  },
-
-  /**
-   * Handles change method from the control, you can override this
-   * with a closure action to have custom behaviors
-   * @method handleChange
-   * @param {*} value
-   * @public
-   */
-  handleChange(value) {
-    this.set('_value', value);
-
-    if (!this.get('_requiresConfirm')) {
-      this.commit();
-    }
-  },
+    return isArray(value) ? value.map((_) => this._stringify(_)).join(',') : JSON.stringify(value);
+  }
 
   _extractKeyValueMapping(_value) {
-    const params = this.get('params');
-    const _withMapping = this.get('withMapping') || {};
+    const params = this.params;
+    const _withMapping = this.args.withMapping || {};
 
     const keyValues = params.reduce((acc, param) => {
       const key = _withMapping[param] || param;
@@ -404,86 +292,7 @@ const FieldFor = Ember.Component.extend({
     }, {});
 
     return keyValues;
-  },
-
-  /**
-   * Triggers the commitValue action
-   * @method commit
-   * @public
-   */
-  commit() {
-
-    let commitPromise = null;
-    const _value = this.get('_value');
-    const prevValue = this.get('value');
-
-    if (this.get('_hasCompositeValue')) {
-      const keyValue = this._extractKeyValueMapping(_value);
-      const prevKeyValue = prevValue && this._extractKeyValueMapping(prevValue);
-      commitPromise = this.commitValues(keyValue).then(() => this.didCommitValues(keyValue, prevKeyValue));
-    } else {
-      const params = this.get('params');
-      commitPromise = this.commitValue(params[0], _value).then(() => this.didCommitValue(_value, prevValue));
-    }
-
-    commitPromise.finally(() => {
-      if (!this.get('hasErrors')) {
-        this.set('isEditing', false);
-      }
-    });
-
-  },
-
-  /**
-   * Triggered after the commit method is called
-   * @method commit
-   * @param {*} value
-   * @public
-   */
-  didCommitValue(/* value */) {
-
-  },
-
-  /**
-   * Triggered after the commit method is called for multiple values
-   * @method commit
-   * @param {Object} values
-   * @public
-   */
-  didCommitValues(/* values */) {
-
-  },
-
-  /**
-   * Cancels the current intermediary value, only really useful
-   * when not autoCommitting
-   * @method cancel
-   * @public
-   */
-  cancel() {
-    this.set('_value', this.get('value'));
-    this._resetField();
-    this.set('isEditing', false);
-  },
-
-  /**
-   * Callback for when the form submits
-   * @method formDidSubmit
-   * @public
-   */
-  formDidSubmit() {
-    const value = this.get('value');
-    this.set('_lastValidValue', isArray(value) ? value.toArray() : value);
-  },
-
-  /**
-   * Callback for when the form resets
-   * @method formDidReset
-   * @public
-   */
-  formDidReset() {
-    this._resetField();
-  },
+  }
 
   /**
    * Resets the field to the backup value by re-committing the value
@@ -491,111 +300,286 @@ const FieldFor = Ember.Component.extend({
    * @private
    */
   _resetField() {
-    let form = this.get('form');
+    const form = this.args.form;
 
-    if (this.get('_hasCompositeValue')) {
-      form.resetValues(this._extractKeyValueMapping(this.get('_lastValidValue')));
+    if (this._hasCompositeValue) {
+      form.resetValues(this._extractKeyValueMapping(this._lastValidValue));
     } else {
-      form.resetValue(this.get('params')[0], this.get('_lastValidValue'));
+      form.resetValue(this.params[0], this._lastValidValue);
     }
 
     form.clearValidations();
-  },
-
-  actions: {
-    edit() {
-      this.set('isEditing', true);
-      run.next(() => {
-
-        if (this.get('_showControl')) {
-          Ember.$(`#${this.get('controlId')}`).focus();
-        }
-      });
-    },
-
-    doSubmit() {
-      if (this.get('_requiresConfirm')) {
-        this.commit();
-      } else {
-        return this.get('form').doSubmit();
-      }
-    },
-
-    doReset() {
-      return this.get('form').doReset();
-    }
-  },
-
-  init() {
-    this._super(...arguments);
-
-    const params = this.get('params');
-
-    if (this.get('_hasCompositeValue')) {
-      // property paths to watch
-      const propertyPaths = params.join(',');
-      const _withMapping = this.get('withMapping') || {};
-
-      // bind to the value
-      defineProperty(this, 'value', computed(`form.model.{${propertyPaths}}`, function () {
-
-        return params.reduce((acc, param) => {
-          // we either use the key map provided by the user, or the
-          // default key value
-          const key = _withMapping[param] || param;
-          acc[key] = this.get(`form.model.${param}`);
-
-          return acc;
-        }, {});
-
-      }));
-
-      const errorPaths = params.map(_ => `form.model.errors.${_}`);
-      defineProperty(this, 'errors', computed.union(...errorPaths));
-    } else {
-      const propertyPath = params[0];
-
-      assert(!!propertyPath, '{{field-for}} Requires a propertyPath to bind to');
-
-      // bind to the value
-      defineProperty(this, 'value', computed.oneWay(`form.model.${propertyPath}`));
-
-      // bind to errors
-      defineProperty(this, 'errors', computed.oneWay(`form.model.errors.${propertyPath}`));
-    }
-
-    // define _value such that we either use the intermediary value that
-    // is set by way of the onChange handler or new values received from the value binding
-    defineProperty(this, '_value', computed('value', {
-      get() {
-        return this.get('value');
-      },
-      set(key, value) {
-        return value;
-      }
-    }));
-
-    // Capture backup value that will allow full roll back if there are errors on cancel
-    // update the backup value after successful commit
-
-    this.get('form').registerField(this);
-  },
-
-  didInsertElement() {
-    const value = this.get('value');
-    this.set('_lastValidValue', isArray(value) ? value.toArray() : value);
-  },
-
-  willDestroyElement() {
-    this.get('form').unregisterField(this);
   }
-});
 
-FieldFor.reopenClass({
-  // Setting the positional params to 'params' makes all positional params available to
-  // the component at runtime under the key 'params' we use this to allow the component
-  // to take a variable number of params thus supporting single value or composite value mode
-  positionalParams: 'params'
-});
+  willDestroy() {
+    this.args.form.deregisterField(this);
+  }
 
-export default FieldFor;
+  // --------------------------------------------------------------------------------
+  // This section is where the DSL syntax lives
+
+  /**
+   * The form that this field belongs to
+   * @property form
+   * @type FormFor
+   * @default null
+   * @public
+   */
+  @arg()
+  form = null;
+
+  /**
+   * The label for this field
+   * @property field
+   * @type String
+   * @default null
+   * @public
+   */
+  @arg(string)
+  label = null;
+
+  /**
+   * Generated ID to tie together the label and the control
+   * @property controlId
+   * @type String
+   * @default 'control-for-<guidForField>'
+   * @public
+   */
+  @arg(string)
+  get controlId() {
+    return `control-for-${this.guid}`;
+  }
+
+  /**
+   * The with mapping hash, provides a mapping from model space
+   * to control space when using composite values
+   * @property _withMapping
+   * @type Object
+   * @default null
+   * @public
+   */
+  @arg(object)
+  withMapping = {};
+
+  /**
+   * Whether or not this form is setup for inline editing
+   * @property inlineEditing
+   * @type boolean
+   * @default false
+   * @public
+   */
+  @arg(bool)
+  inlineEditing = false;
+
+  /**
+   * Whether or not this field requires confirmation to apply values to
+   * the model
+   * @property requireConfirm
+   * @type boolean
+   * @default false
+   * @public
+   */
+  @arg(bool)
+  requireConfirm = false;
+
+  /**
+   * Wether or not the fields have control callouts (popups / popovers) when in
+   * inline-edit mode
+   * @property hasControlCallout
+   * @type Boolean
+   * @default false
+   * @public
+   */
+  @arg(bool)
+  hasControlCallout = false;
+
+  /**
+   * Tooltip to append to the value when inline editing
+   * @property valueTooltip
+   * @type String
+   * @default null
+   * @private
+   */
+  @arg(string)
+  valueTooltip = null;
+
+  /**
+   * The position of the control callout (up to the client to decide how to use this info)
+   * @property calloutPosition
+   * @type String
+   * @default null
+   * @public
+   */
+  @arg(string)
+  get calloutPosition() {
+    return this.formFor?.fieldForControlCalloutPosition || null;
+  }
+
+  /**
+   * The fully qualified path to the control for this component
+   * @property control
+   * @type String
+   * @default 'form-controls/ff-input'
+   * @private
+   */
+  @arg(string)
+  get control() {
+    const controlsFolder = this.formFor.controlsFolder;
+    const controlPrefix = this.formFor.controlPrefix;
+
+    let controlName = `${controlPrefix}${this.args.using}`;
+
+    if (!this.args.using) {
+      controlName = this._hasCompositeValue
+        ? `${controlPrefix}multiple-input`
+        : `${controlPrefix}input`;
+    }
+
+    return `${controlsFolder}/${controlName}`;
+  }
+
+  @arg(array)
+  get params() {
+    return this.args.params ?? isArray(this.args.for) ? this.args.for : [this.args.for];
+  }
+
+  /**
+   * Fully qualified path to a custom display component for rendering this value
+   * @method  displayValueComponent
+   * @default null
+   * @param {String} value
+   * @returns string
+   */
+  @arg(string)
+  displayValueComponent = null;
+
+  /**
+   * Function for formatting the value override for custom behavior
+   * @method formatValue
+   * @param {Object} value
+   * @returns string
+   */
+  @arg(func)
+  formatValue = (value) => {
+    return this._hasCompositeValue ? JSON.stringify(value) : value;
+  };
+
+  /**
+   * Triggered after the commit method is called
+   * @method commit
+   * @param {*} value
+   * @public
+   */
+  @arg(func)
+  didCommitValue = (/* value */) => {};
+
+  /**
+   * Triggered after the commit method is called for multiple values
+   * @method commit
+   * @param {Object} values
+   * @public
+   */
+  @arg(func)
+  didCommitValues = (/* values */) => {};
+
+  /**
+   * Callback for when the form submits
+   * @method formDidSubmit
+   * @public
+   */
+  @arg(func)
+  formDidSubmit = () => {
+    this._lastValidValue = isArray(this.value) ? this.value.toArray() : this.value;
+  };
+
+  /**
+   * Callback for when the form resets
+   * @method formDidReset
+   * @public
+   */
+  @arg(func)
+  formDidReset = () => {
+    this._resetField();
+  };
+
+  /**
+   * Handles change method from the control, you can override this
+   * with a closure action to have custom behaviors
+   * @method handleChange
+   * @param {*} value
+   * @public
+   */
+  @action
+  handleChange(value) {
+    this._value = value;
+
+    if (!this._requiresConfirm) {
+      this.commit();
+    }
+  }
+
+  /**
+   * Triggers the commitValue action
+   * @method commit
+   * @public
+   */
+  @action
+  commit() {
+    let commitPromise = null;
+
+    if (this._hasCompositeValue) {
+      const keyValue = this._extractKeyValueMapping(this._value);
+      const prevKeyValue = this.value && this._extractKeyValueMapping(this.value);
+      commitPromise = this.args
+        .commitValues(keyValue)
+        .then(() => this.didCommitValues(keyValue, prevKeyValue));
+    } else {
+      commitPromise = this.args
+        .commitValue(this.params[0], this._value)
+        .then(() => this.didCommitValue(this._value, this.value));
+    }
+
+    commitPromise.finally(() => {
+      if (!this.hasErrors) {
+        this.isEditing = false;
+      }
+    });
+  }
+
+  /**
+   * Cancels the current intermediary value, only really useful
+   * when not autoCommitting
+   * @method cancel
+   * @public
+   */
+  @action
+  cancel() {
+    this._value = this.value;
+    this._resetField();
+    this.isEditing = false;
+  }
+
+  @action
+  edit() {
+    this.isEditing = true;
+    later(() => {
+      if (this._showControl) {
+        document.querySelector(`#${this.controlId}`).focus();
+      }
+    }, 100);
+  }
+
+  @action
+  doSubmit() {
+    if (this._requiresConfirm) {
+      this.commit();
+    } else {
+      return this.args.form.doSubmit();
+    }
+  }
+
+  @action
+  doReset() {
+    return this.args.form.doReset();
+  }
+}

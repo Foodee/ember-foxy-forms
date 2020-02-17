@@ -1,12 +1,18 @@
-import { moduleFor, test } from 'ember-qunit';
+import { module, test } from 'qunit';
+import { setupTest } from 'ember-qunit';
 
-moduleFor('service:form-for', 'Unit | Service | form for', {
-  // Specify the other units that are required for this test.
-  // needs: ['service:foo']
-});
+module('Unit | Service | form-for', function (hooks) {
+  setupTest(hooks);
 
-// Replace this with your real tests.
-test('it exists', function(assert) {
-  let service = this.subject();
-  assert.ok(service);
+  test('it exists', function (assert) {
+    let service = this.owner.lookup('service:form-for');
+    assert.ok(service);
+  });
+
+  test('exposes confirmDestroy / notifySuccess / notifyError', function (assert) {
+    let service = this.owner.lookup('service:form-for');
+    assert.ok(service.confirmDestroy);
+    assert.ok(service.notifySuccess);
+    assert.ok(service.notifyError);
+  });
 });
