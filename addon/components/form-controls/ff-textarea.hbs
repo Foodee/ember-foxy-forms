@@ -1,0 +1,18 @@
+<textarea
+  id={{@controlId}}
+  value={{@value}}
+  placeholder={{@placeholder}}
+  disabled={{@disabled}}
+  readonly={{@isReadonly}}
+  maxlength={{@maxLength}}
+  max={{@max}}
+  min={{@min}}
+  step={{@step}}
+  ...attributes
+  data-test-ff-control-textarea
+  {{on "blur" this.handleBlur}}
+  {{on "focus" this.handleFocus}}
+  {{on "click" this.handleClick}}
+  {{on "change" this.handleChange}}
+  {{on "keyUp" this.handleChange}}
+></textarea>

@@ -1,0 +1,176 @@
+:root {
+  --brand-primary: #8f2c27;
+}
+
+label {
+  font-weight: bold;
+}
+
+label.error {
+  font-weight: bold;
+  color: red;
+}
+
+input,
+textarea,
+select {
+  padding: 0.1em;
+  border: 1px solid black;
+  border-radius: 4px;
+}
+
+button {
+  border: 1px solid black;
+  background-color: lightgrey;
+  border-radius: 4px;
+}
+
+button:hover {
+  background-color: white;
+}
+
+.form-for h1 {
+  font-weight: bold;
+  font-size: 22px;
+}
+
+.form-for h2 {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.form-for .field-for {
+  display: flex;
+  flex-direction: row;
+  padding: 0.5em;
+  position: relative;
+}
+
+.field-for.error input,
+.field-for.error textarea {
+  border-color: red;
+}
+
+
+.field-for label {
+  width: 100px;
+}
+
+.field-for-control-container  {
+  flex: 1;
+}
+
+.field-for-control-and-commit-buttons  {
+  display: flex;
+}
+
+.field-for-control-callout  {
+  position: relative;
+  background-color: white;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 5px;
+}
+
+[x-placement="bottom"] .field-for-control-callout:after, [x-placement="bottom"] .field-for-control-callout:before {
+  bottom: 100%;
+  left: 50%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+[x-placement="bottom"] .field-for-control-callout:after {
+  border-color: rgba(255, 255, 255, 0);
+  border-bottom-color: #ffffff;
+  border-width: 5px;
+  margin-left: -5px;
+}
+[x-placement="bottom"] .field-for-control-callout:before {
+  border-color: rgba(204, 204, 204, 0);
+  border-bottom-color: #cccccc;
+  border-width: 8px;
+  margin-left: -8px;
+}
+
+[x-placement="top"] .field-for-control-callout:after, [x-placement="top"] .field-for-control-callout:before {
+  top: 100%;
+  left: 50%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+[x-placement="top"] .field-for-control-callout:after {
+  border-color: rgba(255, 255, 255, 0);
+  border-top-color: #ffffff;
+  border-width: 5px;
+  margin-left: -5px;
+}
+
+[x-placement="top"] .field-for-control-callout:before {
+  border-color: rgba(204, 204, 204, 0);
+  border-top-color: #cccccc;
+  border-width: 8px;
+  margin-left: -8px;
+}
+
+.field-for .field-for-value-container  {
+  border: none;
+  background-color: white;
+  flex: 1;
+  text-align: left;
+}
+
+.field-for .field-for-value-container:hover,
+.field-for .field-for-value-container:focus,
+.field-for .field-for-value-showing-control-callout {
+  outline: 1px dashed lightblue;
+}
+
+.field-for.push-right {
+  margin-left: 100px;
+}
+
+.commit-cancel {
+  margin-left: 0.2em;
+}
+
+.commit, .cancel {
+  padding: 0.10em 0.55em;
+}
+
+.commit {
+  color: green;
+  border-color: green;
+}
+
+.cancel {
+  color: red;
+  border-color: red;
+}
+
+.columns {
+  display: flex;
+  flex-direction: row;
+}
+
+.columns > * {
+  flex: 1;
+  width: 50%;
+}
+
+.hljs.model {
+  font-size: 12px;
+}
+
+.form-controls-ff-radio {
+  display: block;
+}

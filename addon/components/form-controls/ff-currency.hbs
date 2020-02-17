@@ -1,0 +1,17 @@
+<OneWayCurrencyMask
+  @value={{@value}}
+  @placeholder={{@placeholder}}
+  @options={{hash prefix=this.prefix}}
+  @update={{this.handleChange}}
+  id={{@controlId}}
+  disabled={{@disabled}}
+  readonly={{@isReadonly}}
+  ...attributes
+  data-test-ff-control-currency
+  {{on "blur" this.handleBlur}}
+  {{on "focus" this.handleFocus}}
+  {{on "click" this.handleClick}}
+  {{on "keyup" this.handleKeyUp}}
+  {{on "keydown" this.handleKeyDown}}
+  {{on "cut" this.handleCut}}
+/>

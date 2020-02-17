@@ -1,0 +1,13 @@
+{{#if @errors.length}}
+  <div class="errors" ...attributes data-test-form-errors>
+    {{#each @errors as |error|}}
+      {{#if @customErrorComponent}}
+        {{component @customErrorComponent error=error}}
+      {{else}}
+        <label class="error" data-test-form-error>
+          {{error}}
+        </label>
+      {{/if}}
+    {{/each}}
+  </div>
+{{/if}}

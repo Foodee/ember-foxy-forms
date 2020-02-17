@@ -1,40 +1,51 @@
-import { moduleForComponent, test } from 'ember-qunit';
+import Component from '@ember/component';
+import { module, test } from 'qunit';
+import { setupRenderingTest } from 'ember-qunit';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import Ember from 'ember';
 
-moduleForComponent('errors-for', 'Integration | Component | errors for', {
-  integration: true
-});
+module('Integration | Component | errors for', function (hooks) {
+  setupRenderingTest(hooks);
 
-test('displays errors', function(assert) {
-  assert.expect(1);
+  test('displays errors', async function (assert) {
+    assert.expect(1);
 
-  this.set('errors', ['some-error', 'another-error']);
+    this.set('errors', ['some-error', 'another-error']);
 
-  this.render(hbs`{{errors-for errors=errors}}`);
+    await render(hbs`<ErrorsFor @errors={{this.errors}} />`);
 
-  assert.equal(this.$('.error').length, 2, 'should display two errors');
-});
+    assert.dom('[data-test-form-error]').exists({ count: 2 }, 'should display two errors');
+  });
 
-test('can configure custom error component', function (assert) {
-  assert.expect(2);
+  test('can configure custom error component', async function (assert) {
+    assert.expect(2);
 
-  this.register('config:environment', {
-    APP: {
-      'ember-foxy-forms': {
-        customErrorComponent: 'custom-errors-for'
-      }
-    }
-  }, {instantiate: false});
+    this.owner.register(
+      'config:environment',
+      {
+        APP: {
+          'ember-foxy-forms': {
+            customErrorComponent: 'custom-errors-for',
+          },
+        },
+      },
+      { instantiate: false }
+    );
 
-  this.register('component:custom-errors-for', Ember.Component.extend({
-    classNames: ['custom-error']
-  }));
+    this.owner.register(
+      'component:custom-errors-for',
+      Component.extend({
+        classNames: ['custom-error'],
+      })
+    );
 
-  this.set('errors', ['some-error']);
+    this.errors = ['some-error'];
 
-  this.render(hbs`{{errors-for errors=errors}}`);
+    await render(
+      hbs`<ErrorsFor @errors={{this.errors}} @customErrorComponent="custom-errors-for" />`
+    );
 
-  assert.equal(this.$('.error').length, 0, 'should not display default error element');
-  assert.equal(this.$('.custom-error').length, 1, 'should use custom errors-for component');
+    assert.dom('[data-test-form-error]').doesNotExist('should not display default error element');
+    assert.dom('.custom-error').exists({ count: 1 }, 'should use custom errors-for component');
+  });
 });

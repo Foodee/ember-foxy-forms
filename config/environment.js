@@ -1,4 +1,3 @@
-/*jshint node:true*/
 'use strict';
 
 module.exports = function (/* environment, appConfig */) {
@@ -12,12 +11,17 @@ module.exports = function (/* environment, appConfig */) {
         fieldForControlCalloutPosition: 'bottom left',
 
         buttonClasses: '',
+        buttonActingClass: '',
         submitButtonClasses: '',
         resetButtonClasses: '',
+        destroyButtonClasses: '',
 
         customCommitCancelComponent: null,
-        customErrorComponent: null
-      }
-    }
+        customErrorComponent: null,
+
+        controlsFolder: 'form-controls',
+        controlPrefix: 'ff-',
+      },
+    },
   };
 };

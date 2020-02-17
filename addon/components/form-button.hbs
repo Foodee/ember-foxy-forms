@@ -1,0 +1,23 @@
+<button
+  class="
+  {{@class}}
+   {{if @isActing @buttonActingClass}}
+   {{if @icon " icon"}}
+   {{if @disabled " disabled"}}
+  "
+  type="button"
+  disabled={{@disabled}}
+  ...attributes
+  data-test-form-button
+  {{on "click" (stop-propagation this.handleClick)}}
+>
+  {{#if @icon}}
+    <i class="icon {{@icon}}" data-test-form-button-icon></i>
+  {{/if}}
+
+  {{#if (hasBlock)}}
+    {{yield}}
+  {{else}}
+    {{@text}}
+  {{/if}}
+</button>
