@@ -1,0 +1,35 @@
+{{yield
+  (hash
+    fieldFor=(component
+      "field-for"
+      form=this
+      commitValue=this.updateValue
+      commitValues=this.updateValues
+    )
+    button=(component "form-button" text="Button")
+    submit=(component
+      "form-button"
+      text="Submit"
+      isActing=this.isSubmitting
+      classNames=this.config.submitButtonClasses
+      onClick=this.doSubmit
+    )
+    reset=(component
+      "form-button"
+      text="Reset"
+      isActing=this.isResetting
+      classNames=this.config.resetButtonClasses
+      onClick=this.doReset
+    )
+    destroy=(component
+      "form-button"
+      text="Delete"
+      isActing=this.isDestroyingRecord
+      classNames=this.config.destroyButtonClasses
+      onClick=(fn this.confirmDestroy this.model)
+    )
+    errors=(component "errors-for" errors=this.errors)
+    self=this
+  )
+  this
+}}

@@ -1,30 +1,50 @@
-import {moduleForComponent, test} from 'ember-qunit';
-import hbs from 'htmlbars-inline-precompile';
+import { module, test } from 'qunit';
+import { setupRenderingTest } from 'ember-qunit';
+import { render } from '@ember/test-helpers';
+import { hbs } from 'ember-cli-htmlbars';
 
-moduleForComponent('label-for', 'Integration | Component | label for', {
-  integration: true
+module('Integration | Component | label-for', function(hooks) {
+  setupRenderingTest(hooks);
+
+  test('it renders', async function(assert) {
+    // Set any properties with this.set('myProperty', 'value');
+    // Handle any actions with this.set('myAction', function(val) { ... });
+
+    await render(hbs`<LabelFor />`);
+
+    assert.equal(this.element.textContent.trim(), '');
+  });
 });
 
-test('binds label "for" works', function(assert) {
-  assert.expect(1);
+// import { module, test } from 'qunit';
+// import { setupRenderingTest } from 'ember-qunit';
+// import { render, findAll } from '@ember/test-helpers';
+// import hbs from 'htmlbars-inline-precompile';
 
-  this.render(hbs`{{label-for controlId="foo" label="foo"}}`);
+// module('Integration | Component | label for', function(hooks) {
+//   setupRenderingTest(hooks);
 
-  assert.equal(this.$('label').attr('for'), 'foo');
-});
+//   test('binds label "for" works', async function(assert) {
+//     assert.expect(1);
 
-test('displays provided label', function(assert) {
-  assert.expect(1);
+//     await render(hbs`<LabelFor @controlId="foo" @label="foo" />`);
 
-  this.render(hbs`{{label-for controlId="foo" label="foo"}}`);
+//     assert.dom('label').hasAttribute('for', 'foo');
+//   });
 
-  assert.equal(this.$('label').text().trim(), 'foo');
-});
+//   test('displays provided label', async function(assert) {
+//     assert.expect(1);
 
-test('hides label element when no label defined', function(assert) {
-  assert.expect(1);
+//     await render(hbs`<LabelFor @controlId="foo" @label="foo" />`);
 
-  this.render(hbs`{{label-for controlId="foo"}}`);
+//     assert.dom('label').hasText('foo');
+//   });
 
-  assert.strictEqual(this.$('label').length, 0, 'label element should not be present');
-});
+//   test('hides label element when no label defined', async function(assert) {
+//     assert.expect(1);
+
+//     await render(hbs`<LabelFor @controlId="foo" />`);
+
+//     assert.strictEqual(findAll('label').length, 0, 'label element should not be present');
+//   });
+// });

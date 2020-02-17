@@ -1,26 +1,78 @@
-import Ember from 'ember';
-import layout from '../templates/components/field-for';
+import Component from '@ember/component';
+import { oneWay, readOnly, notEmpty, gt, union } from '@ember/object/computed';
+import { dasherize } from '@ember/string';
+import { isArray } from '@ember/array';
+import { action, defineProperty, computed, get, set } from '@ember/object';
+import { assert } from '@ember/debug';
+import { getOwner } from '@ember/application';
+import { guidFor } from '@ember/object/internals';
+import { run } from '@ember/runloop';
+import { tagName } from '@ember-decorators/component';
 
-const {
-  isArray,
-  computed,
-  defineProperty,
-  assert,
-  getOwner,
-  guidFor,
-  run
-} = Ember;
+// remove tags, so we don't interfere with styles that use direct inheritance
+@tagName('')
+export default class FieldForComponent extends Component {
+  init() {
+    super.init(...arguments);
 
-const FieldFor = Ember.Component.extend({
+    if (this._hasCompositeValue) {
+      // property paths to watch
+      const propertyPaths = this.params.join(',');
+      const _withMapping = get(this, 'withMapping') || {};
 
-  layout,
+      // bind to the value
+      defineProperty(
+        this,
+        'value',
+        computed(`form.model.{${propertyPaths}}`, function() {
+          return this.params.reduce((acc, param) => {
+            // we either use the key map provided by the user, or the
+            // default key value
+            const key = _withMapping[param] || param;
+            acc[key] = get(this, `form.model.${param}`);
 
-  config: computed(function () {
-    return Object.assign({}, getOwner(this).resolveRegistration('config:environment').APP['ember-foxy-forms']);
-  }),
+            return acc;
+          }, {});
+        })
+      );
 
-  // remove tags, so we don't interfere with styles that use direct inheritance
-  tagName: '',
+      const errorPaths = this.params.map((_) => `form.model.errors.${_}`);
+      defineProperty(this, 'errors', union(...errorPaths));
+    } else {
+      const propertyPath = this.params[0];
+
+      assert('<FieldFor /> Requires a propertyPath to bind to', !!propertyPath);
+
+      // bind to the value
+      defineProperty(this, 'value', oneWay(`form.model.${propertyPath}`));
+
+      // bind to errors
+      defineProperty(this, 'errors', oneWay(`form.model.errors.${propertyPath}`));
+    }
+
+    // Capture backup value that will allow full roll back if there are errors on cancel
+    // update the backup value after successful commit
+
+    this.form.registerField(this);
+  }
+
+  // define _value such that we either use the intermediary value that
+  // is set by way of the onChange handler or new values received from the value binding
+  get _value() {
+    return this.value;
+  }
+
+  set _value(value) {
+    this.value = value;
+    return value;
+  }
+
+  get config() {
+    return Object.assign(
+      {},
+      getOwner(this).resolveRegistration('config:environment').APP['ember-foxy-forms']
+    );
+  }
 
   /**
    * The form that this field belongs to
@@ -29,15 +81,15 @@ const FieldFor = Ember.Component.extend({
    * @default null
    * @public
    */
-  form: null,
+  form = null;
 
   // --------------------------------------------------------------------------------
   // This section is where the DSL syntax lives
   // label
   // require-confirm
-  // inline-editing
+  // inlineEditing
   // using
-  // with-mapping
+  // withMapping
   //
 
   /**
@@ -47,7 +99,7 @@ const FieldFor = Ember.Component.extend({
    * @default null
    * @public
    */
-  label: null,
+  label = null;
 
   /**
    * Whether or not this field is disabled
@@ -56,7 +108,7 @@ const FieldFor = Ember.Component.extend({
    * @default false
    * @public
    */
-  disabled: computed.oneWay('form.disabled'),
+  @oneWay('form.disabled') disabled;
 
   /**
    * Whether or not this field is readonly
@@ -65,7 +117,7 @@ const FieldFor = Ember.Component.extend({
    * @default false
    * @public
    */
-  readonly: computed.oneWay('form.readonly'),
+  @oneWay('form.readonly') readonly;
 
   /**
    * Whether or not this field requires confirmation from the user
@@ -75,32 +127,38 @@ const FieldFor = Ember.Component.extend({
    * @default true
    * @public
    */
-  'require-confirm': computed.oneWay('form.require-confirm'),
-  _requireConfirm: computed.readOnly('require-confirm'),
+  @oneWay('form.require-confirm') 'require-confirm';
+  @readOnly('require-confirm') _requireConfirm;
 
   /**
    * Whether or not this field is in inline-edit mode, which displays
    * a value that can be clicked on and then reveal the control useful
    * for all sorts of layouts
-   * @property inline-editing
+   * @property inlineEditing
    * @type boolean
    * @default false
    * @public
    */
-  'inline-editing': computed.oneWay('form.inline-editing'),
-  inlineEditing: computed.readOnly('inline-editing'),
+  // @oneWay('form.inlineEditing') inlineEditing;
+  // @readOnly('form.inlineEditing') _inlineEditing;
+  @readOnly('inlineEditing') _inlineEditing;
 
   /**
    * Name of the control that fields, used to define the control
    * that the field wraps
-   * @property using
+   * @property _using
    * @type String
    * @default '-input'
    * @public
    */
-  using: computed(function () {
-    return this.get('_hasCompositeValue') ? '-multiple-input' : '-input';
-  }),
+  @computed('using')
+  get _using() {
+    if (!this.using) {
+      return this._hasCompositeValue ? '-multiple-input' : '-input';
+    }
+
+    return this.using;
+  }
 
   /**
    * The with mapping hash, provides a mapping from model space
@@ -110,17 +168,17 @@ const FieldFor = Ember.Component.extend({
    * @default null
    * @public
    */
-  _withMapping: computed.readOnly('with-mapping'),
+  @readOnly('withMapping') _withMapping;
 
   /**
    * Wether or not the fields have control callouts (popups / popovers) when in
    * inline-edit mode
-   * @property has-control-callout
+   * @property hasControlCallout
    * @type Boolean
    * @default false
    * @public
    */
-  ['has-control-callout']: computed.oneWay('form.has-control-callout'),
+  @oneWay('form.hasControlCallout') hasControlCallout;
 
   /**
    * The position of the control callout (up to the client to decide how to use this info)
@@ -129,7 +187,7 @@ const FieldFor = Ember.Component.extend({
    * @default null
    * @public
    */
-  ['callout-position']: null,
+  ['callout-position'] = null;
 
   /**
    * The position of the control callout (up to the client to decide how to use this info)
@@ -138,12 +196,13 @@ const FieldFor = Ember.Component.extend({
    * @type String
    * @private
    */
-  _calloutPosition: computed('callout-position', 'config', function () {
-    const calloutPosition = this.get('callout-position');
-    const config = this.get('config');
+  @computed('callout-position', 'config')
+  get _calloutPosition() {
+    const calloutPosition = get(this, 'callout-position');
+    const config = get(this, 'config');
 
-    return calloutPosition || config && config.fieldForControlCalloutPosition;
-  }),
+    return calloutPosition || (config && config.fieldForControlCalloutPosition);
+  }
 
   /**
    * Optional array of values to be delegated down to the control, useful
@@ -153,7 +212,7 @@ const FieldFor = Ember.Component.extend({
    * @default null
    * @public
    */
-  values: null,
+  values = null;
 
   /**
    * Either delegate the values down to the control, or transform them
@@ -163,18 +222,18 @@ const FieldFor = Ember.Component.extend({
    * @default null
    * @public
    */
-  _values: computed('values', function () {
-    const values = this.get('values');
-    let ret = values;
+  @computed('values')
+  get _values() {
+    let ret = this.values;
 
-    if (values && !isArray(values)) {
+    if (this.values && !isArray(this.values)) {
       // if the values provided is not an array but in fact a string
       // we transform it into a POJO
-      return values.split(',').map(this['values-extractor']);
+      return this.values.split(',').map((value) => this.valuesExtractor(value));
     }
 
     return ret;
-  }),
+  }
 
   /**
    * This method extracts a value for the values array in the
@@ -185,44 +244,42 @@ const FieldFor = Ember.Component.extend({
    * @param value
    * @returns {{id: String, label: String, icon: String}}
    */
-  'values-extractor'(value) {
+  valuesExtractor(value) {
     const chunks = value.split(':');
     const [id, label, icon] = chunks;
 
-    return {id, label, icon};
-  },
-
+    return { id, label, icon };
+  }
 
   /**
    * Function for formatting the value override for custom behavior
-   * @method format-value
+   * @method formatValue
    * @param {Object} value
    * @returns string
    */
-  'format-value'(value) {
+  formatValue(value) {
     return value;
-  },
-
+  }
 
   /**
-   * The result of applying the format-value function to the value
+   * The result of applying the formatValue function to the value
    * @property _formattedValue
    * @type String
    * @default value
    * @private
    */
-  'display-value': computed('value', function () {
-    return this['format-value'](this.get('value'));
-  }),
+  get displayValue() {
+    return this.formatValue(this.value);
+  }
 
   /**
    * Tooltip to append to the value when inline editing
-   * @property value-tooltip
+   * @property valueTooltip
    * @type String
    * @default null
    * @private
    */
-  'value-tooltip': null,
+  valueTooltip = null;
 
   // --------------------------------------------------------------------------------
   // Computed Properties
@@ -235,9 +292,13 @@ const FieldFor = Ember.Component.extend({
    * @default '--field-for__<params>'
    * @private
    */
-  _testingClass: computed(function () {
-    return `${this.get('config.testingClassPrefix')}field-for__${this.get('form._modelName')}_${this.get('params').map(_ => _.toString()).map(Ember.String.dasherize).join('_').replace(/\./g, '__')}`;
-  }),
+  get _testingClass() {
+    return `${this.config.testingClassPrefix}field-for__${this.form._modelName}_${this.params
+      .map((_) => _.toString())
+      .map(dasherize)
+      .join('_')
+      .replace(/\./g, '__')}`;
+  }
 
   /**
    * Whether or not this field currently requires confirmation
@@ -246,9 +307,10 @@ const FieldFor = Ember.Component.extend({
    * @default true
    * @private
    */
-  _requiresConfirm: computed('_requireConfirm', 'inlineEditing', 'isDirty', function () {
-    return this.get('_requireConfirm') && this.get('isDirty') || this.get('inlineEditing');
-  }),
+  @computed('_requireConfirm', '_inlineEditing', 'isDirty')
+  get _requiresConfirm() {
+    return (this._requireConfirm && this.isDirty) || this._inlineEditing;
+  }
 
   /**
    * The fully qualified path to the control for this component
@@ -257,9 +319,10 @@ const FieldFor = Ember.Component.extend({
    * @default 'form-controls/-input-control'
    * @private
    */
-  _control: computed('using', function () {
-    return `form-controls/${this.get('using')}-control`;
-  }),
+  @computed('_using')
+  get _control() {
+    return `form-controls/${this._using}-control`;
+  }
 
   /**
    * Generated ID to tie together the label and the control
@@ -268,9 +331,9 @@ const FieldFor = Ember.Component.extend({
    * @default 'control-for-<guidForField>'
    * @public
    */
-  controlId: computed(function () {
+  get controlId() {
     return `control-for-${guidFor(this)}`;
-  }),
+  }
 
   /**
    * Whether or not this field is has been edited but not
@@ -280,9 +343,10 @@ const FieldFor = Ember.Component.extend({
    * @default false
    * @public
    */
-  isDirty: computed('_value', 'value', function () {
-    return this._stringify(this.get('_value')) !== this._stringify(this.get('value'));
-  }),
+  @computed('_value', 'value')
+  get isDirty() {
+    return this._stringify(this._value) !== this._stringify(this.value);
+  }
 
   /**
    * Whether or not this field is has been edited and
@@ -292,14 +356,19 @@ const FieldFor = Ember.Component.extend({
    * @default false
    * @public
    */
-  isReallyDirty: computed('_lastValidValue', 'value', function () {
+  @computed('_lastValidValue', 'value')
+  get isReallyDirty() {
     // initial values on string values may be null which looks the same as an empty value.
-    return this._stringify(this.get('_lastValidValue')) !== this._stringify(this.get('value')) &&
-      !(this.get('_lastValidValue') === null && this.get('value') === '' ||
-        this.get('_lastValidValue') === '' && this.get('value') === null ||
-        this.get('_lastValidValue') === undefined && this.get('value') === '' ||
-        this.get('_lastValidValue') === '' && this.get('value') === undefined);
-  }),
+    return (
+      this._stringify(get(this, '_lastValidValue')) !== this._stringify(get(this, 'value')) &&
+      !(
+        (get(this, '_lastValidValue') === null && get(this, 'value') === '') ||
+        (get(this, '_lastValidValue') === '' && get(this, 'value') === null) ||
+        (get(this, '_lastValidValue') === undefined && get(this, 'value') === '') ||
+        (get(this, '_lastValidValue') === '' && get(this, 'value') === undefined)
+      )
+    );
+  }
 
   /**
    * Stringifies a value, we can't just use JSON.stringify directly as it can create circular refs
@@ -311,8 +380,8 @@ const FieldFor = Ember.Component.extend({
    * @private
    */
   _stringify(value) {
-    return isArray(value) ? value.map(_ => this._stringify(_)).join(',') : JSON.stringify(value);
-  },
+    return isArray(value) ? value.map((_) => this._stringify(_)).join(',') : JSON.stringify(value);
+  }
 
   /**
    * Whether or not the current field mapping has any errors
@@ -320,7 +389,7 @@ const FieldFor = Ember.Component.extend({
    * @type boolean
    * @public
    */
-  hasErrors: computed.notEmpty('errors'),
+  @notEmpty('errors') hasErrors;
 
   /**
    * Whether or not we show the control component
@@ -328,9 +397,12 @@ const FieldFor = Ember.Component.extend({
    * @type boolean
    * @private
    */
-  _showControl: computed('inlineEditing', 'isEditing', 'hasError', function () {
-    return !this.get('inlineEditing') || this.get('inlineEditing') && this.get('isEditing') || this.get('hasError');
-  }),
+  @computed('_inlineEditing', 'isEditing')
+  get _showControl() {
+    return !this._inlineEditing || (this._inlineEditing && this.isEditing);
+  }
+
+  isEditing = false;
 
   /**
    * Whether or not we show the value / placeholder component
@@ -338,9 +410,10 @@ const FieldFor = Ember.Component.extend({
    * @type boolean
    * @private
    */
-  _showValue: computed('inlineEditing', 'isEditing', 'hasError', function () {
-    return this.get('inlineEditing') && (!this.get('isEditing') || this.get('has-control-callout'));
-  }),
+  @computed('_inlineEditing', 'isEditing', 'hasErrors', 'hasControlCallout')
+  get _showValue() {
+    return (this._inlineEditing && !this.isEditing) || this.hasControlCallout || this.hasErrors;
+  }
 
   /**
    * Whether or not we show the confirm buttons
@@ -348,10 +421,10 @@ const FieldFor = Ember.Component.extend({
    * @type boolean
    * @private
    */
-  _showConfirm: computed(
-    '_requiresConfirm', function () {
-      return this.get('_requiresConfirm');
-    }),
+  @computed('_requiresConfirm')
+  get _showConfirm() {
+    return get(this, '_requiresConfirm');
+  }
 
   /**
    * Whether or not this field is a composite value, meaning
@@ -362,7 +435,7 @@ const FieldFor = Ember.Component.extend({
    * @default false
    * @private
    */
-  _hasCompositeValue: computed.gt('params.length', 1),
+  @gt('params.length', 1) _hasCompositeValue;
 
   /**
    * Override this function to perform custom actions on commit
@@ -371,11 +444,9 @@ const FieldFor = Ember.Component.extend({
    * @param {*} value
    * @public
    */
-  commitValue(/*propertyPath, value*/) {
-  },
+  commitValue(/*propertyPath, value*/) {}
 
-  commitValues(/*value*/) {
-  },
+  commitValues(/*value*/) {}
 
   /**
    * Handles change method from the control, you can override this
@@ -384,17 +455,18 @@ const FieldFor = Ember.Component.extend({
    * @param {*} value
    * @public
    */
+  @action
   handleChange(value) {
-    this.set('_value', value);
+    set(this, '_value', value);
 
-    if (!this.get('_requiresConfirm')) {
+    if (!this._requiresConfirm) {
       this.commit();
     }
-  },
+  }
 
   _extractKeyValueMapping(_value) {
-    const params = this.get('params');
-    const _withMapping = this.get('withMapping') || {};
+    const params = get(this, 'params');
+    const _withMapping = get(this, 'withMapping') || {};
 
     const keyValues = params.reduce((acc, param) => {
       const key = _withMapping[param] || param;
@@ -404,35 +476,35 @@ const FieldFor = Ember.Component.extend({
     }, {});
 
     return keyValues;
-  },
+  }
 
   /**
    * Triggers the commitValue action
    * @method commit
    * @public
    */
+  @action
   commit() {
-
     let commitPromise = null;
-    const _value = this.get('_value');
-    const prevValue = this.get('value');
 
-    if (this.get('_hasCompositeValue')) {
-      const keyValue = this._extractKeyValueMapping(_value);
-      const prevKeyValue = prevValue && this._extractKeyValueMapping(prevValue);
-      commitPromise = this.commitValues(keyValue).then(() => this.didCommitValues(keyValue, prevKeyValue));
+    if (this._hasCompositeValue) {
+      const keyValue = this._extractKeyValueMapping(this._value);
+      const prevKeyValue = this.value && this._extractKeyValueMapping(this.value);
+      commitPromise = this.commitValues(keyValue).then(() =>
+        this.didCommitValues(keyValue, prevKeyValue)
+      );
     } else {
-      const params = this.get('params');
-      commitPromise = this.commitValue(params[0], _value).then(() => this.didCommitValue(_value, prevValue));
+      commitPromise = this.commitValue(this.params[0], this._value).then(() =>
+        this.didCommitValue(this._value, this.value)
+      );
     }
 
     commitPromise.finally(() => {
-      if (!this.get('hasErrors')) {
-        this.set('isEditing', false);
+      if (!this.hasErrors) {
+        set(this, 'isEditing', false);
       }
     });
-
-  },
+  }
 
   /**
    * Triggered after the commit method is called
@@ -440,9 +512,7 @@ const FieldFor = Ember.Component.extend({
    * @param {*} value
    * @public
    */
-  didCommitValue(/* value */) {
-
-  },
+  didCommitValue(/* value */) {}
 
   /**
    * Triggered after the commit method is called for multiple values
@@ -450,9 +520,7 @@ const FieldFor = Ember.Component.extend({
    * @param {Object} values
    * @public
    */
-  didCommitValues(/* values */) {
-
-  },
+  didCommitValues(/* values */) {}
 
   /**
    * Cancels the current intermediary value, only really useful
@@ -460,11 +528,12 @@ const FieldFor = Ember.Component.extend({
    * @method cancel
    * @public
    */
+  @action
   cancel() {
-    this.set('_value', this.get('value'));
+    set(this, '_value', this.value);
     this._resetField();
-    this.set('isEditing', false);
-  },
+    set(this, 'isEditing', false);
+  }
 
   /**
    * Callback for when the form submits
@@ -472,9 +541,9 @@ const FieldFor = Ember.Component.extend({
    * @public
    */
   formDidSubmit() {
-    const value = this.get('value');
-    this.set('_lastValidValue', isArray(value) ? value.toArray() : value);
-  },
+    const value = get(this, 'value');
+    set(this, '_lastValidValue', isArray(value) ? value.toArray() : value);
+  }
 
   /**
    * Callback for when the form resets
@@ -483,7 +552,7 @@ const FieldFor = Ember.Component.extend({
    */
   formDidReset() {
     this._resetField();
-  },
+  }
 
   /**
    * Resets the field to the backup value by re-committing the value
@@ -491,111 +560,47 @@ const FieldFor = Ember.Component.extend({
    * @private
    */
   _resetField() {
-    let form = this.get('form');
+    let form = get(this, 'form');
 
-    if (this.get('_hasCompositeValue')) {
-      form.resetValues(this._extractKeyValueMapping(this.get('_lastValidValue')));
+    if (get(this, '_hasCompositeValue')) {
+      form.resetValues(this._extractKeyValueMapping(get(this, '_lastValidValue')));
     } else {
-      form.resetValue(this.get('params')[0], this.get('_lastValidValue'));
+      form.resetValue(get(this, 'params')[0], get(this, '_lastValidValue'));
     }
 
     form.clearValidations();
-  },
+  }
 
-  actions: {
-    edit() {
-      this.set('isEditing', true);
-      run.next(() => {
-
-        if (this.get('_showControl')) {
-          Ember.$(`#${this.get('controlId')}`).focus();
-        }
-      });
-    },
-
-    doSubmit() {
-      if (this.get('_requiresConfirm')) {
-        this.commit();
-      } else {
-        return this.get('form').doSubmit();
+  @action
+  edit() {
+    set(this, 'isEditing', true);
+    run.next(() => {
+      if (this._showControl) {
+        document.querySelector(`#${this.controlId}`).focus();
       }
-    },
+    });
+  }
 
-    doReset() {
-      return this.get('form').doReset();
-    }
-  },
-
-  init() {
-    this._super(...arguments);
-
-    const params = this.get('params');
-
-    if (this.get('_hasCompositeValue')) {
-      // property paths to watch
-      const propertyPaths = params.join(',');
-      const _withMapping = this.get('withMapping') || {};
-
-      // bind to the value
-      defineProperty(this, 'value', computed(`form.model.{${propertyPaths}}`, function () {
-
-        return params.reduce((acc, param) => {
-          // we either use the key map provided by the user, or the
-          // default key value
-          const key = _withMapping[param] || param;
-          acc[key] = this.get(`form.model.${param}`);
-
-          return acc;
-        }, {});
-
-      }));
-
-      const errorPaths = params.map(_ => `form.model.errors.${_}`);
-      defineProperty(this, 'errors', computed.union(...errorPaths));
+  @action
+  doSubmit() {
+    if (get(this, '_requiresConfirm')) {
+      this.commit();
     } else {
-      const propertyPath = params[0];
-
-      assert(!!propertyPath, '{{field-for}} Requires a propertyPath to bind to');
-
-      // bind to the value
-      defineProperty(this, 'value', computed.oneWay(`form.model.${propertyPath}`));
-
-      // bind to errors
-      defineProperty(this, 'errors', computed.oneWay(`form.model.errors.${propertyPath}`));
+      return get(this, 'form').doSubmit();
     }
+  }
 
-    // define _value such that we either use the intermediary value that
-    // is set by way of the onChange handler or new values received from the value binding
-    defineProperty(this, '_value', computed('value', {
-      get() {
-        return this.get('value');
-      },
-      set(key, value) {
-        return value;
-      }
-    }));
-
-    // Capture backup value that will allow full roll back if there are errors on cancel
-    // update the backup value after successful commit
-
-    this.get('form').registerField(this);
-  },
+  @action
+  doReset() {
+    return get(this, 'form').doReset();
+  }
 
   didInsertElement() {
-    const value = this.get('value');
-    this.set('_lastValidValue', isArray(value) ? value.toArray() : value);
-  },
+    const value = get(this, 'value');
+    set(this, '_lastValidValue', isArray(value) ? value.toArray() : value);
+  }
 
   willDestroyElement() {
-    this.get('form').unregisterField(this);
+    get(this, 'form').unregisterField(this);
   }
-});
-
-FieldFor.reopenClass({
-  // Setting the positional params to 'params' makes all positional params available to
-  // the component at runtime under the key 'params' we use this to allow the component
-  // to take a variable number of params thus supporting single value or composite value mode
-  positionalParams: 'params'
-});
-
-export default FieldFor;
+}

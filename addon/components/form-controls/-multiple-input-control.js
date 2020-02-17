@@ -1,31 +1,18 @@
-import Ember from 'ember';
-import layout from '../../templates/components/form-controls/-multiple-input-control';
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
 
-const {
-  computed
-} = Ember;
-
-export default Ember.Component.extend({
-  layout,
-
-  _inputs: computed('value', function () {
-    return Object.keys(this.get('value') || []).map((key, index) => ({
+export default class FormControlsMultipleInputControlComponent extends Component {
+  get _inputs() {
+    return Object.keys(this.args.value || []).map((key, index) => ({
       key: key,
-      id: index
+      id: index,
     }));
-  }),
+  }
 
-  _sendChange(newValue){
-    this.onChange(Object.assign({}, this.get('value'), newValue));
-  },
-
-  onChange(/*value*/){
-  },
-
-  actions: {
-
-    handleValueChange(key, event){
-      this._sendChange({[key]: event.target.value});
+  @action
+  handleValueChange(key, event) {
+    if (this.args.onChange) {
+      this.args.onChange(Object.assign({}, this.args.value, { [key]: event.target.value }));
     }
   }
-});
+}

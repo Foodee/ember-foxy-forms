@@ -1,0 +1,10 @@
+{{#each this._inputs as |item|}}
+  <input
+    class="input-{{item.id}}"
+    value={{get @value item.key}}
+    ...attributes
+    type="text"
+    {{on "change" (fn this.handleValueChange item.key)}}
+    {{on "keyUp" (fn this.handleValueChange item.key)}}
+  />
+{{/each}}

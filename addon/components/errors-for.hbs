@@ -1,0 +1,12 @@
+{{#if @errors}}
+  <div class="errors {{strip-class-names @classNames}}">
+    {{#each @errors as |error|}}
+      {{#if this.config.customErrorComponent}}
+        {{component this.config.customErrorComponent error=error}}
+      {{else}}
+        <label class="error">{{error}}</label>
+      {{/if}}
+    {{/each}}
+  </div>
+{{/if}}
+

@@ -1,7 +1,21 @@
 # ember-foxy-forms
 
+Compatibility
+------------------------------------------------------------------------------
 
-[![Code Climate](https://codeclimate.com/repos/59076c1d310eda02ab000350/badges/7269e6fd35928949f93f/gpa.svg)](https://codeclimate.com/repos/59076c1d310eda02ab000350/feed) [![Test Coverage](https://codeclimate.com/repos/59076c1d310eda02ab000350/badges/7269e6fd35928949f93f/coverage.svg)](https://codeclimate.com/repos/59076c1d310eda02ab000350/coverage) [![Issue Count](https://codeclimate.com/repos/59076c1d310eda02ab000350/badges/7269e6fd35928949f93f/issue_count.svg)](https://codeclimate.com/repos/59076c1d310eda02ab000350/feed) [ ![Codeship Status for Foodee/ember-foxy-forms](https://app.codeship.com/projects/caace390-10be-0135-bdfd-42a6c56c937f/status?branch=master)](https://app.codeship.com/projects/216394)
+* Ember.js v3.12 or above
+* Ember CLI v2.13 or above
+* Node.js v10 or above
+
+Installation
+------------------------------------------------------------------------------
+
+```
+ember install my-addon
+```
+
+Usage
+------------------------------------------------------------------------------
 
 Not just forms, Foxy Forms.
 
@@ -36,7 +50,7 @@ const FormFor = {
   // Whether or not this form uses inline editing by default
   // in this mode the form will display text values, which can be
   // clicked to edit
-  'inline-editing': false,
+  nlineEditing: false,
   
    // Whether or not all of the fields on this form require confirm before 
    // committing their values to the model
@@ -217,25 +231,14 @@ forms: '--form-for__model-name'
 
 fields: '--form-for__model-name_key(s)'
 
-## Installation
 
-* `git clone` this repository
-* `npm install`
-* `bower install`
+Contributing
+------------------------------------------------------------------------------
 
-## Running
+See the [Contributing](CONTRIBUTING.md) guide for details.
 
-* `ember serve`
-* Visit your app at http://localhost:4200.
 
-## Running Tests
+License
+------------------------------------------------------------------------------
 
-* `npm test` (Runs `ember try:testall` to test your addon against multiple Ember versions)
-* `ember test`
-* `ember test --server`
-
-## Building
-
-* `ember build`
-
-For more information on using ember-cli, visit [http://ember-cli.com/](http://ember-cli.com/).
+This project is licensed under the [MIT License](LICENSE.md).

@@ -1,0 +1,13 @@
+<select
+  id={{@controlId}}
+  value={{@value}}
+  data-test-form-controls-selector
+  ...attributes
+  {{on "change" this.handleChange}}
+>
+  {{#each @values as |item|}}
+    <option value={{item.id}} data-test-form-controls-selector-option>
+      {{item.label}}
+    </option>
+  {{/each}}
+</select>

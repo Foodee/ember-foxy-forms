@@ -1,10 +1,7 @@
-export function initialize(/* application */) {
-  // application.inject('route', 'foo', 'service:foo');
+export function initialize(application) {
+  application.inject('component', 'router', 'router:main');
 }
 
 export default {
-  name: 'router',
-  initialize: function(application) {
-    application.inject('component', 'router', 'router:main');
-  }
+  initialize,
 };

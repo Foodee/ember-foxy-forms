@@ -1,18 +1,11 @@
-import Ember from 'ember';
-import layout from '../../templates/components/form-controls/-select-control';
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
 
-export default Ember.Component.extend({
-  layout,
-
-  value: null,
-
-  values: null,
-
-  idKey: 'id',
-
-  labelKey: 'label',
-
-  onChange(/* value */){
+export default class FormControlsSelectControlComponent extends Component {
+  @action
+  handleChange(event) {
+    if (this.args.onChange) {
+      return this.args.onChange(event.target.value);
+    }
   }
-
-});
+}

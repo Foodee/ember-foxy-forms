@@ -1,7 +1,6 @@
-/*jshint node:true*/
 'use strict';
 
-module.exports = function (/* environment, appConfig */) {
+module.exports = function(/* environment, appConfig */) {
   return {
     APP: {
       'ember-foxy-forms': {
@@ -16,8 +15,8 @@ module.exports = function (/* environment, appConfig */) {
         resetButtonClasses: '',
 
         customCommitCancelComponent: null,
-        customErrorComponent: null
-      }
-    }
+        customErrorComponent: null,
+      },
+    },
   };
 };

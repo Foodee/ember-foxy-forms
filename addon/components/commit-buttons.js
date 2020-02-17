@@ -1,22 +1,9 @@
-import Ember from 'ember';
-import layout from '../templates/components/commit-buttons';
+import Component from '@ember/component';
+import { getOwner } from '@ember/application';
+import { tagName } from '@ember-decorators/component';
 
-const {
-  Component,
-  computed,
-  getOwner,
-} = Ember;
-
-export default Component.extend({
-  layout,
-
-  // remove tags, so we don't interfere with styles that use direct inheritance
-  tagName: '',
-
-  config: computed(function () {
-    return Object.assign({}, getOwner(this).resolveRegistration('config:environment').APP['ember-foxy-forms']);
-  }),
-
+@tagName('') // remove tags, so we don't interfere with styles that use direct inheritance
+export default class CommitButtonsComponent extends Component {
   /**
    * Errors to be rendered by this component
    * @property visible
@@ -24,21 +11,12 @@ export default Component.extend({
    * @default false
    * @public
    */
-  visible: false,
+  visible = false;
 
-  /**
-   * Override function for custom behavior on commit
-   * @method commit
-   * @public
-   */
-  commit(){
-  },
-
-  /**
-   * Override function for custom behavior on cancel
-   * @method commit
-   * @public
-   */
-  cancel(){
+  get config() {
+    return Object.assign(
+      {},
+      getOwner(this).resolveRegistration('config:environment').APP['ember-foxy-forms']
+    );
   }
-});
+}

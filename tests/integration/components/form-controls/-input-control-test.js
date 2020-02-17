@@ -1,14 +1,14 @@
-import { moduleForComponent, test } from 'ember-qunit';
-import hbs from 'htmlbars-inline-precompile';
+import { module, test } from 'qunit';
+import { setupRenderingTest } from 'ember-qunit';
+import { render } from '@ember/test-helpers';
+import { hbs } from 'ember-cli-htmlbars';
 
-moduleForComponent('form-controls/-input-control', 'Integration | Component | controls/ input control', {
-  integration: true
-});
+module('Integration | Component | form-controls/-input-control', function(hooks) {
+  setupRenderingTest(hooks);
 
-test('it renders', function(assert) {
-  assert.expect(1);
+  test('it renders', async function(assert) {
+    await render(hbs`<FormControls::-InputControl />`);
 
-  this.render(hbs`{{form-controls/-input-control}}`);
-
-  assert.equal(this.$().text().trim(), '');
+    assert.equal(this.element.textContent.trim(), '');
+  });
 });

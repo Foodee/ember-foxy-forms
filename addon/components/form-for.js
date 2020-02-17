@@ -1,33 +1,65 @@
-import Ember from 'ember';
-import layout from '../templates/components/form-for';
+import Component from '@ember/component';
+import { next } from '@ember/runloop';
+import { dasherize } from '@ember/string';
+import { Promise } from 'rsvp';
+import { inject as service } from '@ember/service';
+import { getOwner } from '@ember/application';
+import EmberObject, { action, setProperties, get, computed, set } from '@ember/object';
+import { A } from '@ember/array';
+import { classNames, classNameBindings, tagName } from '@ember-decorators/component';
 
-const {
-  RSVP: {Promise},
-  inject: {service},
-  computed,
-  get,
-  getOwner,
-  setProperties,
-} = Ember;
+@tagName('div') // remove tags, so we don't interfere with styles that use direct inheritance
+@classNames('form-for')
+@classNameBindings('config.formClasses', '_testingClass')
+export default class FormForComponent extends Component {
+  @service() formFor;
+  @service() router;
 
-const FormFor = Ember.Component.extend({
+  init() {
+    super.init(...arguments);
 
-  layout,
+    if (this.tagName === '') {
+      this.classNameBindings = [];
+    }
 
-  formFor: service(),
+    if (this.preventsNavigation) {
+      this.handleWilltransition = (transition) => {
+        const isDirty =
+          (this.useEmberDataDirtyTracking && this.model.hasDirtyAttributes) || this.isModelDirty;
 
-  router: service('-routing'),
+        if (isDirty && !confirm('You have unsaved changes, are you sure you want to leave?')) {
+          transition.abort();
+        }
+      };
 
-  config: computed(function () {
-    return Object.assign({}, getOwner(this).resolveRegistration('config:environment').APP['ember-foxy-forms']);
-  }),
+      // in test environments that are not acceptance, we won't have real router
 
-  // remove tags, so we don't interfere with styles that use direct inheritance
-  tagName: 'div',
+      if (this.router && this.router.on) {
+        this.router.on('willTransition', this, this.handleWilltransition);
+      }
 
-  classNames: ['form-for'],
+      // prevent browser reloads
+      window.onbeforeunload = () => {
+        const isDirty =
+          (this.useEmberDataDirtyTracking && this.model.hasDirtyAttributes) || this.isModelDirty;
 
-  classNameBindings: ['config.formClasses', '_testingClass'],
+        if (isDirty) {
+          return 'You have unsaved changes, are you sure you want to leave?';
+        }
+      };
+    }
+
+    if (this.parentForm) {
+      this.parentForm.registerChildForm(this);
+    }
+  }
+
+  get config() {
+    return Object.assign(
+      {},
+      getOwner(this).resolveRegistration('config:environment').APP['ember-foxy-forms']
+    );
+  }
 
   /**
    * Collection of all child field registered with this form
@@ -36,7 +68,7 @@ const FormFor = Ember.Component.extend({
    * @default null
    * @public
    */
-  fields: null,
+  fields = A();
 
   /**
    * Model that this form controls
@@ -45,9 +77,9 @@ const FormFor = Ember.Component.extend({
    * @default null
    * @public
    */
-  model: null,
+  model = EmberObject.create();
 
-  'model-name': null,
+  modelName = null;
 
   /**
    * Whether or not any changes have been made to the model
@@ -56,8 +88,7 @@ const FormFor = Ember.Component.extend({
    * @default false
    * @public
    */
-  isModelDirty: false,
-
+  isModelDirty = false;
 
   /**
    * Whether or not to use ember data dirty tracking
@@ -66,8 +97,7 @@ const FormFor = Ember.Component.extend({
    * @default false
    * @public
    */
-  useEmberDataDirtyTracking: false,
-
+  useEmberDataDirtyTracking = false;
 
   /**
    * The last doSubmit Promise; used to queue multiple submit requests
@@ -76,7 +106,7 @@ const FormFor = Ember.Component.extend({
    * @default null
    * @public
    */
-  lastDoSubmit: null,
+  lastDoSubmit = null;
 
   /**
    * Computed model name
@@ -85,19 +115,21 @@ const FormFor = Ember.Component.extend({
    * @default 'object'
    * @public
    */
-  _modelName: computed('model', 'model-name', function () {
-    const model = this.get('model');
+  @computed('model', 'modelName')
+  get _modelName() {
+    const model = get(this, 'model');
     let modelName = 'object';
 
     if (model) {
-      modelName = this.get('model-name') ||
+      modelName =
+        this.modelName ||
         get(model, 'modelName') ||
         get(model, '_internalModel.modelName') ||
         'object';
     }
 
-    return Ember.String.dasherize(modelName);
-  }),
+    return dasherize(modelName);
+  }
 
   /**
    * A class which will be appended to the form for testing purpose (not styling purposes)
@@ -106,10 +138,10 @@ const FormFor = Ember.Component.extend({
    * @default '--field-for__<model-name>'
    * @private
    */
-  _testingClass: computed('model', function () {
-    return `${this.get('config.testingClassPrefix')}form-for__${this.get('_modelName')}`;
-  }),
-
+  @computed('model', '_modelName')
+  get _testingClass() {
+    return `${this.config.testingClassPrefix}form-for__${this._modelName}`;
+  }
 
   /**
    * Base errors for the model
@@ -118,14 +150,14 @@ const FormFor = Ember.Component.extend({
    * @default []
    * @public
    */
-  errors: computed('model.errors.base', function () {
-    return (this.get('model.errors.base') || [])
-      .map(error => {
-        error.message = error.message.replace(/base - /i, '');
+  @computed('model.errors.base')
+  get errors() {
+    return (get(this, 'model.errors.base') || []).map((error) => {
+      error.message = error.message.replace(/base - /i, '');
 
-        return error;
-      });
-  }),
+      return error;
+    });
+  }
 
   /**
    * Denotes when the form or any of it's children are submitting.
@@ -135,18 +167,22 @@ const FormFor = Ember.Component.extend({
    * @type Boolean
    * @default false
    */
-  isSubmitting: computed(function() {
-    return this.get('_isSubmitting') || (this.get('child-forms') || []).some(_ => _.get('isSubmitting'));
-  }),
+  get isSubmitting() {
+    return (
+      get(this, '_isSubmitting') ||
+      (get(this, 'child-forms') || []).some((_) => _.get('isSubmitting'))
+    );
+  }
 
   /**
    * Denotes whether this is the root form.
    * @property isRootForm
    * @type Boolean
    */
-  isRootForm: computed('parent-form', function() {
-    return !this.get('parent-form');
-  }),
+  @computed('parentForm')
+  get isRootForm() {
+    return !get(this, 'parentForm');
+  }
 
   /**
    * Denotes when this particular form is submitting, an none of it's children
@@ -154,7 +190,7 @@ const FormFor = Ember.Component.extend({
    * @type Boolean
    * @default false
    */
-  _isSubmitting: false,
+  _isSubmitting = false;
 
   // --------------------------------------------------------------------------------
   // This section is where the DSL syntax lives
@@ -166,7 +202,7 @@ const FormFor = Ember.Component.extend({
    * @default false
    * @public
    */
-  disabled: false,
+  disabled = false;
 
   /**
    * Whether or not this form is readonly
@@ -175,16 +211,16 @@ const FormFor = Ember.Component.extend({
    * @default false
    * @public
    */
-  readonly: false,
+  readonly = false;
 
   /**
    * Whether or not this form is setup for inline editing
-   * @property inline-editing
+   * @property inlineEditing
    * @type boolean
    * @default false
    * @public
    */
-  'inline-editing': false,
+  inlineEditing = false;
 
   /**
    * Whether or not this form requires confirmation to apply values to
@@ -194,7 +230,7 @@ const FormFor = Ember.Component.extend({
    * @default false
    * @public
    */
-  'require-confirm': false,
+  'require-confirm' = false;
 
   /**
    * Whether or not this form notifies of its success by way of the formFor service
@@ -203,7 +239,7 @@ const FormFor = Ember.Component.extend({
    * @default true
    * @public
    */
-  'notify-of-success': true,
+  'notify-of-success' = true;
 
   /**
    * Whether or not this form notifies of its error by way of the formFor service
@@ -212,7 +248,7 @@ const FormFor = Ember.Component.extend({
    * @default true
    * @public
    */
-  'notify-of-error': true,
+  'notify-of-error' = true;
 
   /**
    * The message to send on submit success
@@ -221,7 +257,7 @@ const FormFor = Ember.Component.extend({
    * @default null
    * @public
    */
-  'successful-submit-message': null,
+  'successful-submit-message' = null;
 
   /**
    * The message to send on submit error
@@ -230,7 +266,7 @@ const FormFor = Ember.Component.extend({
    * @default null
    * @public
    */
-  'failed-submit-message': null,
+  'failed-submit-message' = null;
 
   /**
    * The message to send when the model did not submit
@@ -239,7 +275,7 @@ const FormFor = Ember.Component.extend({
    * @default null
    * @public
    */
-  'did-not-submit-message': null,
+  'did-not-submit-message' = null;
 
   /**
    * The message to send on reset success
@@ -248,7 +284,7 @@ const FormFor = Ember.Component.extend({
    * @default null
    * @public
    */
-  'successful-reset-message': null,
+  'successful-reset-message' = null;
 
   /**
    * The message to send on reset error
@@ -257,7 +293,7 @@ const FormFor = Ember.Component.extend({
    * @default null
    * @public
    */
-  'failed-reset-message': null,
+  'failed-reset-message' = null;
 
   /**
    * The message to send when model did not reset
@@ -266,7 +302,7 @@ const FormFor = Ember.Component.extend({
    * @default null
    * @public
    */
-  'did-not-reset-message': null,
+  'did-not-reset-message' = null;
 
   /**
    * The message displayed to confirm destruction
@@ -275,7 +311,7 @@ const FormFor = Ember.Component.extend({
    * @default null
    * @public
    */
-  'confirm-destroy-message': null,
+  'confirm-destroy-message' = null;
 
   /**
    * The message to send on destroy success
@@ -284,7 +320,7 @@ const FormFor = Ember.Component.extend({
    * @default null
    * @public
    */
-  'successful-destroy-message': null,
+  'successful-destroy-message' = null;
 
   /**
    * The message to send on destroy error
@@ -293,7 +329,7 @@ const FormFor = Ember.Component.extend({
    * @default null
    * @public
    */
-  'failed-destroy-message': null,
+  'failed-destroy-message' = null;
 
   /**
    * Whether or not the form automatically submits on value changes
@@ -302,27 +338,25 @@ const FormFor = Ember.Component.extend({
    * @default false
    * @public
    */
-  'auto-submit': false,
+  'auto-submit' = false;
 
   /**
    * Whether or not the form automatically prevents navigation when the model is dirty
-   * @property prevents-navigation
+   * @property preventsNavigation
    * @type Boolean
    * @default false
    * @public
    */
-  'prevents-navigation': false,
-
-
+  preventsNavigation = false;
 
   /**
    * Parent form. Used to connect nested form state. Currently used to propagate dirty state to parent.
-   * @property parent-form
+   * @property parentForm
    * @type FormFor
    * @default null
    * @public
    */
-  'parent-form': null,
+  parentForm = null;
 
   /**
    * Child form. Used to connect nested form state. Currently used to coalesce dirty state from the children.
@@ -331,7 +365,7 @@ const FormFor = Ember.Component.extend({
    * @default null
    * @public
    */
-  'child-forms': null,
+  'child-forms' = null;
 
   /**
    * Options to be passed to the validation if using validators
@@ -340,17 +374,17 @@ const FormFor = Ember.Component.extend({
    * @default {}
    * @public
    */
-  'validation-options': {},
+  // eslint-disable-next-line ember/avoid-leaking-state-in-ember-objects
+  'validation-options' = {};
 
- /**
-  * Allows multiple submit calls to be queued
-  * @property allow-submit-enqueue
-  * @type Boolean
-  * @default false
-  * @public
-  */
-  'allow-submit-queue': false,
-
+  /**
+   * Allows multiple submit calls to be queued
+   * @property allow-submit-enqueue
+   * @type Boolean
+   * @default false
+   * @public
+   */
+  'allow-submit-queue' = false;
 
   // --------------------------------------------------------------------------------
   // Methods
@@ -363,9 +397,11 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   runValidations(validationOptions = null) {
-    const model = this.get('model');
-    return model.validate ? model.validate(validationOptions || this.get('validation-options')) : true;
-  },
+    const model = get(this, 'model');
+    return model.validate
+      ? model.validate(validationOptions || get(this, 'validation-options'))
+      : true;
+  }
 
   /**
    * Clears the validations on the model
@@ -373,9 +409,9 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   clearValidations() {
-    const model = this.get('model');
-    return model.validate && model.validate({only: []});
-  },
+    const model = get(this, 'model');
+    return model.validate && model.validate({ only: [] });
+  }
 
   /**
    * Called before the form submits, this is where we do
@@ -387,7 +423,7 @@ const FormFor = Ember.Component.extend({
    */
   willSubmit() {
     return this.runValidations();
-  },
+  }
 
   /**
    * Called when will submit returned false
@@ -395,8 +431,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} [model]
    * @public
    */
-  didNotSubmit() {
-  },
+  didNotSubmit() {}
 
   /**
    * Called when the submit action is called
@@ -407,7 +442,7 @@ const FormFor = Ember.Component.extend({
    */
   onSubmit(model) {
     return model.save ? model.save() : Promise.resolve(model);
-  },
+  }
 
   /**
    * Used to inform parent forms that either this form, or one of its children submitted
@@ -416,16 +451,14 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   notifyChildDidSubmit(originator) {
-    const parentForm = this.get('parent-form');
-
     if (this !== originator) {
       this.childDidSubmit(originator);
     }
 
-    if(parentForm) {
-      parentForm.notifyChildDidSubmit();
+    if (this.parentForm) {
+      this.parentForm.notifyChildDidSubmit();
     }
-  },
+  }
 
   /**
    * Used to inform parent forms that either this form, or one of its children failed
@@ -435,16 +468,14 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   notifyChildFailedSubmit(originator) {
-    const parentForm = this.get('parent-form');
-
     if (this !== originator) {
       this.childFailedSubmit(originator);
     }
 
-    if(parentForm) {
-      parentForm.notifyChildFailedSubmit();
+    if (this.parentForm) {
+      this.parentForm.notifyChildFailedSubmit();
     }
-  },
+  }
 
   /**
    * Called when a child of this form's onSubmit is fulfilled
@@ -452,7 +483,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} model
    * @public
    */
-  childDidSubmit(/*model*/) {},
+  childDidSubmit(/*model*/) {}
 
   /**
    * Called when a child of this form's onSubmit is reject
@@ -460,8 +491,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} model
    * @public
    */
-  childFailedSubmit(/*model*/) {
-  },
+  childFailedSubmit(/*model*/) {}
 
   /**
    * Called when the onSubmit is fulfilled
@@ -469,8 +499,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} model
    * @public
    */
-  didSubmit(/*model*/) {
-  },
+  didSubmit(/*model*/) {}
 
   /**
    * Called when the onSubmit is rejected
@@ -478,8 +507,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} reason
    * @public
    */
-  failedSubmit(/*reason*/) {
-  },
+  failedSubmit(/*reason*/) {}
 
   /**
    * Action that actual does the submitting
@@ -487,35 +515,38 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   doSubmit() {
-    const lastDoSubmit = this.get('lastDoSubmit');
-    const allowSubmitQueue = this.get('allow-submit-queue');
+    const lastDoSubmit = get(this, 'lastDoSubmit');
+    const allowSubmitQueue = get(this, 'allow-submit-queue');
 
-    const model = this.get('model');
+    const model = get(this, 'model');
     const isSaving = get(model, 'isSaving');
 
     // Guard if the model is saving
-    if (!isSaving && this.willSubmit(model) || allowSubmitQueue) {
+    if ((!isSaving && this.willSubmit(model)) || allowSubmitQueue) {
       this._markSubmitting();
 
-      const onSubmit = allowSubmitQueue && lastDoSubmit ? lastDoSubmit.then(() => this.onSubmit(model)) : this.onSubmit(model);
+      const onSubmit =
+        allowSubmitQueue && lastDoSubmit
+          ? lastDoSubmit.then(() => this.onSubmit(model))
+          : this.onSubmit(model);
 
       const doSubmit = onSubmit
         .then(() => {
-          if(this.get('isRootForm')) {
-            return this.submitChildForms(this.get('child-forms'));
+          if (get(this, 'isRootForm')) {
+            return this.submitChildForms(get(this, 'child-forms'));
           }
         })
         .then(() => {
-          this.notifySuccess(this.get('successful-submit-message'));
+          this.notifySuccess(get(this, 'successful-submit-message'));
           this.didSubmit();
           this.notifyChildDidSubmit(false);
           this._markClean();
           this._runFieldDidSubmit();
-          this.set('_hasFailedToSubmit', false);
+          set(this, '_hasFailedToSubmit', false);
           this.notifyChildDidSubmit(this);
         })
-        .catch(_ => {
-          this.notifyError(this.get('failed-submit-message'));
+        .catch((_) => {
+          this.notifyError(get(this, 'failed-submit-message'));
           this.failedSubmit(_);
           this.notifyChildFailedSubmit(this);
           return Promise.reject(_);
@@ -524,18 +555,17 @@ const FormFor = Ember.Component.extend({
           this._unmarkSubmitting();
         });
 
-        this.set('lastDoSubmit', doSubmit);
+      set(this, 'lastDoSubmit', doSubmit);
 
-        return doSubmit;
+      return doSubmit;
     } else {
-      this.set('_hasFailedToSubmit', true);
+      set(this, '_hasFailedToSubmit', true);
       this.didNotSubmit(model);
-      this.notifyError(this.get('did-not-submit-message'));
+      this.notifyError(get(this, 'did-not-submit-message'));
 
       return Promise.resolve(true);
     }
-  },
-
+  }
 
   /**
    * Breadth first submission down the form tree, ensures that parent forms get submitted before child forms.
@@ -548,22 +578,24 @@ const FormFor = Ember.Component.extend({
   submitChildForms(childForms, parentPromise = Promise.resolve()) {
     childForms = childForms || [];
 
-    if(!childForms.length) {
+    if (!childForms.length) {
       return parentPromise;
     }
 
-    const dirtyChildren = childForms.filter(_ => _.get('isModelDirty') || _.get('model.isDeleted') || _.get('model.isNew'));
+    const dirtyChildren = childForms.filter(
+      (_) => _.get('isModelDirty') || _.get('model.isDeleted') || _.get('model.isNew')
+    );
 
     const newPromise = parentPromise.then(() =>
-      Promise.all(dirtyChildren.map(_ => _.doSubmit()))
+      Promise.all(dirtyChildren.map((_) => _.doSubmit()))
     );
 
     const nextDepth = Promise.all(
-      childForms.map(_ => this.submitChildForms(_.get('child-forms'), newPromise))
+      childForms.map((_) => this.submitChildForms(_.get('child-forms'), newPromise))
     );
 
     return nextDepth;
-  },
+  }
 
   /**
    * Called before the form resets
@@ -574,7 +606,7 @@ const FormFor = Ember.Component.extend({
    */
   willReset(/*model*/) {
     return true;
-  },
+  }
 
   /**
    * Called when will reset returned false
@@ -582,8 +614,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} model
    * @public
    */
-  didNotReset(/*model*/) {
-  },
+  didNotReset(/*model*/) {}
 
   /**
    * Called when the reset action is called
@@ -594,7 +625,7 @@ const FormFor = Ember.Component.extend({
    */
   onReset(model) {
     return Promise.resolve(model);
-  },
+  }
 
   /**
    * Called when the onReset is fulfilled
@@ -602,8 +633,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} model
    * @public
    */
-  didReset(/*model*/) {
-  },
+  didReset(/*model*/) {}
 
   /**
    * Called when the onReset is rejected
@@ -611,8 +641,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} reason
    * @public
    */
-  failedReset(/*reason*/) {
-  },
+  failedReset(/*reason*/) {}
 
   /**
    * Called when values are updated in the form. Useful for knowing when a field has
@@ -621,22 +650,21 @@ const FormFor = Ember.Component.extend({
    * @param {Object} keyValues
    * @public
    */
-  onUpdateValues(/*keyValues*/){
-  },
+  onUpdateValues(/*keyValues*/) {}
 
   /**
    * Called when the form is marked dirty
    * @method onMarkedDirty
    * @public
    */
-  onMarkedDirty() {},
+  onMarkedDirty() {}
 
   /**
    * Called when the form is marked clean
    * @method onMarkedClean
    * @public
    */
-  onMarkedClean() {},
+  onMarkedClean() {}
 
   /**
    * Action that actual does the resetting
@@ -644,39 +672,35 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   doReset() {
-    const model = this.get('model');
+    const model = get(this, 'model');
 
     if (this.willReset(model)) {
-
-      this.set('isResetting', true);
+      set(this, 'isResetting', true);
 
       this.onReset()
         .then(() => {
-          this.notifySuccess(this.get('successful-reset-message'));
+          this.notifySuccess(get(this, 'successful-reset-message'));
           this.didReset();
           this._runFieldDidReset();
           this._markClean();
         })
-        .catch(_ => {
-          this.notifyError(this.get('failed-reset-message'));
+        .catch((_) => {
+          this.notifyError(get(this, 'failed-reset-message'));
           this.failedReset(_);
         })
-        .finally(() => this.set('isResetting', false));
+        .finally(() => set(this, 'isResetting', false));
     } else {
       this.didNotReset(model);
-      this.notifyError(this.get('did-not-reset-message'));
+      this.notifyError(get(this, 'did-not-reset-message'));
     }
-  },
-
+  }
 
   /**
    * Called when the onDestroy is fulfilled
    * @method didDestroy
    * @public
    */
-  didDestroy() {
-  },
-
+  didDestroy() {}
 
   /**
    * Called when the onDestroy is fulfilled
@@ -684,8 +708,7 @@ const FormFor = Ember.Component.extend({
    * @param {Object} reason
    * @public
    */
-  failedDestroy(/* reason */) {
-  },
+  failedDestroy(/* reason */) {}
 
   /**
    * Called to confirm the destruction of the model
@@ -694,78 +717,76 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   confirmDestroy(model) {
-    this.set('isDestroyingRecord', true);
-    this.get('formFor')
-      .confirmDestroy(model, this.get('confirm-destroy-message'))
+    set(this, 'isDestroyingRecord', true);
+    get(this, 'formFor')
+      .confirmDestroy(model, get(this, 'confirm-destroy-message'))
       .then(() => {
-        this.notifySuccess(this.get('successful-destroy-message'));
+        this.notifySuccess(get(this, 'successful-destroy-message'));
         this.didDestroy();
       })
       .catch((_) => {
-        this.notifyError(this.get('failed-destroy-message'));
+        this.notifyError(get(this, 'failed-destroy-message'));
         this.failedDestroy(_);
       })
-      .finally(() => !this.get('isDestroyed') && this.set('isDestroyingRecord', false));
-  },
+      .finally(() => !get(this, 'isDestroyed') && set(this, 'isDestroyingRecord', false));
+  }
 
   notifySuccess(message) {
-    if (message && this.get('notify-of-success')) {
-      this.get('formFor').notifySuccess(message);
+    if (message && get(this, 'notify-of-success')) {
+      get(this, 'formFor').notifySuccess(message);
     }
-  },
+  }
 
   notifyError(message) {
-    if (message && this.get('notify-of-error')) {
-      this.get('formFor').notifyError(message);
+    if (message && get(this, 'notify-of-error')) {
+      get(this, 'formFor').notifyError(message);
     }
-  },
+  }
 
   /**
    * Updates a value on the model
-   * @method updateValue
+   * @method updateValueFn
    * @param {String} key
    * @param {*} value
    * @public
    */
-  updateValue(key, value) {
+  updateValueFn(key, value) {
     // better code reuse this way
-    return this.updateValues({[key]: value});
-  },
+    return this.updateValues({ [key]: value });
+  }
 
   /**
    * Updates a collection of values on the model
-   * @method updateValues
+   * @method updateValuesFn
    * @param {Object} keyValues
    * @public
    */
-  updateValues(keyValues) {
+  updateValuesFn(keyValues) {
     this._checkClean();
 
-    const model = this.get('model');
-
-    if (model.setProperties) {
-      model.setProperties(keyValues);
+    if (this.model.setProperties) {
+      this.model.setProperties(keyValues);
     } else {
-      setProperties(model, keyValues);
+      setProperties(this.model, keyValues);
     }
 
-    if (this.get('_hasFailedToSubmit')) {
-      Ember.run.next(() => this.runValidations());
+    if (get(this, '_hasFailedToSubmit')) {
+      next(() => this.runValidations());
     }
 
     this.onUpdateValues(keyValues);
 
-    return this.get('auto-submit') ? this.doSubmit() : Promise.resolve(true);
-  },
+    return get(this, 'auto-submit') ? this.doSubmit() : Promise.resolve(true);
+  }
 
   _checkClean() {
-    Ember.run.next(() => {
-      const fields = this.get('fields') || [];
-      const childForms = this.get('child-forms') || [];
-      const dirtyChildModels = this.get('dirty-child-models') || [];
+    next(() => {
+      const fields = get(this, 'fields') || [];
+      const childForms = get(this, 'child-forms') || [];
+      const dirtyChildModels = get(this, 'dirty-child-models') || [];
 
-      const cleanFields = fields.every(_ => !_.get('isReallyDirty'));
-      const cleanForms = childForms.every(_ => !_.get('isModelDirty'));
+      const cleanFields = fields.every((_) => !_.get('isReallyDirty'));
+      const cleanForms = childForms.every((_) => !_.get('isModelDirty'));
       const noDirtyChildModels = !dirtyChildModels.length;
 
       if (cleanFields && cleanForms && noDirtyChildModels) {
@@ -774,15 +795,14 @@ const FormFor = Ember.Component.extend({
         this._markDirty();
       }
 
-      const parentForm = this.get('parentForm');
-      if(parentForm) {
-        parentForm._checkClean();
+      if (this.parentForm) {
+        this.parentForm._checkClean();
       }
     });
-  },
+  }
 
   resetValues(keyValues) {
-    const model = this.get('model');
+    const model = get(this, 'model');
 
     if (model.setProperties) {
       model.setProperties(keyValues);
@@ -791,11 +811,11 @@ const FormFor = Ember.Component.extend({
     }
 
     this._checkClean();
-  },
+  }
 
   resetValue(key, value) {
-    this.resetValues({[key]: value});
-  },
+    this.resetValues({ [key]: value });
+  }
 
   /**
    * Marks the form as dirty
@@ -803,11 +823,11 @@ const FormFor = Ember.Component.extend({
    * @private
    */
   _markDirty() {
-    if (!this.get('isDestroyed')) {
-      this.set('isModelDirty', true);
-      this.onMarkedDirty(this.get('model'));
+    if (!get(this, 'isDestroyed')) {
+      set(this, 'isModelDirty', true);
+      this.onMarkedDirty(get(this, 'model'));
     }
-  },
+  }
 
   /**
    * Marks the form as clean
@@ -815,11 +835,11 @@ const FormFor = Ember.Component.extend({
    * @private
    */
   _markClean() {
-    if (!this.get('isDestroyed')) {
-      this.set('isModelDirty', false);
-      this.onMarkedClean(this.get('model'));
+    if (!get(this, 'isDestroyed')) {
+      set(this, 'isModelDirty', false);
+      this.onMarkedClean(get(this, 'model'));
     }
-  },
+  }
 
   /**
    * Marks the form as submitting
@@ -827,9 +847,9 @@ const FormFor = Ember.Component.extend({
    * @private
    */
   _markSubmitting() {
-    this.set('_isSubmitting', true);
+    set(this, '_isSubmitting', true);
     this._recomputeIsSubmitting();
-  },
+  }
 
   /**
    * Unmarks the form as submitting
@@ -837,9 +857,9 @@ const FormFor = Ember.Component.extend({
    * @private
    */
   _unmarkSubmitting() {
-    this.set('_isSubmitting', false);
+    set(this, '_isSubmitting', false);
     this._recomputeIsSubmitting();
-  },
+  }
 
   /**
    * Manual property change notification is required because if
@@ -851,11 +871,10 @@ const FormFor = Ember.Component.extend({
   _recomputeIsSubmitting() {
     this.notifyPropertyChange('isSubmitting');
 
-    const parentForm = this.get('parent-form');
-    if(parentForm) {
-      parentForm._recomputeIsSubmitting();
+    if (this.parentForm) {
+      this.parentForm._recomputeIsSubmitting();
     }
-  },
+  }
 
   /**
    * Runs the callback for did submit on all of the fields
@@ -863,8 +882,8 @@ const FormFor = Ember.Component.extend({
    * @private
    */
   _runFieldDidSubmit() {
-    (this.get('fields') || []).forEach(_ => _.formDidSubmit());
-  },
+    (get(this, 'fields') || []).forEach((_) => _.formDidSubmit());
+  }
 
   /**
    * Runs the callback for did reset on all of the fields
@@ -872,9 +891,8 @@ const FormFor = Ember.Component.extend({
    * @private
    */
   _runFieldDidReset() {
-    (this.get('fields') || []).forEach(_ => _.formDidReset());
-  },
-
+    (get(this, 'fields') || []).forEach((_) => _.formDidReset());
+  }
 
   /**
    * Registers a field with the form
@@ -883,10 +901,10 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   registerField(field) {
-    const fields = this.get('fields') || [];
+    const fields = get(this, 'fields') || [];
     fields.push(field);
-    this.set('fields', fields);
-  },
+    set(this, 'fields', fields);
+  }
 
   /**
    * Unregisters a field with the form
@@ -895,10 +913,10 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   unregisterField(field) {
-    const fields = this.get('fields') || [];
+    const fields = this.fields || [];
     fields.removeObject(field);
-    this.set('fields', fields);
-  },
+    set(this, 'fields', fields);
+  }
 
   /**
    * Registers a child form with it's parent
@@ -907,10 +925,10 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   registerChildForm(form) {
-    const childForms = this.get('child-forms') || [];
+    const childForms = get(this, 'child-forms') || [];
     childForms.push(form);
-    this.set('child-forms', childForms);
-  },
+    set(this, 'child-forms', childForms);
+  }
 
   /**
    * Unregisters a child form with it's parent
@@ -919,91 +937,42 @@ const FormFor = Ember.Component.extend({
    * @public
    */
   unregisterChildForm(form) {
-    const childForms = this.get('child-forms') || [];
+    const childForms = get(this, 'child-forms') || [];
     childForms.removeObject(form);
-    this.set('child-forms', childForms);
-  },
-
-  init() {
-    if (this.tagName === '') {
-      this.classNameBindings = [];
-    }
-
-    this._super();
-
-    if (this.get('prevents-navigation')) {
-      this.handleWilltransition = (transition) => {
-
-        const isDirty = this.get('useEmberDataDirtyTracking') && this.get('model.hasDirtyAttributes') || this.get('isModelDirty');
-
-        if (isDirty && !confirm('You have unsaved changes, are you sure you want to leave?')) {
-          transition.abort();
-        }
-      };
-
-      // in test environments that are not acceptance, we won't have real router
-      let router = this.get('router');
-      if (router && router.on) {
-        this.get('router')
-          .on('willTransition', this, this.handleWilltransition);
-      }
-
-      // prevent browser reloads
-      window.onbeforeunload = () => {
-        const isDirty = this.get('useEmberDataDirtyTracking') && this.get('model.hasDirtyAttributes') || this.get('isModelDirty');
-
-        if (isDirty) {
-          return 'You have unsaved changes, are you sure you want to leave?';
-        }
-      };
-    }
-
-    const parentForm = this.get('parent-form');
-    if(parentForm) {
-      parentForm.registerChildForm(this);
-    }
-  },
+    set(this, 'child-forms', childForms);
+  }
 
   willDestroyElement() {
     window.onbeforeunload = null;
 
     // in test environments that are not acceptance, we won't have real router
-    let router = this.get('router');
+    let router = get(this, 'router');
     if (router && router.off && this.handleWilltransition) {
       router.off('willTransition', this, this.handleWilltransition);
     }
 
-    const parentForm = this.get('parent-form');
-    if(parentForm) {
-      parentForm.unregisterChildForm(this);
+    if (this.parentForm) {
+      this.parentForm.unregisterChildForm(this);
     }
-  },
-
-  actions: {
-
-    submit() {
-      this.doSubmit();
-    },
-
-    reset() {
-      this.doReset();
-    },
-
-    updateValue(key, value) {
-      return this.updateValue(key, value);
-    },
-
-    updateValues(keyValues) {
-      return this.updateValues(keyValues);
-    }
-
   }
 
+  @action
+  submit() {
+    this.doSubmit();
+  }
 
-});
+  @action
+  reset() {
+    this.doReset();
+  }
 
-FormFor.reopenClass({
-  positionalParams: ['model']
-});
+  @action
+  updateValue(key, value) {
+    return this.updateValueFn(key, value);
+  }
 
-export default FormFor;
+  @action
+  updateValues(keyValues) {
+    return this.updateValuesFn(keyValues);
+  }
+}

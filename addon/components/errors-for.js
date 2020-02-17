@@ -1,26 +1,13 @@
-import Ember from 'ember';
-import layout from '../templates/components/errors-for';
-
-
-const {
-  computed,
-  getOwner,
-} = Ember;
+import Component from '@ember/component';
+import { getOwner } from '@ember/application';
+import { tagName } from '@ember-decorators/component';
 
 /**
  * This class conditionally renders an array of errors
  * @class ErrorsFor
  */
-export default Ember.Component.extend({
-  layout,
-
-  config: computed(function () {
-    return Object.assign({}, getOwner(this).resolveRegistration('config:environment').APP['ember-foxy-forms']);
-  }),
-
-  // remove tags, so we don't interfere with styles that use direct inheritance
-  tagName: '',
-
+@tagName('') // remove tags, so we don't interfere with styles that use direct inheritance
+export default class ErrorsForComponent extends Component {
   /**
    * Errors to be rendered by this component
    * @property label
@@ -28,5 +15,12 @@ export default Ember.Component.extend({
    * @default null
    * @public
    */
-  errors: null
-});
+  errors = null;
+
+  get config() {
+    return Object.assign(
+      {},
+      getOwner(this).resolveRegistration('config:environment').APP['ember-foxy-forms']
+    );
+  }
+}

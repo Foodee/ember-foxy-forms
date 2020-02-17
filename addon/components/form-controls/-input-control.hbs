@@ -1,0 +1,15 @@
+<input
+  id={{@controlId}}
+  value={{@value}}
+  type={{@inputType}}
+  placeholder={{@placeholder}}
+  disabled={{@isDisabled}}
+  readonly={{@isReadonly}}
+  maxlength={{@maxLength}}
+  ...attributes
+  {{on "blur" this.handleBlur}}
+  {{on "focus" this.handleFocus}}
+  {{on "click" this.handleClick}}
+  {{on "change" this.handleChange}}
+  {{on "keyUp" this.handleChange}}
+/>

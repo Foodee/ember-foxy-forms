@@ -1,35 +1,26 @@
-import Ember from 'ember';
-import layout from '../templates/components/form-button';
+import Component from '@ember/component';
+import { action, get } from '@ember/object';
+import { getOwner } from '@ember/application';
+import { tagName } from '@ember-decorators/component';
 
-const {
-  computed,
-  getOwner,
-} = Ember;
+@tagName('')
+export default class FormButtonComponent extends Component {
+  icon = null;
+  bubbles = true;
 
-export default Ember.Component.extend({
-  layout,
-
-  config: computed(function () {
-    return Object.assign({}, getOwner(this).resolveRegistration('config:environment').APP['ember-foxy-forms']);
-  }),
-
-  tagName: '',
-
-  icon: null,
-
-  bubbles: true,
-
-  onClick() {
-  },
-
-  actions: {
-
-    handleClick(){
-      if (!this.get('isActing')) {
-        this.onClick();
-      }
-    }
-
+  get config() {
+    return Object.assign(
+      {},
+      getOwner(this).resolveRegistration('config:environment').APP['ember-foxy-forms']
+    );
   }
 
-});
+  onClick() {}
+
+  @action
+  handleClick() {
+    if (!get(this, 'isActing')) {
+      this.onClick();
+    }
+  }
+}

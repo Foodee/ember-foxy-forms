@@ -1,8 +1,0 @@
-<select
-  value="{{value}}"
-  onchange={{action onChange value='target.value'}}
->
-  {{#each values as |option|}}
-    <option value="{{get option idKey}}">{{get option labelKey}}</option>
-  {{/each}}
-</select>

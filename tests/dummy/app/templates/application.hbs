@@ -1,4 +1,3 @@
-{{#example-component as |f|}}
-  {{f.input}}
-  {{f.checkbox}}
-{{/example-component}}
+<FormFor as |form|>
+  <form.fieldFor @params={{array "hello"}} />
+</FormFor>

@@ -1,0 +1,76 @@
+<div
+  class="field-for {{this.config.fieldClasses}} {{strip-class-names this.classNames}} {{if this.errors.length "error"}} {{if this.disabled "disabled"}} {{if this.readonly "readonly"}} {{this._testingClass}} {{this.using}} -field"
+  data-test-field-for
+>
+  <LabelFor @label={{@label}} @controlId={{this.controlId}} />
+
+  {{#if this._showValue}}
+    <div
+      class="field-for-value-container"
+      data-tooltip={{@valueTooltip}}
+      role="button"
+      {{on "click" this.edit}}
+    >
+      {{#if this.displayValue includeZero=true}}
+        {{this.displayValue}}
+      {{else}}
+        <span class="field-for-placeholder">
+          {{@placeholder}}
+        </span>
+      {{/if}}
+    </div>
+  {{/if}}
+
+  {{#if this._showControl}}
+    <div
+      class="field-for-control-container {{if this.has-control-callout this.config.fieldForControlCalloutClasses}} {{if this.has-control-callout this._calloutPosition}}"
+    >
+      <div class="field-for-control-and-commit-buttons">
+        {{#if (hasBlock)}}
+          {{yield
+            (hash
+              control=(component
+                this._control
+                value=(readonly this._value)
+                values=(readonly this._values)
+                errors=(readonly this.errors)
+                placeholder=this.placeholder
+                readonly=this.readonly
+                disabled=this.disabled
+                controlId=this.controlId
+                doSubmit=this.doSubmit
+                doReset=this.doReset
+                onChange=this.handleChange
+              )
+              self=this
+            )
+            this
+          }}
+        {{else}}
+          {{component
+            this._control
+            value=(readonly this._value)
+            values=(readonly this._values)
+            errors=(readonly this.errors)
+            placeholder=@placeholder
+            readonly=this.readonly
+            disabled=this.disabled
+            controlId=this.controlId
+            doSubmit=this.doSubmit
+            doReset=this.doReset
+            onChange=this.handleChange
+          }}
+        {{/if}}
+
+        <CommitButtons
+          @visible={{this._showConfirm}}
+          @isActing={{this.form.isSubmitting}}
+          @commit={{this.commit}}
+          @cancel={{this.cancel}}
+        />
+      </div>
+
+      <ErrorsFor @errors={{this.errors}} />
+    </div>
+  {{/if}}
+</div>

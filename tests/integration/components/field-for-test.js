@@ -1,68 +1,68 @@
-import {moduleForComponent, test} from 'ember-qunit';
+import { module, test } from 'qunit';
+import { setupRenderingTest } from 'ember-qunit';
+import { render, findAll } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-
 import faker from 'faker';
 
-moduleForComponent('field-for', 'Integration | Component | field container', {
-  integration: true
-});
+module('Integration | Component | field container', function(hooks) {
+  setupRenderingTest(hooks);
 
-test('it renders', function (assert) {
-  assert.expect(0);
-});
+  test('it renders', function(assert) {
+    assert.expect(0);
+  });
 
+  test('it renders testing classes', async function(assert) {
+    this.key = faker.lorem.word();
 
-test('it renders testing classes', function (assert) {
+    await render(hbs`
+      <FormFor as |form|>
+        <form.fieldFor @params={{array this.key}} />
+      </FormFor>
+    `);
 
-  const key = faker.lorem.word();
-  this.set('key', key);
+    assert.notEqual(findAll(`.--field-for__object_${this.key}`)[0], undefined);
+  });
 
-  this.render(hbs`
-    {{#form-for as |f|}}
-      {{f.field-for key}} 
-    {{/form-for}}
-  `);
+  test('it delegates the values param to the control', async function(assert) {
+    this.key = faker.lorem.word();
 
-  assert.notEqual(this.$(`.--field-for__object_${key}`)[0], undefined);
-});
+    this.values = [
+      {
+        id: 1,
+        label: faker.lorem.word(),
+      },
+      {
+        id: 2,
+        label: faker.lorem.word(),
+      },
+    ];
 
+    await render(hbs`
+      <FormFor as |form|>
+        <form.fieldFor
+          @params={{array this.key}}
+          @using="-select"
+          @values={{this.values}}
+        />
+      </FormFor>
+    `);
 
-test('it delegates the values param to the control', function (assert) {
+    assert.dom('[data-test-form-controls-selector-option]').exists({ count: 2 });
+  });
 
-  const key = faker.lorem.word();
-  this.set('key', key);
+  test('it delegates the values param to the control using the string format', async function(assert) {
+    this.key = faker.lorem.word();
 
-  this.set('values', [
-    {
-      id: 1,
-      label: faker.lorem.word()
-    },
-    {
-      id: 2,
-      label: faker.lorem.word()
-    }
-  ]);
+    await render(hbs`
+      <FormFor as |form|>
+        <form.fieldFor
+          @params={{array this.key}}
+          @using="-select"
+          @values="1:foo,2:bar"
+        />
+      </FormFor>
+    `);
 
-  this.render(hbs`
-    {{#form-for as |f|}}
-      {{f.field-for key using='-select' values=values}} 
-    {{/form-for}}
-  `);
-
-  assert.equal(this.$('option').length, 2);
-});
-
-
-test('it delegates the values param to the control using the string format', function (assert) {
-
-  const key = faker.lorem.word();
-  this.set('key', key);
-
-  this.render(hbs`
-    {{#form-for as |f|}}
-      {{f.field-for key using='-select' values='1:foo,2:bar'}} 
-    {{/form-for}}
-  `);
-
-  assert.equal(this.$('option').length, 2);
+    assert.dom('[data-test-form-controls-selector-option]').exists({ count: 2 });
+  });
 });

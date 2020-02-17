@@ -1,12 +1,7 @@
-import Ember from 'ember';
+import Service from '@ember/service';
+import { Promise } from 'rsvp';
 
-
-const {
-  RSVP: {Promise}
-} = Ember;
-
-export default Ember.Service.extend({
-
+export default class FormForService extends Service {
   /**
    * Called by form's delete button to confirm the destruction of
    * a record override for custom behavior in your project (ie pop up a modal)
@@ -14,7 +9,7 @@ export default Ember.Service.extend({
    * @param {Object} model
    * @public
    */
-  confirmDestroy(model, message = 'Are you sure you want to destroy this?'){
+  confirmDestroy(model, message = 'Are you sure you want to destroy this?') {
     let ret = Promise.resolve(model);
     if (confirm(message)) {
       if (model.destroyRecord) {
@@ -23,7 +18,7 @@ export default Ember.Service.extend({
     }
 
     return ret;
-  },
+  }
 
   /**
    * Called on form success override for custom behavior
@@ -31,10 +26,9 @@ export default Ember.Service.extend({
    * @param {String} message
    * @public
    */
-  notifySuccess(message){
+  notifySuccess(message) {
     alert('Success: ' + message);
-  },
-
+  }
 
   /**
    * Called on form failures
@@ -42,19 +36,17 @@ export default Ember.Service.extend({
    * @param {String} message
    * @public
    */
-  notifyError(message){
+  notifyError(message) {
     alert('Error: ' + message);
-  },
-
+  }
 
   /**
    * In case some people have overridden these in their application space
    * lets null them to prevent leaks
    */
-  willDestroy(){
+  willDestroy() {
     this.confirmDestroy = null;
     this.notifySuccess = null;
     this.notifyError = null;
   }
-
-});
+}

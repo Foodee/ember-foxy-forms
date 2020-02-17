@@ -1,19 +1,32 @@
-import Ember from 'ember';
-import layout from '../../templates/components/form-controls/-input-control';
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
 
-export default Ember.Component.extend({
-  layout,
+export default class FormControlsInputControlComponent extends Component {
+  @action
+  handleClick(event) {
+    if (this.args.onClick) {
+      return this.args.onClick(event.target.value);
+    }
+  }
 
-  tagName: '',
+  @action
+  handleFocus(event) {
+    if (this.args.onFocus) {
+      return this.args.onFocus(event.target.value);
+    }
+  }
 
-  value: null,
+  @action
+  handleBlur(event) {
+    if (this.args.onBlur) {
+      return this.args.onBlur(event.target.value);
+    }
+  }
 
-  onClick(){},
-
-  onFocus(){},
-
-  onBlur(){},
-
-  onChange(/*value*/){}
-
-});
+  @action
+  handleChange(event) {
+    if (this.args.onChange) {
+      return this.args.onChange(event.target.value);
+    }
+  }
+}

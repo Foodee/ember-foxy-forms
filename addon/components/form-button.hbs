@@ -1,0 +1,12 @@
+<button class="{{this.config.buttonClasses}} {{if @isActing this.config.buttonActingClass}} {{if @icon "icon" }} {{strip-class-names
+  @classNames}} {{if @disabled "disabled"}}" {{on "click" (stop-propagation this.handleClick)}} type="button">
+  {{#if @icon}}
+    <i class="icon {{@icon}}"></i>
+  {{/if}}
+
+  {{#if (hasBlock)}}
+    {{yield}}
+  {{else}}
+    {{@text}}
+  {{/if}}
+</button>

@@ -1,0 +1,27 @@
+{{#if this.visible}}
+  {{#if this.config.customCommitCancelComponent}}
+    {{component
+      this.config.customCommitCancelComponent
+      isActing=@isActing
+      commit=@commit
+      cancel=@cancel
+    }}
+  {{else}}
+    <div class="commit-cancel {{strip-class-names @classNames}}">
+      <button
+        class="{{this.config.buttonClasses}} commit"
+        type="button"
+        {{on "click" @commit}}
+      >
+        ✔
+      </button>
+      <button
+        class="{{this.config.buttonClasses}} cancel"
+        type="button"
+        {{on "click" @cancel}}
+      >
+        ✘
+      </button>
+    </div>
+  {{/if}}
+{{/if}}
