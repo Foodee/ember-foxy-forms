@@ -34,8 +34,6 @@ jobs:
         run: npm install
       - name: Lint JS
         run: npm run lint:js
-      - name: Lint Types
-        run: npm run lint:types
       - name: Lint Handlebars
         run: npm run lint:hbs
       - name: Browser Tests
@@ -63,10 +61,13 @@ jobs:
     strategy:
       matrix:
         scenario:
-          - ember-3.15
+          - ember-lts-3.12
+          - ember-lts-3.16
           - ember-release
           - ember-beta
           - ember-canary
+          - ember-default-with-jquery
+          - ember-classic
     steps:
       - name: Checkout Code
         uses: actions/checkout@v1
@@ -77,4 +78,4 @@ jobs:
       - name: Install Dependencies
         run: npm install
       - name: Try Scenario
-        run: npm run ember try:one ${{ matrix.scenario }}
+        run: node_modules/.bin/ember try:one ${{ matrix.scenario }}
