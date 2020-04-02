@@ -2,15 +2,13 @@ import Component from '@ember/component';
 import { oneWay, readOnly, notEmpty, gt, union } from '@ember/object/computed';
 import { dasherize } from '@ember/string';
 import { isArray } from '@ember/array';
-import { action, defineProperty, computed, get, set } from '@ember/object';
+import { action, defineProperty, computed, set } from '@ember/object';
 import { assert } from '@ember/debug';
-import { getOwner } from '@ember/application';
 import { guidFor } from '@ember/object/internals';
 import { run } from '@ember/runloop';
 import { tagName } from '@ember-decorators/component';
 
-// remove tags, so we don't interfere with styles that use direct inheritance
-@tagName('')
+@tagName('') // remove tags, so we don't interfere with styles that use direct inheritance
 export default class FieldForComponent extends Component {
   init() {
     super.init(...arguments);
@@ -18,18 +16,18 @@ export default class FieldForComponent extends Component {
     if (this._hasCompositeValue) {
       // property paths to watch
       const propertyPaths = this.params.join(',');
-      const _withMapping = get(this, 'withMapping') || {};
+      const _withMapping = this.withMapping || {};
 
       // bind to the value
       defineProperty(
         this,
         'value',
-        computed(`form.model.{${propertyPaths}}`, function() {
+        computed(`form.model.{${propertyPaths}}`, 'form.model', 'params', function () {
           return this.params.reduce((acc, param) => {
             // we either use the key map provided by the user, or the
             // default key value
             const key = _withMapping[param] || param;
-            acc[key] = get(this, `form.model.${param}`);
+            acc[key] = this.form.model[param];
 
             return acc;
           }, {});
@@ -67,13 +65,6 @@ export default class FieldForComponent extends Component {
     return value;
   }
 
-  get config() {
-    return Object.assign(
-      {},
-      getOwner(this).resolveRegistration('config:environment').APP['ember-foxy-forms']
-    );
-  }
-
   /**
    * The form that this field belongs to
    * @property form
@@ -86,7 +77,7 @@ export default class FieldForComponent extends Component {
   // --------------------------------------------------------------------------------
   // This section is where the DSL syntax lives
   // label
-  // require-confirm
+  // requireConfirm
   // inlineEditing
   // using
   // withMapping
@@ -127,8 +118,8 @@ export default class FieldForComponent extends Component {
    * @default true
    * @public
    */
-  @oneWay('form.require-confirm') 'require-confirm';
-  @readOnly('require-confirm') _requireConfirm;
+  @oneWay('form.requireConfirm') requireConfirm;
+  @readOnly('requireConfirm') _requireConfirm;
 
   /**
    * Whether or not this field is in inline-edit mode, which displays
@@ -182,12 +173,12 @@ export default class FieldForComponent extends Component {
 
   /**
    * The position of the control callout (up to the client to decide how to use this info)
-   * @property callout-position
+   * @property calloutPosition
    * @type String
    * @default null
    * @public
    */
-  ['callout-position'] = null;
+  calloutPosition = null;
 
   /**
    * The position of the control callout (up to the client to decide how to use this info)
@@ -196,12 +187,9 @@ export default class FieldForComponent extends Component {
    * @type String
    * @private
    */
-  @computed('callout-position', 'config')
+  @computed('calloutPosition', 'config')
   get _calloutPosition() {
-    const calloutPosition = get(this, 'callout-position');
-    const config = get(this, 'config');
-
-    return calloutPosition || (config && config.fieldForControlCalloutPosition);
+    return this.calloutPosition || (this.config && this.config.fieldForControlCalloutPosition);
   }
 
   /**
@@ -224,7 +212,7 @@ export default class FieldForComponent extends Component {
    */
   @computed('values')
   get _values() {
-    let ret = this.values;
+    const ret = this.values;
 
     if (this.values && !isArray(this.values)) {
       // if the values provided is not an array but in fact a string
@@ -293,7 +281,7 @@ export default class FieldForComponent extends Component {
    * @private
    */
   get _testingClass() {
-    return `${this.config.testingClassPrefix}field-for__${this.form._modelName}_${this.params
+    return `${this.testingClassPrefix}field-for__${this.form._modelName}_${this.params
       .map((_) => _.toString())
       .map(dasherize)
       .join('_')
@@ -360,12 +348,12 @@ export default class FieldForComponent extends Component {
   get isReallyDirty() {
     // initial values on string values may be null which looks the same as an empty value.
     return (
-      this._stringify(get(this, '_lastValidValue')) !== this._stringify(get(this, 'value')) &&
+      this._stringify(this._lastValidValue) !== this._stringify(this.value) &&
       !(
-        (get(this, '_lastValidValue') === null && get(this, 'value') === '') ||
-        (get(this, '_lastValidValue') === '' && get(this, 'value') === null) ||
-        (get(this, '_lastValidValue') === undefined && get(this, 'value') === '') ||
-        (get(this, '_lastValidValue') === '' && get(this, 'value') === undefined)
+        (this._lastValidValue === null && this.value === '') ||
+        (this._lastValidValue === '' && this.value === null) ||
+        (this._lastValidValue === undefined && this.value === '') ||
+        (this._lastValidValue === '' && this.value === undefined)
       )
     );
   }
@@ -423,7 +411,7 @@ export default class FieldForComponent extends Component {
    */
   @computed('_requiresConfirm')
   get _showConfirm() {
-    return get(this, '_requiresConfirm');
+    return this._requiresConfirm;
   }
 
   /**
@@ -444,9 +432,9 @@ export default class FieldForComponent extends Component {
    * @param {*} value
    * @public
    */
-  commitValue(/*propertyPath, value*/) {}
+  commitValue(/*propertyPath, value*/) { }
 
-  commitValues(/*value*/) {}
+  commitValues(/*value*/) { }
 
   /**
    * Handles change method from the control, you can override this
@@ -465,8 +453,8 @@ export default class FieldForComponent extends Component {
   }
 
   _extractKeyValueMapping(_value) {
-    const params = get(this, 'params');
-    const _withMapping = get(this, 'withMapping') || {};
+    const params = this.params;
+    const _withMapping = this.withMapping || {};
 
     const keyValues = params.reduce((acc, param) => {
       const key = _withMapping[param] || param;
@@ -512,7 +500,7 @@ export default class FieldForComponent extends Component {
    * @param {*} value
    * @public
    */
-  didCommitValue(/* value */) {}
+  didCommitValue(/* value */) { }
 
   /**
    * Triggered after the commit method is called for multiple values
@@ -520,7 +508,7 @@ export default class FieldForComponent extends Component {
    * @param {Object} values
    * @public
    */
-  didCommitValues(/* values */) {}
+  didCommitValues(/* values */) { }
 
   /**
    * Cancels the current intermediary value, only really useful
@@ -541,7 +529,7 @@ export default class FieldForComponent extends Component {
    * @public
    */
   formDidSubmit() {
-    const value = get(this, 'value');
+    const value = this.value;
     set(this, '_lastValidValue', isArray(value) ? value.toArray() : value);
   }
 
@@ -560,12 +548,12 @@ export default class FieldForComponent extends Component {
    * @private
    */
   _resetField() {
-    let form = get(this, 'form');
+    const form = this.form;
 
-    if (get(this, '_hasCompositeValue')) {
-      form.resetValues(this._extractKeyValueMapping(get(this, '_lastValidValue')));
+    if (this._hasCompositeValue) {
+      form.resetValues(this._extractKeyValueMapping(this._lastValidValue));
     } else {
-      form.resetValue(get(this, 'params')[0], get(this, '_lastValidValue'));
+      form.resetValue(this.params[0], this._lastValidValue);
     }
 
     form.clearValidations();
@@ -583,24 +571,24 @@ export default class FieldForComponent extends Component {
 
   @action
   doSubmit() {
-    if (get(this, '_requiresConfirm')) {
+    if (this._requiresConfirm) {
       this.commit();
     } else {
-      return get(this, 'form').doSubmit();
+      return this.form.doSubmit();
     }
   }
 
   @action
   doReset() {
-    return get(this, 'form').doReset();
+    return this.form.doReset();
   }
 
   didInsertElement() {
-    const value = get(this, 'value');
+    const value = this.value;
     set(this, '_lastValidValue', isArray(value) ? value.toArray() : value);
   }
 
   willDestroyElement() {
-    get(this, 'form').unregisterField(this);
+    this.form.unregisterField(this);
   }
 }

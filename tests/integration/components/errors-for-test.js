@@ -41,7 +41,7 @@ module('Integration | Component | errors for', function(hooks) {
 
     this.errors = ['some-error'];
 
-    await render(hbs`<ErrorsFor @errors={{this.errors}} />`);
+    await render(hbs`<ErrorsFor @errors={{this.errors}} @customErrorComponent="custom-errors-for" />`);
 
     assert.dom('.error').doesNotExist('should not display default error element');
     assert.dom('.custom-error').exists({ count: 1 }, 'should use custom errors-for component');

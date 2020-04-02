@@ -1,25 +1,22 @@
 # ember-foxy-forms
 
-Compatibility
-------------------------------------------------------------------------------
+## Compatibility
 
-* Ember.js v3.12 or above
-* Ember CLI v2.13 or above
-* Node.js v10 or above
+- Ember.js v3.12 or above
+- Ember CLI v2.13 or above
+- Node.js v10 or above
 
-Installation
-------------------------------------------------------------------------------
+## Installation
 
-```
+```bash
 ember install my-addon
 ```
 
-Usage
-------------------------------------------------------------------------------
+## Usage
 
 Not just forms, Foxy Forms.
 
-This addon allows you to build simple declarative forms with some snazy features. It is UI framework agnostic and generates 
+This addon allows you to build simple declarative forms with some snazy features. It is UI framework agnostic and generates
 minimal dom, so as to not interfere with what ever UI framework you might be using.
 
 More documentation to come.
@@ -35,49 +32,45 @@ The form component builder exposes 4 components:
 - reset: a button which triggers the reset process on the form (current doesn't do much)
 - destroy: a button which triggers the destroy process on the form
 
-
 ### Configuration Values
-
 
 ```javascript
 const FormFor = {
   // Whether or not this form is disabled, delegated to all fields
   disabled: false,
- 
+
   // Whether or not this form is readonly, delegated to all fields
   readonly: false,
- 
+
   // Whether or not this form uses inline editing by default
   // in this mode the form will display text values, which can be
   // clicked to edit
   nlineEditing: false,
-  
-   // Whether or not all of the fields on this form require confirm before 
-   // committing their values to the model
-  'require-confirm': false,
-  
-   // Whether or not this form auto submits on commit of a value (useful for inline editing)
-  'auto-submit': false,
- 
+
+  // Whether or not all of the fields on this form require confirm before
+  // committing their values to the model
+  requireConfirm: false,
+
+  // Whether or not this form auto submits on commit of a value (useful for inline editing)
+  autoSubmit: false,
+
   // Whether or not you want notifications on success or failure
-  
 
-  'notify-of-success': true,
-  'notify-of-error': true,
-  
-  'successful-submit-message': null,
-  'failed-submit-message': null,
-  
-  'successful-reset-message': null,
-  'failed-reset-message': null,
-  
-  'successful-destroy-message': null,
-  'failed-destroy-message': null,
+  notifyOfSuccess: true,
+  notifyOfError: true,
 
- 
+  successfulSubmitMessage: null,
+  failedSubmitMessage: null,
+
+  successfulResetMessage: null,
+  failedResetMessage: null,
+
+  successfulDestroyMessage: null,
+  failedDestroyMessage: null,
+
   // options passed to the validation method if present
-  'validation-options': {} 
-}
+  validationOptions: {},
+};
 ```
 
 ### Life Cycle Events
@@ -92,12 +85,12 @@ Called when the willSubmit function returns false
 
 #### onSubmit
 
-Called when the willSubmit function returns true, does the actual submission, in the case of ED models calls save. 
+Called when the willSubmit function returns true, does the actual submission, in the case of ED models calls save.
 
 #### didSubmit
 
-Called when the onSubmit function successfully runs 
- 
+Called when the onSubmit function successfully runs
+
 #### failedSubmit
 
 Called when the onSubmit function fails to runs
@@ -132,13 +125,13 @@ Multiple values can be extracted by providing multiple keys to the field-for hel
 {{#form-for model as |f|}}
 
   {{f.field-for 'startDate' 'endDate' using='date-range' label='Date Range'}}
-  
+
   {{f.submit}}
 
 {{/form-for}}
 ```
 
-This will expose a pojo of {startDate, endDate} to the form control. That control must then emit onChange events with 
+This will expose a pojo of {startDate, endDate} to the form control. That control must then emit onChange events with
 pojos containing the same key value mappings.
 
 Alternatively you can use the with-mapping property to provide value mapping. This is useful for making generic components.
@@ -147,15 +140,15 @@ Alternatively you can use the with-mapping property to provide value mapping. Th
 {{#form-for model as |f|}}
 
   {{f.field-for 'foo' 'bar' using='date-range' with-mapping=(hash foo='start-date' bar='end-date') label='Date Range'}}
-  
+
   {{f.field-for 'baz' 'quz' using='date-range' with-mapping=(hash baz='start-date' qux='end-date') label='Date Range'}}
-  
+
   {{f.submit}}
 
 {{/form-for}}
 ```
 
-# FormControls
+## FormControls
 
 A form control is any component which implements the following interface.
 
@@ -167,14 +160,14 @@ const FormControl = {
   placeholder: '', // optional placeholder text
   disabled: true | false, // whether or not this control is disabled
   readonly: true | false, // whether or not this control is readonly
-  
+
   onChange(){} // callback function when the values controlled by this control is changed
 }
 ```
 
 If you follow this convention values will be seamlessly managed by the field / form layers.
 
-# Custom Configurations
+## Custom Configurations
 
 ## Site-wide `environment.js` overrides
 
@@ -210,10 +203,10 @@ control out of the field-for.
 ```handlebars
 {{#form-for model as |f|}}
 
-  {{#f.field-for 'foo' using='input' as |ff|}}  
+  {{#f.field-for 'foo' using='input' as |ff|}}
     {{ff.control leftIcon='cake' min=5 max=10 }}
   {{/f.field-for}}
-  
+
   {{f.submit}}
 
 {{/form-for}}
@@ -227,18 +220,14 @@ If you set a form-for to prevent-navigation it will intercept page reloads and r
 
 Form for will automatically generate some testing classes on both the form and the field. They take the following pattern:
 
-forms: '--form-for__model-name'
+forms: '--form-for\_\_model-name'
 
-fields: '--form-for__model-name_key(s)'
+fields: '--form-for\_\_model-name_key(s)'
 
-
-Contributing
-------------------------------------------------------------------------------
+## Contributing
 
 See the [Contributing](CONTRIBUTING.md) guide for details.
 
-
-License
-------------------------------------------------------------------------------
+## License
 
 This project is licensed under the [MIT License](LICENSE.md).

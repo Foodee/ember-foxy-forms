@@ -1,5 +1,5 @@
 <div
-  class="field-for {{this.config.fieldClasses}} {{strip-class-names this.classNames}} {{if this.errors.length "error"}} {{if this.disabled "disabled"}} {{if this.readonly "readonly"}} {{this._testingClass}} {{this.using}} -field"
+  class="field-for {{@fieldClasses}} {{strip-class-names this.classNames}} {{if this.errors.length "error"}} {{if this.disabled "disabled"}} {{if this.readonly "readonly"}} {{this._testingClass}} {{this.using}} -field"
   data-test-field-for
 >
   <LabelFor @label={{@label}} @controlId={{this.controlId}} />
@@ -23,7 +23,7 @@
 
   {{#if this._showControl}}
     <div
-      class="field-for-control-container {{if this.has-control-callout this.config.fieldForControlCalloutClasses}} {{if this.has-control-callout this._calloutPosition}}"
+      class="field-for-control-container {{if this.has-control-callout @fieldForControlCalloutClasses}} {{if this.has-control-callout this._calloutPosition}}"
     >
       <div class="field-for-control-and-commit-buttons">
         {{#if (hasBlock)}}
@@ -65,12 +65,17 @@
         <CommitButtons
           @visible={{this._showConfirm}}
           @isActing={{this.form.isSubmitting}}
+          @customCommitCancelComponent={{this.customCommitCancelComponent}}
+          @buttonClasses={{this.buttonClasses}}
           @commit={{this.commit}}
           @cancel={{this.cancel}}
         />
       </div>
 
-      <ErrorsFor @errors={{this.errors}} />
+      <ErrorsFor
+        @errors={{this.errors}}
+        @customErrorComponent={{this.customErrorComponent}}
+      />
     </div>
   {{/if}}
 </div>

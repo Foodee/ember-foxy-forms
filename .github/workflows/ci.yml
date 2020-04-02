@@ -1,3 +1,5 @@
+# https://github.com/kybishop/ember-attacher/blob/master/.github/workflows/ci-build.yml
+
 name: CI
 
 # These trigger patterns courtesy of https://github.com/broccolijs/broccoli/pull/436

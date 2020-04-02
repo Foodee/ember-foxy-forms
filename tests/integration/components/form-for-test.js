@@ -23,7 +23,7 @@ module('Integration | Component | form for', function(hooks) {
       </FormFor>
     `);
 
-    assert.dom('*').hasText('template block text');
+    assert.dom('.form-for').hasText('template block text');
   });
 
   test('it binds the field value down to the control', async function(assert) {

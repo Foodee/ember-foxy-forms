@@ -5,30 +5,45 @@
       form=this
       commitValue=this.updateValue
       commitValues=this.updateValues
+      testingClassPrefix=this.testingClassPrefix
+      fieldForControlCalloutClasses=this.fieldForControlCalloutClasses
     )
-    button=(component "form-button" text="Button")
+    button=(component
+      "form-button"
+      text="Button"
+      buttonClasses=this.buttonClasses
+      buttonActingClass=this.buttonActingClass
+    )
     submit=(component
       "form-button"
       text="Submit"
       isActing=this.isSubmitting
-      classNames=this.config.submitButtonClasses
+      classNames=this.submitButtonClasses
       onClick=this.doSubmit
+      buttonClasses=this.buttonClasses
+      buttonActingClass=this.buttonActingClass
     )
     reset=(component
       "form-button"
       text="Reset"
       isActing=this.isResetting
-      classNames=this.config.resetButtonClasses
+      classNames=this.resetButtonClasses
       onClick=this.doReset
+      buttonClasses=this.buttonClasses
+      buttonActingClass=this.buttonActingClass
     )
     destroy=(component
       "form-button"
       text="Delete"
       isActing=this.isDestroyingRecord
-      classNames=this.config.destroyButtonClasses
+      classNames=this.destroyButtonClasses
+      buttonClasses=this.buttonClasses
+      buttonActingClass=this.buttonActingClass
       onClick=(fn this.confirmDestroy this.model)
     )
-    errors=(component "errors-for" errors=this.errors)
+    errors=(component
+      "errors-for" errors=this.errors customErrorComponent=this.customErrorComponent
+    )
     self=this
   )
   this

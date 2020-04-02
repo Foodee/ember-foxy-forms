@@ -13,11 +13,11 @@ module('Integration | Component | form button', function(hooks) {
 
     // Template block usage:
     await render(hbs`
-      <FormButton>
-        template block text
-      </FormButton>
+    <FormButton>
+    template block text
+    </FormButton>
     `);
 
-    assert.dom('*').hasText('template block text');
+    assert.dom('[data-test-form-button]').hasText('template block text');
   });
 });

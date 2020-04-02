@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
   root: true,
   parser: 'babel-eslint',
@@ -22,6 +24,7 @@ module.exports = {
       files: [
         '.eslintrc.js',
         '.template-lintrc.js',
+        '.prettierrc.js',
         'ember-cli-build.js',
         'index.js',
         'testem.js',

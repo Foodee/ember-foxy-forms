@@ -1,7 +1,30 @@
 import Service from '@ember/service';
+import { getOwner } from '@ember/application';
 import { Promise } from 'rsvp';
 
 export default class FormForService extends Service {
+  constructor() {
+    super(...arguments);
+
+    this.testingClassPrefix = this.config.testingClassPrefix;
+    this.fieldClasses = this.config.fieldClasses;
+    this.formClasses = this.config.formClasses;
+    this.fieldForControlCalloutClasses = this.config.fieldForControlCalloutClasses;
+    this.fieldForControlCalloutPosition = this.config.fieldForControlCalloutPosition;
+    this.buttonClasses = this.config.buttonClasses;
+    this.submitButtonClasses = this.config.submitButtonClasses;
+    this.resetButtonClasses = this.config.resetButtonClasses;
+    this.customCommitCancelComponent = this.config.customCommitCancelComponent;
+    this.customErrorComponent = this.config.customErrorComponent;
+  }
+
+  get config() {
+    return Object.assign(
+      {},
+      getOwner(this).resolveRegistration('config:environment').APP['ember-foxy-forms']
+    );
+  }
+
   /**
    * Called by form's delete button to confirm the destruction of
    * a record override for custom behavior in your project (ie pop up a modal)
