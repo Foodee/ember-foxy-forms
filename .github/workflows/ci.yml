@@ -63,7 +63,7 @@ jobs:
     strategy:
       matrix:
         scenario:
-          - ember-lts-3.12
+          - ember-lts-3.13
           - ember-lts-3.16
           - ember-release
           - ember-beta

@@ -8,10 +8,10 @@ import Model from '@ember-data/model';
 
 import faker from 'faker';
 
-module('Integration | Component | form for', function(hooks) {
+module('Integration | Component | form for', function (hooks) {
   setupRenderingTest(hooks);
 
-  test('it renders', async function(assert) {
+  test('it renders', async function (assert) {
     await render(hbs`<FormFor />`);
 
     assert.dom('*').hasText('');
@@ -26,7 +26,7 @@ module('Integration | Component | form for', function(hooks) {
     assert.dom('.form-for').hasText('template block text');
   });
 
-  test('it binds the field value down to the control', async function(assert) {
+  test('it binds the field value down to the control', async function (assert) {
     this.model = EmberObject.create({
       foo: `1-${faker.lorem.word()}`,
     });
@@ -46,7 +46,7 @@ module('Integration | Component | form for', function(hooks) {
     assert.dom('input').hasValue(this.model.foo);
   });
 
-  test('it propagates changes to the form model', async function(assert) {
+  test('it propagates changes to the form model', async function (assert) {
     const foo = faker.lorem.word();
 
     const model = EmberObject.create({
@@ -68,7 +68,7 @@ module('Integration | Component | form for', function(hooks) {
     assert.equal(model.get('foo'), newFoo);
   });
 
-  test('it binds the multiple field values down to the control', async function(assert) {
+  test('it binds the multiple field values down to the control', async function (assert) {
     const valueOne = faker.lorem.word();
     const valueTwo = faker.lorem.word();
     const valueThree = faker.lorem.word();
@@ -102,7 +102,7 @@ module('Integration | Component | form for', function(hooks) {
     assert.dom('input.input-2').hasValue(newValueThree);
   });
 
-  test('it propagates the multiple changes to the form model', async function(assert) {
+  test('it propagates the multiple changes to the form model', async function (assert) {
     const valueOne = faker.lorem.word();
     const valueTwo = faker.lorem.word();
     const valueThree = faker.lorem.word();
@@ -121,7 +121,7 @@ module('Integration | Component | form for', function(hooks) {
     assert.equal(this.model.get('valueOne'), newFoo);
   });
 
-  test('it binds the multiple field values down to the control with the mapping ', async function(assert) {
+  test('it binds the multiple field values down to the control with the mapping ', async function (assert) {
     const foo = faker.lorem.word();
     const bar = faker.lorem.word();
     const baz = faker.lorem.word();
@@ -158,7 +158,7 @@ module('Integration | Component | form for', function(hooks) {
     assert.dom('input.input-2').hasValue(newValueThree);
   });
 
-  test('it propagates the multiple changes to the form model with the mapping', async function(assert) {
+  test('it propagates the multiple changes to the form model with the mapping', async function (assert) {
     const foo = faker.lorem.word();
     const bar = faker.lorem.word();
     const baz = faker.lorem.word();
@@ -182,7 +182,7 @@ module('Integration | Component | form for', function(hooks) {
     assert.equal(model.get('foo'), newFoo);
   });
 
-  test('it hides the control when inlineEditing', async function(assert) {
+  test('it hides the control when inlineEditing', async function (assert) {
     this.model = EmberObject.create({ foo: 'bar' });
 
     await render(hbs`
@@ -197,7 +197,7 @@ module('Integration | Component | form for', function(hooks) {
     assert.equal(findAll('input')[0], undefined);
   });
 
-  test('it shows the control and hides the value when inline-editing and the value is clicked', async function(assert) {
+  test('it shows the control and hides the value when inline-editing and the value is clicked', async function (assert) {
     this.model = EmberObject.create({ foo: 'bar' });
 
     await render(hbs`
@@ -215,7 +215,7 @@ module('Integration | Component | form for', function(hooks) {
     assert.equal(findAll('.field-for-value-container')[0], undefined);
   });
 
-  test('it hides the control inline-editing when commited or canceled with no errors', async function(assert) {
+  test('it hides the control inline-editing when commited or canceled with no errors', async function (assert) {
     this.model = EmberObject.create({ foo: 'bar' });
 
     await render(hbs`
@@ -235,7 +235,7 @@ module('Integration | Component | form for', function(hooks) {
     assert.equal(findAll('input')[0], undefined);
   });
 
-  test('it does not hide the control when inline-editing when there are errors', async function(assert) {
+  test('it does not hide the control when inline-editing when there are errors', async function (assert) {
     this.model = EmberObject.create({ foo: 'bar', errors: { foo: ['bar'] } });
 
     await render(hbs`
@@ -255,7 +255,7 @@ module('Integration | Component | form for', function(hooks) {
     assert.dom('.field-for-value-container').hasText('bar');
   });
 
-  test('it shows the control and the value when inline-editing and has-control-callout and the value is clicked', async function(assert) {
+  test('it shows the control and the value when inline-editing and has-control-callout and the value is clicked', async function (assert) {
     this.model = EmberObject.create({ foo: 'bar' });
 
     await render(hbs`
@@ -274,7 +274,7 @@ module('Integration | Component | form for', function(hooks) {
     assert.notEqual(findAll('.field-for-value-container')[0], undefined);
   });
 
-  test('it should use the model name to build the testing class', async function(assert) {
+  test('it should use the model name to build the testing class', async function (assert) {
     this.modelName = faker.lorem.word();
     this.model = {};
 
@@ -291,7 +291,7 @@ module('Integration | Component | form for', function(hooks) {
     assert.notEqual(findAll(`.--form-for__${this.modelName}`)[0], undefined);
   });
 
-  test('it should use the ember data model name to build the testing class', async function(assert) {
+  test('it should use the ember data model name to build the testing class', async function (assert) {
     const modelName = faker.lorem.word();
 
     const modelClass = Model.extend({});
@@ -317,7 +317,7 @@ module('Integration | Component | form for', function(hooks) {
     assert.notEqual(findAll(`.--form-for__${modelName}`)[0], undefined);
   });
 
-  test('it should use the object model name to build the testing class', async function(assert) {
+  test('it should use the object model name to build the testing class', async function (assert) {
     this.model = {
       modelName: faker.lorem.word(),
     };

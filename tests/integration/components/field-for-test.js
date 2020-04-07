@@ -4,14 +4,14 @@ import { render, findAll } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import faker from 'faker';
 
-module('Integration | Component | field container', function(hooks) {
+module('Integration | Component | field container', function (hooks) {
   setupRenderingTest(hooks);
 
-  test('it renders', function(assert) {
+  test('it renders', function (assert) {
     assert.expect(0);
   });
 
-  test('it renders testing classes', async function(assert) {
+  test('it renders testing classes', async function (assert) {
     this.key = faker.lorem.word();
 
     await render(hbs`
@@ -23,7 +23,7 @@ module('Integration | Component | field container', function(hooks) {
     assert.notEqual(findAll(`.--field-for__object_${this.key}`)[0], undefined);
   });
 
-  test('it delegates the values param to the control', async function(assert) {
+  test('it delegates the values param to the control', async function (assert) {
     this.key = faker.lorem.word();
 
     this.values = [
@@ -50,16 +50,12 @@ module('Integration | Component | field container', function(hooks) {
     assert.dom('[data-test-form-controls-selector-option]').exists({ count: 2 });
   });
 
-  test('it delegates the values param to the control using the string format', async function(assert) {
+  test('it delegates the values param to the control using the string format', async function (assert) {
     this.key = faker.lorem.word();
 
     await render(hbs`
       <FormFor as |form|>
-        <form.fieldFor
-          @params={{array this.key}}
-          @using="-select"
-          @values="1:foo,2:bar"
-        />
+        <form.fieldFor @params={{array this.key}} @using="-select" @values="1:foo,2:bar" />
       </FormFor>
     `);
 

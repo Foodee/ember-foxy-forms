@@ -1,5 +1,12 @@
 <button
-  class="{{@buttonClasses}} {{if @isActing @buttonActingClass}} {{if @icon "icon"}} {{strip-class-names @classNames}} {{if @disabled "disabled"}}"
+  class={{
+    concat
+    @buttonClasses
+    (if @isActing @buttonActingClass)
+    (if @icon "icon")
+    (strip-class-names @classNames)
+    (if @disabled "disabled")
+  }}
   type="button"
   ...attributes
   data-test-form-button

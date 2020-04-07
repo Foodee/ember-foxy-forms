@@ -432,9 +432,9 @@ export default class FieldForComponent extends Component {
    * @param {*} value
    * @public
    */
-  commitValue(/*propertyPath, value*/) { }
+  commitValue(/*propertyPath, value*/) {}
 
-  commitValues(/*value*/) { }
+  commitValues(/*value*/) {}
 
   /**
    * Handles change method from the control, you can override this
@@ -500,7 +500,7 @@ export default class FieldForComponent extends Component {
    * @param {*} value
    * @public
    */
-  didCommitValue(/* value */) { }
+  didCommitValue(/* value */) {}
 
   /**
    * Triggered after the commit method is called for multiple values
@@ -508,7 +508,7 @@ export default class FieldForComponent extends Component {
    * @param {Object} values
    * @public
    */
-  didCommitValues(/* values */) { }
+  didCommitValues(/* values */) {}
 
   /**
    * Cancels the current intermediary value, only really useful

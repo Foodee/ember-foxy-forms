@@ -420,7 +420,7 @@ export default class FormForComponent extends Component {
    * @param {Object} [model]
    * @public
    */
-  didNotSubmit() { }
+  didNotSubmit() {}
 
   /**
    * Called when the submit action is called
@@ -472,7 +472,7 @@ export default class FormForComponent extends Component {
    * @param {Object} model
    * @public
    */
-  childDidSubmit(/*model*/) { }
+  childDidSubmit(/*model*/) {}
 
   /**
    * Called when a child of this form's onSubmit is reject
@@ -480,7 +480,7 @@ export default class FormForComponent extends Component {
    * @param {Object} model
    * @public
    */
-  childFailedSubmit(/*model*/) { }
+  childFailedSubmit(/*model*/) {}
 
   /**
    * Called when the onSubmit is fulfilled
@@ -488,7 +488,7 @@ export default class FormForComponent extends Component {
    * @param {Object} model
    * @public
    */
-  didSubmit(/*model*/) { }
+  didSubmit(/*model*/) {}
 
   /**
    * Called when the onSubmit is rejected
@@ -496,7 +496,7 @@ export default class FormForComponent extends Component {
    * @param {Object} reason
    * @public
    */
-  failedSubmit(/*reason*/) { }
+  failedSubmit(/*reason*/) {}
 
   /**
    * Action that actual does the submitting
@@ -602,7 +602,7 @@ export default class FormForComponent extends Component {
    * @param {Object} model
    * @public
    */
-  didNotReset(/*model*/) { }
+  didNotReset(/*model*/) {}
 
   /**
    * Called when the reset action is called
@@ -621,7 +621,7 @@ export default class FormForComponent extends Component {
    * @param {Object} model
    * @public
    */
-  didReset(/*model*/) { }
+  didReset(/*model*/) {}
 
   /**
    * Called when the onReset is rejected
@@ -629,7 +629,7 @@ export default class FormForComponent extends Component {
    * @param {Object} reason
    * @public
    */
-  failedReset(/*reason*/) { }
+  failedReset(/*reason*/) {}
 
   /**
    * Called when values are updated in the form. Useful for knowing when a field has
@@ -638,21 +638,21 @@ export default class FormForComponent extends Component {
    * @param {Object} keyValues
    * @public
    */
-  onUpdateValues(/*keyValues*/) { }
+  onUpdateValues(/*keyValues*/) {}
 
   /**
    * Called when the form is marked dirty
    * @method onMarkedDirty
    * @public
    */
-  onMarkedDirty() { }
+  onMarkedDirty() {}
 
   /**
    * Called when the form is marked clean
    * @method onMarkedClean
    * @public
    */
-  onMarkedClean() { }
+  onMarkedClean() {}
 
   /**
    * Action that actual does the resetting
@@ -688,7 +688,7 @@ export default class FormForComponent extends Component {
    * @method didDestroy
    * @public
    */
-  didDestroy() { }
+  didDestroy() {}
 
   /**
    * Called when the onDestroy is fulfilled
@@ -696,7 +696,7 @@ export default class FormForComponent extends Component {
    * @param {Object} reason
    * @public
    */
-  failedDestroy(/* reason */) { }
+  failedDestroy(/* reason */) {}
 
   /**
    * Called to confirm the destruction of the model
