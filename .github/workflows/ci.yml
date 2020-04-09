@@ -1,83 +1,78 @@
-# https://github.com/kybishop/ember-attacher/blob/master/.github/workflows/ci-build.yml
-
 name: CI
 
-# These trigger patterns courtesy of https://github.com/broccolijs/broccoli/pull/436
 on:
   pull_request:
   push:
-    # filtering branches here prevents duplicate builds from pull_request and push
     branches:
       - master
       - "v*"
-    # always run CI for tags
     tags:
       - "*"
-
-  # early issue detection: run CI weekly on Sundays
   schedule:
-    - cron: "0 6 * * 0"
-
-env:
-  CI: true
+    - cron: '0 6 * * 0' # early issue detection: run CI weekly on Sundays
 
 jobs:
-  test-locked-deps:
-    name: Locked Deps
-    runs-on: ubuntu-16.04
+  lint:
+    name: Code Quality
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v1
       - name: Install Node
         uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 12.x
       - name: Install Dependencies
         run: npm install
       - name: Lint JS
         run: npm run lint:js
       - name: Lint Handlebars
         run: npm run lint:hbs
-      - name: Browser Tests
-        run: npm test
 
-  test-old-dependencies:
-    name: Oldest Supported Env
-    runs-on: ubuntu-16.04
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v1
       - name: Install Node
         uses: actions/setup-node@v1
         with:
-          node-version: 10
+          node-version: 10.x
       - name: Install Dependencies
         run: npm install
-      - name: Browser Tests
-        run: npm test
+      - name: Test
+        run: npm run test:ember
 
-  test-try:
-    name: Ember Try
-    runs-on: ubuntu-16.04
-    needs: [test-locked-deps]
+  try-scenarios:
+    name: ${{ matrix.ember-try-scenario }}
+
+    runs-on: ubuntu-latest
+
+    needs: test
+
     strategy:
+      fail-fast: true
       matrix:
-        scenario:
-          - ember-lts-3.13
+        ember-try-scenario:
           - ember-lts-3.16
           - ember-release
           - ember-beta
           - ember-canary
+          - ember-default
           - ember-default-with-jquery
           - ember-classic
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v1
       - name: Install Node
         uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 12.x
       - name: Install Dependencies
         run: npm install
-      - name: Try Scenario
-        run: node_modules/.bin/ember try:one ${{ matrix.scenario }}
+      - name: test
+        env:
+          EMBER_TRY_SCENARIO: ${{ matrix.ember-try-scenario }}
+        run: node_modules/.bin/ember try:one $EMBER_TRY_SCENARIO
