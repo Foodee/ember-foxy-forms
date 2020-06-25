@@ -1,190 +1,17 @@
-import Component from '@ember/component';
+import Component from '@glimmer/component';
+import { arg } from 'ember-arg-types';
+import { bool, string } from 'prop-types';
 import { next } from '@ember/runloop';
 import { dasherize } from '@ember/string';
-import { Promise } from 'rsvp';
-import { inject as service } from '@ember/service';
-import EmberObject, { action, setProperties, computed, set } from '@ember/object';
-import { A } from '@ember/array';
-import { classNames, classNameBindings } from '@ember-decorators/component';
+import EmberObject, { action, setProperties } from '@ember/object';
 import { readOnly } from '@ember/object/computed';
+import { A } from '@ember/array';
+import { inject as service } from '@ember/service';
+import { Promise } from 'rsvp';
 
-@classNames('form-for')
-@classNameBindings('config.formClasses', '_testingClass')
 export default class FormForComponent extends Component {
   @service formFor;
   @service router;
-
-  init() {
-    super.init(...arguments);
-
-    if (this.tagName === '') {
-      this.classNameBindings = [];
-    }
-
-    if (this.preventsNavigation) {
-      this.handleWilltransition = (transition) => {
-        const isDirty =
-          (this.useEmberDataDirtyTracking && this.model.hasDirtyAttributes) || this.isModelDirty;
-
-        if (isDirty && !confirm('You have unsaved changes, are you sure you want to leave?')) {
-          transition.abort();
-        }
-      };
-
-      // in test environments that are not acceptance, we won't have real router
-
-      if (this.router && this.router.on) {
-        this.router.on('willTransition', this, this.handleWilltransition);
-      }
-
-      // prevent browser reloads
-      window.onbeforeunload = () => {
-        const isDirty =
-          (this.useEmberDataDirtyTracking && this.model.hasDirtyAttributes) || this.isModelDirty;
-
-        if (isDirty) {
-          return 'You have unsaved changes, are you sure you want to leave?';
-        }
-      };
-    }
-
-    if (this.parentForm) {
-      this.parentForm.registerChildForm(this);
-    }
-  }
-
-  @readOnly('formFor.testingClassPrefix') testingClassPrefix;
-  @readOnly('formFor.fieldClasses') fieldClasses;
-  @readOnly('formFor.formClasses') formClasses;
-  @readOnly('formFor.fieldForControlCalloutClasses') fieldForControlCalloutClasses;
-  @readOnly('formFor.fieldForControlCalloutPosition') fieldForControlCalloutPosition;
-  @readOnly('formFor.buttonClasses') buttonClasses;
-  @readOnly('formFor.submitButtonClasses') submitButtonClasses;
-  @readOnly('formFor.resetButtonClasses') resetButtonClasses;
-  @readOnly('formFor.customCommitCancelComponent') customCommitCancelComponent;
-  @readOnly('formFor.customErrorComponent') customErrorComponent;
-
-  /**
-   * Collection of all child field registered with this form
-   * @property fields
-   * @type FieldFor[]
-   * @default null
-   * @public
-   */
-  fields = A();
-
-  /**
-   * Model that this form controls
-   * @property model
-   * @type Ember.Object
-   * @default null
-   * @public
-   */
-  model = EmberObject.create();
-
-  modelName = null;
-
-  /**
-   * Whether or not any changes have been made to the model
-   * @property isModelDirty
-   * @type boolean
-   * @default false
-   * @public
-   */
-  isModelDirty = false;
-
-  /**
-   * Whether or not to use ember data dirty tracking
-   * @property useEmberDataDirtyTracking
-   * @type boolean
-   * @default false
-   * @public
-   */
-  useEmberDataDirtyTracking = false;
-
-  /**
-   * The last doSubmit Promise; used to queue multiple submit requests
-   * @property lastDoSubmit
-   * @type Promise
-   * @default null
-   * @public
-   */
-  lastDoSubmit = null;
-
-  /**
-   * Computed model name
-   * @property _modelName
-   * @type String
-   * @default 'object'
-   * @public
-   */
-  @computed('model', 'modelName')
-  get _modelName() {
-    return dasherize(
-      this.modelName || this.model?.modelName || this.model?._internalModel?.modelName || 'object'
-    );
-  }
-
-  /**
-   * A class which will be appended to the form for testing purpose (not styling purposes)
-   * @property _testingClass
-   * @type String
-   * @default '--field-for__<model-name>'
-   * @private
-   */
-  @computed('model', '_modelName')
-  get _testingClass() {
-    return `${this.testingClassPrefix}form-for__${this._modelName}`;
-  }
-
-  /**
-   * Base errors for the model
-   * @property errors
-   * @type Error[]
-   * @default []
-   * @public
-   */
-  @computed('model.errors.base')
-  get errors() {
-    return (this.model?.errors?.base || []).map((error) => {
-      error.message = error.message.replace(/base - /i, '');
-
-      return error;
-    });
-  }
-
-  /**
-   * Denotes when the form or any of it's children are submitting.
-   * Manually recomputed to prevent double setting of isSubmitting while
-   * childForms are registering.
-   * @property isSubmitting
-   * @type Boolean
-   * @default false
-   */
-  get isSubmitting() {
-    return this._isSubmitting || (this.childForms || []).some((_) => _.isSubmitting);
-  }
-
-  /**
-   * Denotes whether this is the root form.
-   * @property isRootForm
-   * @type Boolean
-   */
-  @computed('parentForm')
-  get isRootForm() {
-    return !this.parentForm;
-  }
-
-  /**
-   * Denotes when this particular form is submitting, an none of it's children
-   * @property _isSubmitting
-   * @type Boolean
-   * @default false
-   */
-  _isSubmitting = false;
-
-  // --------------------------------------------------------------------------------
-  // This section is where the DSL syntax lives
 
   /**
    * Whether or not this form is disabled
@@ -193,6 +20,7 @@ export default class FormForComponent extends Component {
    * @default false
    * @public
    */
+  @arg(bool)
   disabled = false;
 
   /**
@@ -377,6 +205,182 @@ export default class FormForComponent extends Component {
    */
   allowSubmitQueue = false;
 
+  constructor() {
+    super(...arguments);
+
+    if (this.preventsNavigation) {
+      this.handleWilltransition = (transition) => {
+        const isDirty =
+          (this.useEmberDataDirtyTracking && this.model.hasDirtyAttributes) || this.isModelDirty;
+
+        if (isDirty && !confirm('You have unsaved changes, are you sure you want to leave?')) {
+          transition.abort();
+        }
+      };
+
+      // in test environments that are not acceptance, we won't have real router
+
+      if (this.router && this.router.on) {
+        this.router.on('willTransition', this, this.handleWilltransition);
+      }
+
+      // prevent browser reloads
+      window.onbeforeunload = () => {
+        const isDirty =
+          (this.useEmberDataDirtyTracking && this.model.hasDirtyAttributes) || this.isModelDirty;
+
+        if (isDirty) {
+          return 'You have unsaved changes, are you sure you want to leave?';
+        }
+      };
+    }
+
+    if (this.parentForm) {
+      this.parentForm.registerChildForm(this);
+    }
+  }
+
+  get tagName() {
+    return this.args.tagName || 'form';
+  }
+
+  @readOnly('formFor.testingClassPrefix') testingClassPrefix;
+  @readOnly('formFor.fieldClasses') fieldClasses;
+  @readOnly('formFor.formClasses') formClasses;
+  @readOnly('formFor.fieldForControlCalloutClasses')
+  fieldForControlCalloutClasses;
+  @readOnly('formFor.fieldForControlCalloutPosition')
+  fieldForControlCalloutPosition;
+  @readOnly('formFor.buttonClasses') buttonClasses;
+  @readOnly('formFor.submitButtonClasses') submitButtonClasses;
+  @readOnly('formFor.resetButtonClasses') resetButtonClasses;
+  @readOnly('formFor.customCommitCancelComponent') customCommitCancelComponent;
+  @readOnly('formFor.customErrorComponent') customErrorComponent;
+
+  /**
+   * Collection of all child field registered with this form
+   * @property fields
+   * @type FieldFor[]
+   * @default null
+   * @public
+   */
+  fields = A();
+
+  /**
+   * Model that this form controls
+   * @property model
+   * @type Ember.Object
+   * @default null
+   * @public
+   */
+  get model() {
+    return this.args.model || EmberObject.create();
+  }
+
+  @arg(string)
+  modelName = null;
+
+  /**
+   * Whether or not any changes have been made to the model
+   * @property isModelDirty
+   * @type boolean
+   * @default false
+   * @public
+   */
+  isModelDirty = false;
+
+  /**
+   * Whether or not to use ember data dirty tracking
+   * @property useEmberDataDirtyTracking
+   * @type boolean
+   * @default false
+   * @public
+   */
+  useEmberDataDirtyTracking = false;
+
+  /**
+   * The last doSubmit Promise; used to queue multiple submit requests
+   * @property lastDoSubmit
+   * @type Promise
+   * @default null
+   * @public
+   */
+  lastDoSubmit = null;
+
+  /**
+   * Computed model name
+   * @property _modelName
+   * @type String
+   * @default 'object'
+   * @public
+   */
+  get _modelName() {
+    return dasherize(
+      this.args.modelName ||
+        this.model?.modelName ||
+        this.model?._internalModel?.modelName ||
+        'object'
+    );
+  }
+
+  /**
+   * A class which will be appended to the form for testing purpose (not styling purposes)
+   * @property _testingClass
+   * @type String
+   * @default '--field-for__<model-name>'
+   * @private
+   */
+  get _testingClass() {
+    return `${this.testingClassPrefix}form-for__${this._modelName}`;
+  }
+
+  /**
+   * Base errors for the model
+   * @property errors
+   * @type Error[]
+   * @default []
+   * @public
+   */
+  get errors() {
+    return (this.model?.errors?.base || []).map((error) => {
+      error.message = error.message.replace(/base - /i, '');
+
+      return error;
+    });
+  }
+
+  /**
+   * Denotes when the form or any of it's children are submitting.
+   * Manually recomputed to prevent double setting of isSubmitting while
+   * childForms are registering.
+   * @property isSubmitting
+   * @type Boolean
+   * @default false
+   */
+  get isSubmitting() {
+    return this._isSubmitting || (this.childForms || []).some((_) => _.isSubmitting);
+  }
+
+  /**
+   * Denotes whether this is the root form.
+   * @property isRootForm
+   * @type Boolean
+   */
+  get isRootForm() {
+    return !this.parentForm;
+  }
+
+  /**
+   * Denotes when this particular form is submitting, an none of it's children
+   * @property _isSubmitting
+   * @type Boolean
+   * @default false
+   */
+  _isSubmitting = false;
+
+  // --------------------------------------------------------------------------------
+  // This section is where the DSL syntax lives
+
   // --------------------------------------------------------------------------------
   // Methods
   //
@@ -530,7 +534,7 @@ export default class FormForComponent extends Component {
           this.notifyChildDidSubmit(false);
           this._markClean();
           this._runFieldDidSubmit();
-          set(this, '_hasFailedToSubmit', false);
+          this._hasFailedToSubmit = false;
           this.notifyChildDidSubmit(this);
         })
         .catch((_) => {
@@ -543,11 +547,11 @@ export default class FormForComponent extends Component {
           this._unmarkSubmitting();
         });
 
-      set(this, 'lastDoSubmit', doSubmit);
+      this.lastDoSubmit = doSubmit;
 
       return doSubmit;
     } else {
-      set(this, '_hasFailedToSubmit', true);
+      this._hasFailedToSubmit = true;
       this.didNotSubmit(model);
       this.notifyError(this.didNotSubmitMessage);
 
@@ -663,7 +667,7 @@ export default class FormForComponent extends Component {
     const model = this.model;
 
     if (this.willReset(model)) {
-      set(this, 'isResetting', true);
+      this.isResetting = true;
 
       this.onReset()
         .then(() => {
@@ -676,7 +680,7 @@ export default class FormForComponent extends Component {
           this.notifyError(this.failedResetMessage);
           this.failedReset(_);
         })
-        .finally(() => set(this, 'isResetting', false));
+        .finally(() => (this.isResetting = false));
     } else {
       this.didNotReset(model);
       this.notifyError(this.didNotResetMessage);
@@ -705,7 +709,7 @@ export default class FormForComponent extends Component {
    * @public
    */
   confirmDestroy(model) {
-    set(this, 'isDestroyingRecord', true);
+    this.isDestroyingRecord = true;
     this.formFor
       .confirmDestroy(model, this.confirmDestroyMessage)
       .then(() => {
@@ -716,7 +720,7 @@ export default class FormForComponent extends Component {
         this.notifyError(this.failedDestroyMessage);
         this.failedDestroy(_);
       })
-      .finally(() => !this.isDestroyed && set(this, 'isDestroyingRecord', false));
+      .finally(() => !this.isDestroyed && (this.isDestroyingRecord = false));
   }
 
   notifySuccess(message) {
@@ -810,7 +814,7 @@ export default class FormForComponent extends Component {
    */
   _markDirty() {
     if (!this.isDestroyed) {
-      set(this, 'isModelDirty', true);
+      this.isModelDirty = true;
       this.onMarkedDirty(this.model);
     }
   }
@@ -822,7 +826,7 @@ export default class FormForComponent extends Component {
    */
   _markClean() {
     if (!this.isDestroyed) {
-      set(this, 'isModelDirty', false);
+      this.isModelDirty = false;
       this.onMarkedClean(this.model);
     }
   }
@@ -833,7 +837,7 @@ export default class FormForComponent extends Component {
    * @private
    */
   _markSubmitting() {
-    set(this, '_isSubmitting', true);
+    this._isSubmitting = true;
     this._recomputeIsSubmitting();
   }
 
@@ -843,7 +847,7 @@ export default class FormForComponent extends Component {
    * @private
    */
   _unmarkSubmitting() {
-    set(this, '_isSubmitting', false);
+    this._isSubmitting = false;
     this._recomputeIsSubmitting();
   }
 
@@ -889,7 +893,7 @@ export default class FormForComponent extends Component {
   registerField(field) {
     const fields = this.fields || [];
     fields.push(field);
-    set(this, 'fields', fields);
+    this.fields = fields;
   }
 
   /**
@@ -901,7 +905,7 @@ export default class FormForComponent extends Component {
   unregisterField(field) {
     const fields = this.fields || [];
     fields.removeObject(field);
-    set(this, 'fields', fields);
+    this.fields = fields;
   }
 
   /**
@@ -913,7 +917,7 @@ export default class FormForComponent extends Component {
   registerChildForm(form) {
     const childForms = this.childForms || [];
     childForms.push(form);
-    set(this, 'childForms', childForms);
+    this.childForms = childForms;
   }
 
   /**
@@ -925,7 +929,7 @@ export default class FormForComponent extends Component {
   unregisterChildForm(form) {
     const childForms = this.childForms || [];
     childForms.removeObject(form);
-    set(this, 'childForms', childForms);
+    this.childForms = childForms;
   }
 
   willDestroyElement() {

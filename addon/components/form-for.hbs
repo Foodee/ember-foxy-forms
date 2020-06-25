@@ -1,50 +1,59 @@
-{{yield
-  (hash
-    fieldFor=(component
-      "field-for"
-      form=this
-      commitValue=this.updateValue
-      commitValues=this.updateValues
-      testingClassPrefix=this.testingClassPrefix
-      fieldForControlCalloutClasses=this.fieldForControlCalloutClasses
-    )
-    button=(component
-      "form-button"
-      text="Button"
-      buttonClasses=this.buttonClasses
-      buttonActingClass=this.buttonActingClass
-    )
-    submit=(component
-      "form-button"
-      text="Submit"
-      isActing=this.isSubmitting
-      classNames=this.submitButtonClasses
-      onClick=this.doSubmit
-      buttonClasses=this.buttonClasses
-      buttonActingClass=this.buttonActingClass
-    )
-    reset=(component
-      "form-button"
-      text="Reset"
-      isActing=this.isResetting
-      classNames=this.resetButtonClasses
-      onClick=this.doReset
-      buttonClasses=this.buttonClasses
-      buttonActingClass=this.buttonActingClass
-    )
-    destroy=(component
-      "form-button"
-      text="Delete"
-      isActing=this.isDestroyingRecord
-      classNames=this.destroyButtonClasses
-      buttonClasses=this.buttonClasses
-      buttonActingClass=this.buttonActingClass
-      onClick=(fn this.confirmDestroy this.model)
-    )
-    errors=(component
-      "errors-for" errors=this.errors customErrorComponent=this.customErrorComponent
-    )
-    self=this
-  )
-  this
-}}
+{{#let (-element this.tagName) as |Tag|}}
+  <Tag
+    class="
+    form-for
+    {{if this.formClasses this.formClasses}}
+     {{this._testingClass}}
+    "
+    ...attributes
+  >
+    {{
+      yield
+      (hash
+        fieldFor=(component
+          "field-for"
+          form=this
+          commitValue=this.updateValue
+          commitValues=this.updateValues
+          testingClassPrefix=this.testingClassPrefix
+          fieldForControlCalloutClasses=this.fieldForControlCalloutClasses
+        )
+        button=(component
+          "form-button"
+          text="Button"
+          class=this.buttonClasses
+          buttonActingClass=this.buttonActingClass
+        )
+        submit=(component
+          "form-button"
+          text="Submit"
+          class=(concat this.submitButtonClasses " " this.buttonClasses)
+          isActing=this.isSubmitting
+          onClick=this.doSubmit
+          buttonActingClass=this.buttonActingClass
+        )
+        reset=(component
+          "form-button"
+          text="Reset"
+          class=(concat this.resetButtonClasses " " this.buttonClasses)
+          isActing=this.isResetting
+          onClick=this.doReset
+          buttonActingClass=this.buttonActingClass
+        )
+        destroy=(component
+          "form-button"
+          text="Delete"
+          class=(concat this.destroyButtonClasses " " this.buttonClasses)
+          isActing=this.isDestroyingRecord
+          buttonActingClass=this.buttonActingClass
+          onClick=(fn this.confirmDestroy this.model)
+        )
+        errors=(component
+          "errors-for" errors=this.errors customErrorComponent=this.customErrorComponent
+        )
+        self=this
+      )
+      this
+    }}
+  </Tag>
+{{/let}}

@@ -1,19 +1,12 @@
 <button
-  class={{
-    concat
-    @buttonClasses
-    (if @isActing @buttonActingClass)
-    (if @icon "icon")
-    (strip-class-names @classNames)
-    (if @disabled "disabled")
-  }}
+  class={{concat (if @isActing @buttonActingClass) (if @icon " icon") (if @disabled " disabled")}}
   type="button"
   ...attributes
   data-test-form-button
   {{on "click" (stop-propagation this.handleClick)}}
 >
   {{#if @icon}}
-    <i class="icon {{@icon}}"></i>
+    <i class="icon {{@icon}}" data-test-form-button-icon></i>
   {{/if}}
 
   {{#if (hasBlock)}}

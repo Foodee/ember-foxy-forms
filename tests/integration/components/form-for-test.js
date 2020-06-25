@@ -80,8 +80,8 @@ module('Integration | Component | form for', function (hooks) {
         <f.fieldFor @params={{array "valueOne" "valueTwo" "valueThree"}} />
       </FormFor>
     `);
-
     assert.dom('input.input-0').hasValue(valueOne);
+
     assert.dom('input.input-1').hasValue(valueTwo);
     assert.dom('input.input-2').hasValue(valueThree);
 
@@ -279,7 +279,7 @@ module('Integration | Component | form for', function (hooks) {
     this.model = {};
 
     await render(hbs`
-      <FormFor this.model @modelName={{this.modelName}} as |f|>
+      <FormFor @model={{this.model}} @modelName={{this.modelName}} as |f|>
         <f.fieldFor
           @params={{array "foo"}}
           @inlineEditing={{true}}

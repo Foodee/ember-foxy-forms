@@ -3,18 +3,19 @@
     concat
     "field-for "
     @fieldClasses
-    (strip-class-names this.classNames)
     (if this.errors.length " error")
     (if this.disabled " disabled")
     (if this.readonly " readonly")
+    " "
     this._testingClass
+    " "
     this.using
     " -field"
   }}
+  ...attributes
   data-test-field-for
 >
   <LabelFor @label={{@label}} @controlId={{this.controlId}} />
-
   {{#if this._showValue}}
     <div
       class="field-for-value-container"
@@ -38,6 +39,7 @@
         concat
         "field-for-control-container "
         (if this.has-control-callout @fieldForControlCalloutClasses)
+        " "
         (if this.has-control-callout this._calloutPosition)
       }}
     >

@@ -1,5 +1,5 @@
 {{#if @errors.length}}
-  <div class="errors {{strip-class-names @classNames}}">
+  <div class="errors" ...attributes>
     {{#each @errors as |error|}}
       {{#if @customErrorComponent}}
         {{component @customErrorComponent error=error}}
