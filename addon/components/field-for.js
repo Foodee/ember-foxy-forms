@@ -1,8 +1,8 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { arg } from 'ember-arg-types';
-import { bool, string } from 'prop-types';
-import { oneWay, readOnly, notEmpty, gt, union } from '@ember/object/computed';
+import { bool, string, object } from 'prop-types';
+import { oneWay, notEmpty, gt, union } from '@ember/object/computed';
 import { dasherize } from '@ember/string';
 import { isArray } from '@ember/array';
 import { action, defineProperty, computed } from '@ember/object';
@@ -20,7 +20,7 @@ export default class FieldForComponent extends Component {
     if (this._hasCompositeValue) {
       // property paths to watch
       const propertyPaths = this.args.params.join(',');
-      const _withMapping = this.withMapping || {};
+      const _withMapping = this.args.withMapping || {};
 
       // bind to the value
       defineProperty(
@@ -66,15 +66,8 @@ export default class FieldForComponent extends Component {
     this.args.form.registerField(this);
   }
 
-  // define _value such that we either use the intermediary value that
-  // is set by way of the onChange handler or new values received from the value binding
-  get _value() {
-    return this.value;
-  }
-
-  set _value(value) {
-    this.value = value;
-  }
+  // --------------------------------------------------------------------------------
+  // This section is where the DSL syntax lives
 
   /**
    * The form that this field belongs to
@@ -83,14 +76,8 @@ export default class FieldForComponent extends Component {
    * @default null
    * @public
    */
+  @arg()
   form = null;
-
-  // --------------------------------------------------------------------------------
-  // This section is where the DSL syntax lives
-  // label
-  // requireConfirm
-  // withMapping
-  //
 
   /**
    * The label for this field
@@ -99,36 +86,8 @@ export default class FieldForComponent extends Component {
    * @default null
    * @public
    */
+  @arg(string)
   label = null;
-
-  /**
-   * Whether or not this field is disabled
-   * @property disabled
-   * @type boolean
-   * @default false
-   * @public
-   */
-  @oneWay('form.disabled') disabled;
-
-  /**
-   * Whether or not this field is readonly
-   * @property readonly
-   * @type boolean
-   * @default false
-   * @public
-   */
-  @oneWay('form.readonly') readonly;
-
-  /**
-   * Whether or not this field requires confirmation from the user
-   * before it commits its value to the form
-   * @property  _requireConfirm
-   * @type boolean
-   * @default true
-   * @public
-   */
-  @oneWay('form.requireConfirm') requireConfirm;
-  @readOnly('requireConfirm') _requireConfirm;
 
   /**
    * The with mapping hash, provides a mapping from model space
@@ -138,7 +97,8 @@ export default class FieldForComponent extends Component {
    * @default null
    * @public
    */
-  @readOnly('withMapping') _withMapping;
+  @arg(object)
+  withMapping = {};
 
   /**
    * Wether or not the fields have control callouts (popups / popovers) when in
@@ -159,17 +119,8 @@ export default class FieldForComponent extends Component {
    * @public
    */
   @arg(string)
-  calloutPosition = null;
-
-  /**
-   * The position of the control callout (up to the client to decide how to use this info)
-   * This will default to the site-wide environment value if no override is given for this field
-   * @property _calloutPosition
-   * @type String
-   * @private
-   */
-  get _calloutPosition() {
-    return this.calloutPosition || (this.config && this.config.fieldForControlCalloutPosition);
+  get calloutPosition() {
+    return this.formFor?.fieldForControlCalloutPosition || null;
   }
 
   /**
@@ -196,6 +147,26 @@ export default class FieldForComponent extends Component {
   }
 
   /**
+   * Tooltip to append to the value when inline editing
+   * @property valueTooltip
+   * @type String
+   * @default null
+   * @private
+   */
+  @arg(string)
+  valueTooltip = null;
+
+  // define _value such that we either use the intermediary value that
+  // is set by way of the onChange handler or new values received from the value binding
+  get _value() {
+    return this.value;
+  }
+
+  set _value(value) {
+    this.value = value;
+  }
+
+  /**
    * Either delegate the values down to the control, or transform them
    * using the values extractor function
    * @property values
@@ -217,32 +188,6 @@ export default class FieldForComponent extends Component {
   }
 
   /**
-   * This method extracts a value for the values array in the
-   * event of a string being passed.
-   *
-   * The expected format is id:value:icon
-   * @method values-extractor
-   * @param value
-   * @returns {{id: String, label: String, icon: String}}
-   */
-  valuesExtractor(value) {
-    const chunks = value.split(':');
-    const [id, label, icon] = chunks;
-
-    return { id, label, icon };
-  }
-
-  /**
-   * Function for formatting the value override for custom behavior
-   * @method formatValue
-   * @param {Object} value
-   * @returns string
-   */
-  formatValue(value) {
-    return value;
-  }
-
-  /**
    * The result of applying the formatValue function to the value
    * @property _formattedValue
    * @type String
@@ -252,15 +197,6 @@ export default class FieldForComponent extends Component {
   get displayValue() {
     return this.formatValue(this.value);
   }
-
-  /**
-   * Tooltip to append to the value when inline editing
-   * @property valueTooltip
-   * @type String
-   * @default null
-   * @private
-   */
-  valueTooltip = null;
 
   // --------------------------------------------------------------------------------
   // Computed Properties
@@ -291,7 +227,7 @@ export default class FieldForComponent extends Component {
    * @private
    */
   get _requiresConfirm() {
-    return (this._requireConfirm && this.isDirty) || this.args.inlineEditing;
+    return (this.args.requireConfirm && this.isDirty) || this.args.inlineEditing;
   }
 
   /**
@@ -336,6 +272,32 @@ export default class FieldForComponent extends Component {
         (this._lastValidValue === '' && this.value === undefined)
       )
     );
+  }
+
+  /**
+   * This method extracts a value for the values array in the
+   * event of a string being passed.
+   *
+   * The expected format is id:value:icon
+   * @method values-extractor
+   * @param value
+   * @returns {{id: String, label: String, icon: String}}
+   */
+  valuesExtractor(value) {
+    const chunks = value.split(':');
+    const [id, label, icon] = chunks;
+
+    return { id, label, icon };
+  }
+
+  /**
+   * Function for formatting the value override for custom behavior
+   * @method formatValue
+   * @param {Object} value
+   * @returns string
+   */
+  formatValue(value) {
+    return value;
   }
 
   /**
@@ -422,7 +384,7 @@ export default class FieldForComponent extends Component {
 
   _extractKeyValueMapping(_value) {
     const params = this.args.params;
-    const _withMapping = this.withMapping || {};
+    const _withMapping = this.args.withMapping || {};
 
     const keyValues = params.reduce((acc, param) => {
       const key = _withMapping[param] || param;

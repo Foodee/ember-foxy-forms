@@ -227,7 +227,7 @@ export default class FormForComponent extends Component {
   constructor() {
     super(...arguments);
 
-    if (this.preventsNavigation) {
+    if (this.args.preventsNavigation) {
       this.handleWilltransition = (transition) => {
         const isDirty =
           (this.useEmberDataDirtyTracking && this.model.hasDirtyAttributes) || this.isModelDirty;
@@ -254,8 +254,8 @@ export default class FormForComponent extends Component {
       };
     }
 
-    if (this.parentForm) {
-      this.parentForm.registerChildForm(this);
+    if (this.args.parentForm) {
+      this.args.parentForm.registerChildForm(this);
     }
   }
 
@@ -377,7 +377,7 @@ export default class FormForComponent extends Component {
    * @default false
    */
   get isSubmitting() {
-    return this._isSubmitting || (this.childForms || []).some((_) => _.isSubmitting);
+    return this._isSubmitting || (this.args.childForms || []).some((_) => _.isSubmitting);
   }
 
   /**
@@ -386,7 +386,7 @@ export default class FormForComponent extends Component {
    * @type Boolean
    */
   get isRootForm() {
-    return !this.parentForm;
+    return !this.args.parentForm;
   }
 
   /**
@@ -412,7 +412,7 @@ export default class FormForComponent extends Component {
    */
   runValidations(validationOptions = null) {
     const model = this.model;
-    return model.validate ? model.validate(validationOptions || this.validationOptions) : true;
+    return model.validate ? model.validate(validationOptions || this.args.validationOptions) : true;
   }
 
   /**
@@ -467,8 +467,8 @@ export default class FormForComponent extends Component {
       this.childDidSubmit(originator);
     }
 
-    if (this.parentForm) {
-      this.parentForm.notifyChildDidSubmit();
+    if (this.args.parentForm) {
+      this.args.parentForm.notifyChildDidSubmit();
     }
   }
 
@@ -484,8 +484,8 @@ export default class FormForComponent extends Component {
       this.childFailedSubmit(originator);
     }
 
-    if (this.parentForm) {
-      this.parentForm.notifyChildFailedSubmit();
+    if (this.args.parentForm) {
+      this.args.parentForm.notifyChildFailedSubmit();
     }
   }
 
@@ -533,22 +533,22 @@ export default class FormForComponent extends Component {
     const isSaving = model.isSaving;
 
     // Guard if the model is saving
-    if ((!isSaving && this.willSubmit(model)) || this.allowSubmitQueue) {
+    if ((!isSaving && this.willSubmit(model)) || this.args.allowSubmitQueue) {
       this._markSubmitting();
 
       const onSubmit =
-        this.allowSubmitQueue && lastDoSubmit
+        this.args.allowSubmitQueue && lastDoSubmit
           ? lastDoSubmit.then(() => this.onSubmit(model))
           : this.onSubmit(model);
 
       const doSubmit = onSubmit
         .then(() => {
           if (this.isRootForm) {
-            return this.submitChildForms(this.childForms);
+            return this.submitChildForms(this.args.childForms);
           }
         })
         .then(() => {
-          this.notifySuccess(this.successfulSubmitMessage);
+          this.notifySuccess(this.args.successfulSubmitMessage);
           this.didSubmit();
           this.notifyChildDidSubmit(false);
           this._markClean();
@@ -557,7 +557,7 @@ export default class FormForComponent extends Component {
           this.notifyChildDidSubmit(this);
         })
         .catch((_) => {
-          this.notifyError(this.failedSubmitMessage);
+          this.notifyError(this.args.failedSubmitMessage);
           this.failedSubmit(_);
           this.notifyChildFailedSubmit(this);
           return Promise.reject(_);
@@ -572,7 +572,7 @@ export default class FormForComponent extends Component {
     } else {
       this._hasFailedToSubmit = true;
       this.didNotSubmit(model);
-      this.notifyError(this.didNotSubmitMessage);
+      this.notifyError(this.args.didNotSubmitMessage);
 
       return Promise.resolve(true);
     }
@@ -690,19 +690,19 @@ export default class FormForComponent extends Component {
 
       this.onReset()
         .then(() => {
-          this.notifySuccess(this.successfulResetMessage);
+          this.notifySuccess(this.args.successfulResetMessage);
           this.didReset();
           this._runFieldDidReset();
           this._markClean();
         })
         .catch((_) => {
-          this.notifyError(this.failedResetMessage);
+          this.notifyError(this.args.failedResetMessage);
           this.failedReset(_);
         })
         .finally(() => (this.isResetting = false));
     } else {
       this.didNotReset(model);
-      this.notifyError(this.didNotResetMessage);
+      this.notifyError(this.args.didNotResetMessage);
     }
   }
 
@@ -730,26 +730,26 @@ export default class FormForComponent extends Component {
   confirmDestroy(model) {
     this.isDestroyingRecord = true;
     this.formFor
-      .confirmDestroy(model, this.confirmDestroyMessage)
+      .confirmDestroy(model, this.args.confirmDestroyMessage)
       .then(() => {
-        this.notifySuccess(this.successfulDestroyMessage);
+        this.notifySuccess(this.args.successfulDestroyMessage);
         this.didDestroy();
       })
       .catch((_) => {
-        this.notifyError(this.failedDestroyMessage);
+        this.notifyError(this.args.failedDestroyMessage);
         this.failedDestroy(_);
       })
       .finally(() => !this.isDestroyed && (this.isDestroyingRecord = false));
   }
 
   notifySuccess(message) {
-    if (message && this.notifyOfSuccess) {
+    if (message && this.args.notifyOfSuccess) {
       this.formFor.notifySuccess(message);
     }
   }
 
   notifyError(message) {
-    if (message && this.notifyOfError) {
+    if (message && this.args.notifyOfError) {
       this.formFor.notifyError(message);
     }
   }
@@ -787,13 +787,13 @@ export default class FormForComponent extends Component {
 
     this.onUpdateValues(keyValues);
 
-    return this.autoSubmit ? this.doSubmit() : Promise.resolve(true);
+    return this.args.autoSubmit ? this.doSubmit() : Promise.resolve(true);
   }
 
   _checkClean() {
     next(() => {
       const fields = this.fields || [];
-      const childForms = this.childForms || [];
+      const childForms = this.args.childForms || [];
       const dirtyChildModels = this.dirtyChildModels || [];
 
       const cleanFields = fields.every((_) => !_.isReallyDirty);
@@ -806,8 +806,8 @@ export default class FormForComponent extends Component {
         this._markDirty();
       }
 
-      if (this.parentForm) {
-        this.parentForm._checkClean();
+      if (this.args.parentForm) {
+        this.args.parentForm._checkClean();
       }
     });
   }
@@ -880,8 +880,8 @@ export default class FormForComponent extends Component {
   _recomputeIsSubmitting() {
     this.notifyPropertyChange('isSubmitting');
 
-    if (this.parentForm) {
-      this.parentForm._recomputeIsSubmitting();
+    if (this.args.parentForm) {
+      this.args.parentForm._recomputeIsSubmitting();
     }
   }
 
@@ -934,9 +934,9 @@ export default class FormForComponent extends Component {
    * @public
    */
   registerChildForm(form) {
-    const childForms = this.childForms || [];
+    const childForms = this.args.childForms || [];
     childForms.push(form);
-    this.childForms = childForms;
+    this.args.childForms = childForms;
   }
 
   /**
@@ -946,9 +946,9 @@ export default class FormForComponent extends Component {
    * @public
    */
   unregisterChildForm(form) {
-    const childForms = this.childForms || [];
+    const childForms = this.args.childForms || [];
     childForms.removeObject(form);
-    this.childForms = childForms;
+    this.args.childForms = childForms;
   }
 
   willDestroyElement() {
@@ -960,8 +960,8 @@ export default class FormForComponent extends Component {
       router.off('willTransition', this, this.handleWilltransition);
     }
 
-    if (this.parentForm) {
-      this.parentForm.unregisterChildForm(this);
+    if (this.args.parentForm) {
+      this.args.parentForm.unregisterChildForm(this);
     }
   }
 

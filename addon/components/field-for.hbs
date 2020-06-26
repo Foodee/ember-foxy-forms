@@ -38,9 +38,9 @@
       class={{
         concat
         "field-for-control-container "
-        (if this.has-control-callout @fieldForControlCalloutClasses)
+        (if @hasControlCallout @fieldForControlCalloutClasses)
         " "
-        (if this.has-control-callout this._calloutPosition)
+        (if @hasControlCallout @calloutPosition)
       }}
     >
       <div class="field-for-control-and-commit-buttons">

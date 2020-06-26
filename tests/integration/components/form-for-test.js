@@ -14,7 +14,7 @@ module('Integration | Component | form for', function (hooks) {
   test('it renders', async function (assert) {
     await render(hbs`<FormFor />`);
 
-    assert.dom('*').hasText('');
+    assert.dom('[data-test-form-for]').exists();
 
     // Template block usage:
     await render(hbs`
