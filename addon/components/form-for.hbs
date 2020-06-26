@@ -34,7 +34,7 @@
           text="Submit"
           class=(concat this.submitButtonClasses " " this.buttonClasses)
           isActing=this.isSubmitting
-          onClick=this.doSubmit
+          onClick=this.submit
           buttonActingClass=this.buttonActingClass
         )
         reset=(component
@@ -42,7 +42,7 @@
           text="Reset"
           class=(concat this.resetButtonClasses " " this.buttonClasses)
           isActing=this.isResetting
-          onClick=this.doReset
+          onClick=this.reset
           buttonActingClass=this.buttonActingClass
         )
         destroy=(component
