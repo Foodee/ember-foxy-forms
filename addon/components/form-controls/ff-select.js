@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 
-export default class FormControlsSelectControlComponent extends Component {
+export default class FormControlsFfSelectComponent extends Component {
   @action
   handleChange(event) {
     if (this.args.onChange) {

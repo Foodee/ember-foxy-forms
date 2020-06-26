@@ -41,13 +41,13 @@ module('Integration | Component | field container', function (hooks) {
       <FormFor as |form|>
         <form.fieldFor
           @params={{array this.key}}
-          @using="-select"
+          @using="select"
           @values={{this.values}}
         />
       </FormFor>
     `);
 
-    assert.dom('[data-test-form-controls-selector-option]').exists({ count: 2 });
+    assert.dom('[data-test-ff-control-select-option]').exists({ count: 2 });
   });
 
   test('it delegates the values param to the control using the string format', async function (assert) {
@@ -55,10 +55,10 @@ module('Integration | Component | field container', function (hooks) {
 
     await render(hbs`
       <FormFor as |form|>
-        <form.fieldFor @params={{array this.key}} @using="-select" @values="1:foo,2:bar" />
+        <form.fieldFor @params={{array this.key}} @using="select" @values="1:foo,2:bar" />
       </FormFor>
     `);
 
-    assert.dom('[data-test-form-controls-selector-option]').exists({ count: 2 });
+    assert.dom('[data-test-ff-control-select-option]').exists({ count: 2 });
   });
 });

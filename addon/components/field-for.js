@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { arg } from 'ember-arg-types';
-import { bool } from 'prop-types';
+import { bool, string } from 'prop-types';
 import { oneWay, readOnly, notEmpty, gt, union } from '@ember/object/computed';
 import { dasherize } from '@ember/string';
 import { isArray } from '@ember/array';
@@ -9,8 +9,11 @@ import { action, defineProperty, computed } from '@ember/object';
 import { assert } from '@ember/debug';
 import { guidFor } from '@ember/object/internals';
 import { run } from '@ember/runloop';
+import { inject as service } from '@ember/service';
 
 export default class FieldForComponent extends Component {
+  @service formFor;
+
   constructor() {
     super(...arguments);
 
@@ -86,7 +89,6 @@ export default class FieldForComponent extends Component {
   // This section is where the DSL syntax lives
   // label
   // requireConfirm
-  // using
   // withMapping
   //
 
@@ -129,22 +131,6 @@ export default class FieldForComponent extends Component {
   @readOnly('requireConfirm') _requireConfirm;
 
   /**
-   * Name of the control that fields, used to define the control
-   * that the field wraps
-   * @property _using
-   * @type String
-   * @default '-input'
-   * @public
-   */
-  get _using() {
-    if (!this.args.using) {
-      return this._hasCompositeValue ? '-multiple-input' : '-input';
-    }
-
-    return this.args.using;
-  }
-
-  /**
    * The with mapping hash, provides a mapping from model space
    * to control space when using composite values
    * @property _withMapping
@@ -172,6 +158,7 @@ export default class FieldForComponent extends Component {
    * @default null
    * @public
    */
+  @arg(string)
   calloutPosition = null;
 
   /**
@@ -183,6 +170,29 @@ export default class FieldForComponent extends Component {
    */
   get _calloutPosition() {
     return this.calloutPosition || (this.config && this.config.fieldForControlCalloutPosition);
+  }
+
+  /**
+   * The fully qualified path to the control for this component
+   * @property control
+   * @type String
+   * @default 'form-controls/ff-input'
+   * @private
+   */
+  @arg(string)
+  get control() {
+    const controlsFolder = this.formFor.controlsFolder;
+    const controlPrefix = this.formFor.controlPrefix;
+
+    let controlName = `${controlPrefix}${this.args.using}`;
+
+    if (!this.args.using) {
+      controlName = this._hasCompositeValue
+        ? `${controlPrefix}multiple-input`
+        : `${controlPrefix}input`;
+    }
+
+    return `${controlsFolder}/${controlName}`;
   }
 
   /**
@@ -282,17 +292,6 @@ export default class FieldForComponent extends Component {
    */
   get _requiresConfirm() {
     return (this._requireConfirm && this.isDirty) || this.args.inlineEditing;
-  }
-
-  /**
-   * The fully qualified path to the control for this component
-   * @property _control
-   * @type String
-   * @default 'form-controls/-input-control'
-   * @private
-   */
-  get _control() {
-    return `form-controls/${this._using}-control`;
   }
 
   /**

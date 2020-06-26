@@ -16,6 +16,9 @@ module.exports = function (/* environment, appConfig */) {
 
         customCommitCancelComponent: null,
         customErrorComponent: null,
+
+        controlsFolder: 'form-controls',
+        controlPrefix: 'ff-',
       },
     },
   };

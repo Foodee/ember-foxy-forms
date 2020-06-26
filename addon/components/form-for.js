@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 import { arg } from 'ember-arg-types';
-import { bool, string } from 'prop-types';
+import { bool, string, array, object } from 'prop-types';
 import { next } from '@ember/runloop';
 import { dasherize } from '@ember/string';
 import EmberObject, { action, setProperties } from '@ember/object';
@@ -30,6 +30,7 @@ export default class FormForComponent extends Component {
    * @default false
    * @public
    */
+  @arg(bool)
   readonly = false;
 
   /**
@@ -39,6 +40,7 @@ export default class FormForComponent extends Component {
    * @default false
    * @public
    */
+  @arg(bool)
   inlineEditing = false;
 
   /**
@@ -49,6 +51,7 @@ export default class FormForComponent extends Component {
    * @default false
    * @public
    */
+  @arg(bool)
   requireConfirm = false;
 
   /**
@@ -58,6 +61,7 @@ export default class FormForComponent extends Component {
    * @default true
    * @public
    */
+  @arg(bool)
   notifyOfSuccess = true;
 
   /**
@@ -67,6 +71,7 @@ export default class FormForComponent extends Component {
    * @default true
    * @public
    */
+  @arg(bool)
   notifyOfError = true;
 
   /**
@@ -76,6 +81,7 @@ export default class FormForComponent extends Component {
    * @default null
    * @public
    */
+  @arg(string)
   successfulSubmitMessage = null;
 
   /**
@@ -85,6 +91,7 @@ export default class FormForComponent extends Component {
    * @default null
    * @public
    */
+  @arg(string)
   failedSubmitMessage = null;
 
   /**
@@ -94,6 +101,7 @@ export default class FormForComponent extends Component {
    * @default null
    * @public
    */
+  @arg(string)
   didNotSubmitMessage = null;
 
   /**
@@ -103,6 +111,7 @@ export default class FormForComponent extends Component {
    * @default null
    * @public
    */
+  @arg(string)
   successfulResetMessage = null;
 
   /**
@@ -112,6 +121,7 @@ export default class FormForComponent extends Component {
    * @default null
    * @public
    */
+  @arg(string)
   failedResetMessage = null;
 
   /**
@@ -121,6 +131,7 @@ export default class FormForComponent extends Component {
    * @default null
    * @public
    */
+  @arg(string)
   didNotResetMessage = null;
 
   /**
@@ -130,6 +141,7 @@ export default class FormForComponent extends Component {
    * @default null
    * @public
    */
+  @arg(string)
   confirmDestroyMessage = null;
 
   /**
@@ -139,6 +151,7 @@ export default class FormForComponent extends Component {
    * @default null
    * @public
    */
+  @arg(string)
   successfulDestroyMessage = null;
 
   /**
@@ -148,6 +161,7 @@ export default class FormForComponent extends Component {
    * @default null
    * @public
    */
+  @arg(string)
   failedDestroyMessage = null;
 
   /**
@@ -157,6 +171,7 @@ export default class FormForComponent extends Component {
    * @default false
    * @public
    */
+  @arg(bool)
   autoSubmit = false;
 
   /**
@@ -166,6 +181,7 @@ export default class FormForComponent extends Component {
    * @default false
    * @public
    */
+  @arg(bool)
   preventsNavigation = false;
 
   /**
@@ -175,6 +191,7 @@ export default class FormForComponent extends Component {
    * @default null
    * @public
    */
+  @arg(string)
   parentForm = null;
 
   /**
@@ -184,6 +201,7 @@ export default class FormForComponent extends Component {
    * @default null
    * @public
    */
+  @arg(array)
   childForms = null;
 
   /**
@@ -193,7 +211,7 @@ export default class FormForComponent extends Component {
    * @default {}
    * @public
    */
-  // eslint-disable-next-line ember/avoid-leaking-state-in-ember-objects
+  @arg(object)
   validationOptions = {};
 
   /**
@@ -203,6 +221,7 @@ export default class FormForComponent extends Component {
    * @default false
    * @public
    */
+  @arg(string)
   allowSubmitQueue = false;
 
   constructor() {

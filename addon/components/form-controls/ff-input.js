@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 
-export default class FormControlsInputControlComponent extends Component {
+export default class FormControlsFfInputComponent extends Component {
   @action
   handleClick(event) {
     if (this.args.onClick) {

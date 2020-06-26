@@ -16,6 +16,8 @@ export default class FormForService extends Service {
     this.resetButtonClasses = this.config.resetButtonClasses;
     this.customCommitCancelComponent = this.config.customCommitCancelComponent;
     this.customErrorComponent = this.config.customErrorComponent;
+    this.controlPrefix = this.config.controlPrefix;
+    this.controlsFolder = this.config.controlsFolder;
   }
 
   get config() {

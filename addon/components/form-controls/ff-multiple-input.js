@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 
-export default class FormControlsMultipleInputControlComponent extends Component {
+export default class FormControlsFfMultipleInputComponent extends Component {
   get _inputs() {
     return Object.keys(this.args.value || []).map((key, index) => ({
       key: key,

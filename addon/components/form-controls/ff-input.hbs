@@ -7,6 +7,7 @@
   readonly={{@isReadonly}}
   maxlength={{@maxLength}}
   ...attributes
+  data-test-ff-control-input
   {{on "blur" this.handleBlur}}
   {{on "focus" this.handleFocus}}
   {{on "click" this.handleClick}}
