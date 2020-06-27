@@ -5,7 +5,7 @@ import { string } from 'prop-types';
 
 export default class FormControlsFfInputComponent extends Component {
   @arg(string)
-  inputType;
+  inputType = 'text';
 
   @action
   handleClick(event) {
