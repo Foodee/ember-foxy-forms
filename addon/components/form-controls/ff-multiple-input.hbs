@@ -3,6 +3,7 @@
     class="input-{{item.id}}"
     type="text"
     value={{get @value item.key}}
+    disabled={{@disabled}}
     ...attributes
     data-test-multiple-input
     {{on "change" (fn this.handleValueChange item.key)}}

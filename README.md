@@ -45,7 +45,7 @@ const FormFor = {
   // Whether or not this form uses inline editing by default
   // in this mode the form will display text values, which can be
   // clicked to edit
-  nlineEditing: false,
+  inlineEditing: false,
 
   // Whether or not all of the fields on this form require confirm before
   // committing their values to the model

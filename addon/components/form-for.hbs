@@ -11,6 +11,18 @@
     {{
       yield
       (hash
+        field=(component
+          "field-for"
+          form=this
+          disabled=this.disabled
+          readonly=this.readonly
+          inlineEditing=this.inlineEditing
+          requireConfirm=this.requireConfirm
+          commitValue=this.updateValue
+          commitValues=this.updateValues
+          testingClassPrefix=this.testingClassPrefix
+          fieldForControlCalloutClasses=this.fieldForControlCalloutClasses
+        )
         fieldFor=(component
           "field-for"
           form=this

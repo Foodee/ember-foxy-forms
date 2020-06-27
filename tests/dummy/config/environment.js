@@ -18,8 +18,23 @@ module.exports = function (environment) {
     },
 
     APP: {
-      // Here you can pass flags/options to your application instance
-      // when it is created
+      'ember-foxy-forms': {
+        testingClassPrefix: '--',
+        fieldClasses: 'field',
+        formClasses: 'form',
+        fieldForControlCalloutClasses: 'field-for-control-callout',
+        fieldForControlCalloutPosition: 'bottom left',
+
+        buttonClasses: 'a-button',
+        submitButtonClasses: 'submit',
+        resetButtonClasses: 'reset',
+
+        customCommitCancelComponent: null,
+        customErrorComponent: null,
+
+        controlsFolder: 'form-controls',
+        controlPrefix: 'ff-',
+      },
     },
   };
 
