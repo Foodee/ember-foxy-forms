@@ -421,7 +421,6 @@ export default class FormForComponent extends Component {
    * @method clearValidations
    * @public
    */
-  @arg(func)
   clearValidations() {
     const model = this.model;
     return model.validate && model.validate({ only: [] });
@@ -679,7 +678,6 @@ export default class FormForComponent extends Component {
    * @param {Object} keyValues
    * @public
    */
-  @arg(func)
   onUpdateValues(/*keyValues*/) {}
 
   /**
@@ -687,7 +685,6 @@ export default class FormForComponent extends Component {
    * @method onMarkedDirty
    * @public
    */
-  @arg(func)
   onMarkedDirty() {}
 
   /**
@@ -695,7 +692,6 @@ export default class FormForComponent extends Component {
    * @method onMarkedClean
    * @public
    */
-  @arg(func)
   onMarkedClean() {}
 
   /**
@@ -787,7 +783,6 @@ export default class FormForComponent extends Component {
    * @param {*} value
    * @public
    */
-  @arg(func)
   updateValueFn(key, value) {
     // better code reuse this way
     return this.updateValues({ [key]: value });
@@ -799,7 +794,6 @@ export default class FormForComponent extends Component {
    * @param {Object} keyValues
    * @public
    */
-  @arg(func)
   updateValuesFn(keyValues) {
     this._checkClean();
 

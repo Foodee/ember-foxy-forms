@@ -435,7 +435,6 @@ export default class FieldForComponent extends Component {
    * @param {*} value
    * @public
    */
-  @arg(func)
   didCommitValue(/* value */) {}
 
   /**
@@ -444,7 +443,6 @@ export default class FieldForComponent extends Component {
    * @param {Object} values
    * @public
    */
-  @arg(func)
   didCommitValues(/* values */) {}
 
   /**
@@ -485,7 +483,6 @@ export default class FieldForComponent extends Component {
    * @method _resetField
    * @private
    */
-  @arg(func)
   _resetField() {
     const form = this.args.form;
 
