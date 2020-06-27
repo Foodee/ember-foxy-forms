@@ -1,5 +1,5 @@
 import Component from '@glimmer/component';
-import { arg } from 'ember-arg-types';
+import { arg, func } from 'ember-arg-types';
 import { bool, string, array, object } from 'prop-types';
 import { next } from '@ember/runloop';
 import { dasherize } from '@ember/string';
@@ -410,6 +410,7 @@ export default class FormForComponent extends Component {
    * @return {boolean}
    * @public
    */
+  @arg(func)
   runValidations(validationOptions = null) {
     const model = this.model;
     return model.validate ? model.validate(validationOptions || this.args.validationOptions) : true;
@@ -420,6 +421,7 @@ export default class FormForComponent extends Component {
    * @method clearValidations
    * @public
    */
+  @arg(func)
   clearValidations() {
     const model = this.model;
     return model.validate && model.validate({ only: [] });
@@ -433,6 +435,7 @@ export default class FormForComponent extends Component {
    * @return {boolean}
    * @public
    */
+  @arg(func)
   willSubmit() {
     return this.runValidations();
   }
@@ -443,6 +446,7 @@ export default class FormForComponent extends Component {
    * @param {Object} [model]
    * @public
    */
+  @arg(func)
   didNotSubmit() {}
 
   /**
@@ -452,6 +456,7 @@ export default class FormForComponent extends Component {
    * @return {Promise.<Object>}
    * @public
    */
+  @arg(func)
   onSubmit(model) {
     return model.save ? model.save() : Promise.resolve(model);
   }
@@ -462,6 +467,7 @@ export default class FormForComponent extends Component {
    * @param {FormFor} originator
    * @public
    */
+  @arg(func)
   notifyChildDidSubmit(originator) {
     if (this !== originator) {
       this.childDidSubmit(originator);
@@ -479,6 +485,7 @@ export default class FormForComponent extends Component {
    * @param {FormFor} originator
    * @public
    */
+  @arg(func)
   notifyChildFailedSubmit(originator) {
     if (this !== originator) {
       this.childFailedSubmit(originator);
@@ -495,6 +502,7 @@ export default class FormForComponent extends Component {
    * @param {Object} model
    * @public
    */
+  @arg(func)
   childDidSubmit(/*model*/) {}
 
   /**
@@ -503,6 +511,7 @@ export default class FormForComponent extends Component {
    * @param {Object} model
    * @public
    */
+  @arg(func)
   childFailedSubmit(/*model*/) {}
 
   /**
@@ -511,6 +520,7 @@ export default class FormForComponent extends Component {
    * @param {Object} model
    * @public
    */
+  @arg(func)
   didSubmit(/*model*/) {}
 
   /**
@@ -519,6 +529,7 @@ export default class FormForComponent extends Component {
    * @param {Object} reason
    * @public
    */
+  @arg(func)
   failedSubmit(/*reason*/) {}
 
   /**
@@ -526,6 +537,7 @@ export default class FormForComponent extends Component {
    * @method doSubmit
    * @public
    */
+  @arg(func)
   doSubmit() {
     const lastDoSubmit = this.lastDoSubmit;
 
@@ -586,6 +598,7 @@ export default class FormForComponent extends Component {
    * @param {Promise} parentPromise
    * @returns {Promise}
    */
+  @arg(func)
   submitChildForms(childForms, parentPromise = Promise.resolve()) {
     childForms = childForms || [];
 
@@ -615,6 +628,7 @@ export default class FormForComponent extends Component {
    * @return boolean
    * @public
    */
+  @arg(func)
   willReset(/*model*/) {
     return true;
   }
@@ -625,6 +639,7 @@ export default class FormForComponent extends Component {
    * @param {Object} model
    * @public
    */
+  @arg(func)
   didNotReset(/*model*/) {}
 
   /**
@@ -634,6 +649,7 @@ export default class FormForComponent extends Component {
    * @return {Promise.<Object>}
    * @public
    */
+  @arg(func)
   onReset(model) {
     return Promise.resolve(model);
   }
@@ -644,6 +660,7 @@ export default class FormForComponent extends Component {
    * @param {Object} model
    * @public
    */
+  @arg(func)
   didReset(/*model*/) {}
 
   /**
@@ -652,6 +669,7 @@ export default class FormForComponent extends Component {
    * @param {Object} reason
    * @public
    */
+  @arg(func)
   failedReset(/*reason*/) {}
 
   /**
@@ -661,6 +679,7 @@ export default class FormForComponent extends Component {
    * @param {Object} keyValues
    * @public
    */
+  @arg(func)
   onUpdateValues(/*keyValues*/) {}
 
   /**
@@ -668,6 +687,7 @@ export default class FormForComponent extends Component {
    * @method onMarkedDirty
    * @public
    */
+  @arg(func)
   onMarkedDirty() {}
 
   /**
@@ -675,6 +695,7 @@ export default class FormForComponent extends Component {
    * @method onMarkedClean
    * @public
    */
+  @arg(func)
   onMarkedClean() {}
 
   /**
@@ -682,6 +703,7 @@ export default class FormForComponent extends Component {
    * @method doReset
    * @public
    */
+  @arg(func)
   doReset() {
     const model = this.model;
 
@@ -711,6 +733,7 @@ export default class FormForComponent extends Component {
    * @method didDestroy
    * @public
    */
+  @arg(func)
   didDestroy() {}
 
   /**
@@ -719,6 +742,7 @@ export default class FormForComponent extends Component {
    * @param {Object} reason
    * @public
    */
+  @arg(func)
   failedDestroy(/* reason */) {}
 
   /**
@@ -727,6 +751,7 @@ export default class FormForComponent extends Component {
    * @param {Object} model
    * @public
    */
+  @arg(func)
   confirmDestroy(model) {
     this.isDestroyingRecord = true;
     this.formFor
@@ -741,13 +766,14 @@ export default class FormForComponent extends Component {
       })
       .finally(() => !this.isDestroyed && (this.isDestroyingRecord = false));
   }
-
+  @arg(func)
   notifySuccess(message) {
     if (message && this.args.notifyOfSuccess) {
       this.formFor.notifySuccess(message);
     }
   }
 
+  @arg(func)
   notifyError(message) {
     if (message && this.args.notifyOfError) {
       this.formFor.notifyError(message);
@@ -761,6 +787,7 @@ export default class FormForComponent extends Component {
    * @param {*} value
    * @public
    */
+  @arg(func)
   updateValueFn(key, value) {
     // better code reuse this way
     return this.updateValues({ [key]: value });
@@ -772,6 +799,7 @@ export default class FormForComponent extends Component {
    * @param {Object} keyValues
    * @public
    */
+  @arg(func)
   updateValuesFn(keyValues) {
     this._checkClean();
 
@@ -933,6 +961,7 @@ export default class FormForComponent extends Component {
    * @param {FormFor} form
    * @public
    */
+  @arg(func)
   registerChildForm(form) {
     const childForms = this.args.childForms || [];
     childForms.push(form);
@@ -945,6 +974,7 @@ export default class FormForComponent extends Component {
    * @param {FormFor} form
    * @public
    */
+  @arg(func)
   unregisterChildForm(form) {
     const childForms = this.args.childForms || [];
     childForms.removeObject(form);

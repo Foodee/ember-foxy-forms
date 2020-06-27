@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { arg } from 'ember-arg-types';
+import { arg, func } from 'ember-arg-types';
 import { bool, string, object } from 'prop-types';
 import { oneWay, notEmpty, gt, union } from '@ember/object/computed';
 import { dasherize } from '@ember/string';
@@ -59,6 +59,21 @@ export default class FieldForComponent extends Component {
 
       this._lastValidValue = isArray(this.value) ? this.value.toArray() : this.value;
     }
+
+    // define _value such that we either use the intermediary value that
+    // is set by way of the onChange handler or new values received from the value binding
+    defineProperty(
+      this,
+      '_value',
+      computed('value', {
+        get() {
+          return this.value;
+        },
+        set(key, value) {
+          return value;
+        },
+      })
+    );
 
     // Capture backup value that will allow full roll back if there are errors on cancel
     // update the backup value after successful commit
@@ -155,16 +170,6 @@ export default class FieldForComponent extends Component {
    */
   @arg(string)
   valueTooltip = null;
-
-  // define _value such that we either use the intermediary value that
-  // is set by way of the onChange handler or new values received from the value binding
-  get _value() {
-    return this.value;
-  }
-
-  set _value(value) {
-    this.value = value;
-  }
 
   /**
    * Either delegate the values down to the control, or transform them
@@ -430,6 +435,7 @@ export default class FieldForComponent extends Component {
    * @param {*} value
    * @public
    */
+  @arg(func)
   didCommitValue(/* value */) {}
 
   /**
@@ -438,6 +444,7 @@ export default class FieldForComponent extends Component {
    * @param {Object} values
    * @public
    */
+  @arg(func)
   didCommitValues(/* values */) {}
 
   /**
@@ -458,6 +465,7 @@ export default class FieldForComponent extends Component {
    * @method formDidSubmit
    * @public
    */
+  @arg(func)
   formDidSubmit() {
     this._lastValidValue = isArray(this.value) ? this.value.toArray() : this.value;
   }
@@ -467,6 +475,7 @@ export default class FieldForComponent extends Component {
    * @method formDidReset
    * @public
    */
+  @arg(func)
   formDidReset() {
     this._resetField();
   }
@@ -476,6 +485,7 @@ export default class FieldForComponent extends Component {
    * @method _resetField
    * @private
    */
+  @arg(func)
   _resetField() {
     const form = this.args.form;
 
