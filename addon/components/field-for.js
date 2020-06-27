@@ -59,11 +59,11 @@ export default class FieldForComponent extends Component {
       defineProperty(this, 'errors', oneWay(`args.form.model.errors.${propertyPath}`));
     }
 
-    this._lastValidValue = isArray(this.value) ? this.value.toArray() : this.value;
 
     // Capture backup value that will allow full roll back if there are errors on cancel
     // update the backup value after successful commit
-    // debugger;
+    this._lastValidValue = isArray(this.value) ? this.value.toArray() : this.value;
+
     this.args.form.registerField(this);
 
     // define _value such that we either use the intermediary value that
@@ -301,8 +301,7 @@ export default class FieldForComponent extends Component {
    * @returns string
    */
   formatValue(value) {
-    return value;
-    // return JSON.stringify(value); // TODO why?
+    return JSON.stringify(value);
   }
 
   /**

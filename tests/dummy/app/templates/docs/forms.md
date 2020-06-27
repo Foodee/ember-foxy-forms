@@ -126,6 +126,7 @@ Forms can be configured to notify the user when a form either succeeds or fails.
 
 The form-for service can be extended to provide custom popups, or messages by injecting it into your application.
 
+
 {{#docs-snippet name="navigation.js"}}
   class SomeController extends Controller {
   
@@ -145,7 +146,8 @@ The form-for service can be extended to provide custom popups, or messages by in
 
 ## Navigation Guards
 
-By default a dirty form will require confirmation of navigation both of the ember-router and the browser. 
+By default a dirty form will require confirmation of navigation both of the ember-router and the browser. The form-for
+service can be extended to provide custom popups, or messages by injecting it into your application.
 
 ## Lifecycle hooks
 
