@@ -19,7 +19,7 @@ export default class FieldForComponent extends Component {
 
     if (this._hasCompositeValue) {
       // property paths to watch
-      const propertyPaths = this.args.params.join(',');
+      const propertyPaths = this.params.join(',');
       const _withMapping = this.args.withMapping || {};
 
       // bind to the value
@@ -31,8 +31,9 @@ export default class FieldForComponent extends Component {
           `args.form.{model,model.${propertyPaths}}`,
           'args.form.model',
           'args.params',
+          'args.for',
           function () {
-            return this.args.params.reduce((acc, param) => {
+            return this.params.reduce((acc, param) => {
               // we either use the key map provided by the user, or the
               // default key value
               const key = _withMapping[param] || param;
@@ -44,10 +45,10 @@ export default class FieldForComponent extends Component {
         )
       );
 
-      const errorPaths = this.args.params.map((param) => `args.form.model.errors.${param}`);
+      const errorPaths = this.params.map((param) => `args.form.model.errors.${param}`);
       defineProperty(this, 'errors', union(...errorPaths));
     } else {
-      const propertyPath = this.args.params[0];
+      const propertyPath = this.params[0];
 
       assert('<FieldFor /> Requires a propertyPath to bind to', !!propertyPath);
 
@@ -57,28 +58,25 @@ export default class FieldForComponent extends Component {
       // bind to errors
       defineProperty(this, 'errors', oneWay(`args.form.model.errors.${propertyPath}`));
 
-      this._lastValidValue = isArray(this.value) ? this.value.toArray() : this.value;
     }
 
-    // define _value such that we either use the intermediary value that
-    // is set by way of the onChange handler or new values received from the value binding
-    defineProperty(
-      this,
-      '_value',
-      computed('value', {
-        get() {
-          return this.value;
-        },
-        set(key, value) {
-          return value;
-        },
-      })
-    );
+    this._lastValidValue = isArray(this.value) ? this.value.toArray() : this.value;
 
     // Capture backup value that will allow full roll back if there are errors on cancel
     // update the backup value after successful commit
     // debugger;
     this.args.form.registerField(this);
+
+    // define _value such that we either use the intermediary value that
+    // is set by way of the onChange handler or new values received from the value binding
+    defineProperty(this, '_value', computed('value', {
+      get() {
+        return this.value;
+      },
+      set(key, value) {
+        return value;
+      }
+    }));
   }
 
   // --------------------------------------------------------------------------------
@@ -217,7 +215,7 @@ export default class FieldForComponent extends Component {
   get _testingClass() {
     return `${this.args.testingClassPrefix}field-for__${
       this.args.form._modelName
-    }_${this.args.params
+    }_${this.params
       .map((_) => _.toString())
       .map(dasherize)
       .join('_')
@@ -302,7 +300,7 @@ export default class FieldForComponent extends Component {
    * @returns string
    */
   formatValue(value) {
-    return value;
+    return JSON.stringify(value);
   }
 
   /**
@@ -369,7 +367,12 @@ export default class FieldForComponent extends Component {
    * @default false
    * @private
    */
-  @gt('args.params.length', 1) _hasCompositeValue;
+  @gt('params.length', 1) _hasCompositeValue;
+
+  // TODO annotate me
+  get params() {
+    return this.args.params ?? isArray(this.args.for) ? this.args.for : [this.args.for];
+  }
 
   /**
    * Handles change method from the control, you can override this
@@ -388,7 +391,7 @@ export default class FieldForComponent extends Component {
   }
 
   _extractKeyValueMapping(_value) {
-    const params = this.args.params;
+    const params = this.params;
     const _withMapping = this.args.withMapping || {};
 
     const keyValues = params.reduce((acc, param) => {
@@ -418,7 +421,7 @@ export default class FieldForComponent extends Component {
         .then(() => this.didCommitValues(keyValue, prevKeyValue));
     } else {
       commitPromise = this.args
-        .commitValue(this.args.params[0], this._value)
+        .commitValue(this.params[0], this._value)
         .then(() => this.didCommitValue(this._value, this.value));
     }
 
@@ -489,7 +492,7 @@ export default class FieldForComponent extends Component {
     if (this._hasCompositeValue) {
       form.resetValues(this._extractKeyValueMapping(this._lastValidValue));
     } else {
-      form.resetValue(this.args.params[0], this._lastValidValue);
+      form.resetValue(this.params[0], this._lastValidValue);
     }
 
     form.clearValidations();

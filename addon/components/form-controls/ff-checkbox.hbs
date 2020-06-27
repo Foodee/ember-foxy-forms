@@ -1,0 +1,10 @@
+<div class="checkbox" ...attributes {{on "change" this.handleChange}}>
+  <input
+    value="true"
+    type="checkbox"
+    id="{{this.id}}"
+    checked={{@value}}
+    disabled={{@disabled}}
+  >
+  <label for="{{this.id}}">{{@label}}</label>
+</div>

@@ -1,7 +1,6 @@
-<input
+<textarea
   id={{@controlId}}
   value={{@value}}
-  type={{this.inputType}}
   placeholder={{@placeholder}}
   disabled={{@disabled}}
   readonly={{@isReadonly}}
@@ -10,7 +9,7 @@
   min={{@min}}
   step={{@step}}
   ...attributes
-  data-test-ff-control-input
+  data-test-ff-textarea
   {{on "blur" this.handleBlur}}
   {{on "focus" this.handleFocus}}
   {{on "click" this.handleClick}}

@@ -9,6 +9,9 @@ export default class Router extends AddonDocsRouter {
 Router.map(function () {
   docsRoute(this, function () {
     this.route('usage');
+    this.route('forms');
+    this.route('fields');
+    this.route('controls');
   });
 
   this.route('not-found', { path: '/*path' });

@@ -900,7 +900,7 @@ export default class FormForComponent extends Component {
    * @private
    */
   _recomputeIsSubmitting() {
-    this.notifyPropertyChange('isSubmitting');
+    // this.notifyPropertyChange('isSubmitting');
 
     if (this.args.parentForm) {
       this.args.parentForm._recomputeIsSubmitting();
