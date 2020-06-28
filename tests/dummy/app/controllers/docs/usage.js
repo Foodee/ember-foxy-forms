@@ -1,6 +1,7 @@
 import Controller from '@ember/controller';
 import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
+import { A } from '@ember/array';
 
 export default class UsageController extends Controller {
 
@@ -58,81 +59,81 @@ export default class UsageController extends Controller {
   @tracked requiresConfirm = false;
   @tracked disabled = false;
   @tracked readonly = false;
-  @tracked logs = [];
+  @tracked logs = A();
 
-  @tracked stopSubmit = false;
+  @tracked enableSubmit = true;
   @tracked successfulSubmitMessage = 'We submitted!';
   @tracked failedSubmitMessage = 'We failed to submit!';
 
   @action
   async willSubmit() {
-    return this.stopSubmit;
+    return this.enableSubmit;
   }
 
   @action
   async submit() {
-    this.logs.push('submitting');
-    await setTimeout(() => this.logs.push('done'), 2000);
+    this.logs.pushObject('submitting');
+    await new Promise(r => setTimeout(r, 2000));
   }
 
   @action
   async didSubmit() {
-    this.logs.push('submitted!');
+    this.logs.pushObject('submitted!');
   }
 
   @action
   async didNotSubmit() {
-    this.logs.push('did not submit!');
+    this.logs.pushObject('did not submit!');
   }
 
-  @tracked stopReset = false;
+  @tracked enableReset = true;
   @tracked successfulResetMessage = 'We Reset!';
   @tracked failedResetMessage = 'We failed to reset!';
 
   @action
   async willReset() {
-    return this.stopReset;
+    return this.enableReset;
   }
 
   @action
   async reset() {
-    this.logs.push('resetting');
-    await setTimeout(() => this.logs.push('reset'), 2000);
+    this.logs.pushObject('resetting');
+    await new Promise(r => setTimeout(r, 2000));
   }
 
   @action
   async didReset() {
-    this.logs.push('reset!');
+    this.logs.pushObject('reset!');
   }
 
   @action
   async didNotReset() {
-   this.logs.push('did not reset!');
+   this.logs.pushObject('did not reset!');
   }
 
-  @tracked stopDestroy = false;
+  @tracked enableDestroy = true;
   @tracked successfulDestroyMessage = 'We Destroyed';
   @tracked failedDestroyMessage = 'We failed to destroy!';
 
   @action
   async willDestroy() {
-    return this.stopDestroy;
+    return this.enableDestroy;
   }
 
   @action
   async destroy() {
-    this.logs.push('resetting');
-    await setTimeout(() => this.logs.push('reset'), 2000);
+    this.logs.pushObject('destroying');
+    await new Promise(r => setTimeout(r, 2000));
   }
 
   @action
   async didDestroy() {
-    this.logs.push('reset!');
+    this.logs.pushObject('destroyed!');
   }
 
   @action
   async didNotDestroy() {
-    this.logs.push('did not reset!');
+    this.logs.pushObject('did not destroy!');
   }
 
 }

@@ -124,12 +124,7 @@ Forms can be configured to notify the user when a form either succeeds or fails.
   };
 {{/docs-snippet}}
 
-
-## Navigation Guards
-
-By default a dirty form will require confirmation of navigation both of the ember-router and the browser. The form-for
-service can be extended to provide custom popups, or messages by injecting it into your application.
-
+The form-for service can be extended to provide custom popups, or messages by injecting it into your application.
 
 {{#docs-snippet name="navigation.js"}}
   class SomeController extends Controller {
@@ -147,6 +142,10 @@ service can be extended to provide custom popups, or messages by injecting it in
   
   }
 {{/docs-snippet}}
+
+## Navigation Guards
+
+By default a dirty form will require confirmation of navigation both of the ember-router and the browser. 
 
 ## Lifecycle hooks
 
@@ -174,6 +173,8 @@ Called when the will(Submit|Reset|Destroy) function returns false.
   onSubmit(model):Promise
   onReset(model):Promise
   onDestroy(model):Promise
+  onMarkedDirty():void
+  onMarkedClean():void
 {{/docs-snippet}}
 
 Called when the will(Submit|Reset|Destroy) function returns true, does the actual submission, resetting, or destruction.
@@ -191,6 +192,14 @@ Called when the on(Submit|Reset|Destroy) function fails to run
 
 Called when the destroy button is pressed, by default runs the code found in the form-for service to confirm the destruction
 of the model.
+
+### On Marked Dirty
+
+Called when the form becomes dirty 
+
+### On Marked Clean
+
+Called when the form becomes clean 
 
 ## Wrapping Tag
 

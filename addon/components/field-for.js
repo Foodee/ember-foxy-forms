@@ -30,8 +30,8 @@ export default class FieldForComponent extends Component {
           // eslint-disable-next-line ember/use-brace-expansion
           `args.form.{model,model.${propertyPaths}}`,
           'args.form.model',
-          'args.params',
-          'args.for',
+          'args.{for,params}',
+          'params',
           function () {
             return this.params.reduce((acc, param) => {
               // we either use the key map provided by the user, or the
@@ -57,7 +57,6 @@ export default class FieldForComponent extends Component {
 
       // bind to errors
       defineProperty(this, 'errors', oneWay(`args.form.model.errors.${propertyPath}`));
-
     }
 
     this._lastValidValue = isArray(this.value) ? this.value.toArray() : this.value;
@@ -69,14 +68,18 @@ export default class FieldForComponent extends Component {
 
     // define _value such that we either use the intermediary value that
     // is set by way of the onChange handler or new values received from the value binding
-    defineProperty(this, '_value', computed('value', {
-      get() {
-        return this.value;
-      },
-      set(key, value) {
-        return value;
-      }
-    }));
+    defineProperty(
+      this,
+      '_value',
+      computed('value', {
+        get() {
+          return this.value;
+        },
+        set(key, value) {
+          return value;
+        },
+      })
+    );
   }
 
   // --------------------------------------------------------------------------------
@@ -213,9 +216,7 @@ export default class FieldForComponent extends Component {
    * @private
    */
   get _testingClass() {
-    return `${this.args.testingClassPrefix}field-for__${
-      this.args.form._modelName
-    }_${this.params
+    return `${this.args.testingClassPrefix}field-for__${this.args.form._modelName}_${this.params
       .map((_) => _.toString())
       .map(dasherize)
       .join('_')
@@ -438,7 +439,8 @@ export default class FieldForComponent extends Component {
    * @param {*} value
    * @public
    */
-  didCommitValue(/* value */) {}
+  @arg(func)
+  didCommitValue = (/* value */) => {};
 
   /**
    * Triggered after the commit method is called for multiple values
@@ -446,7 +448,8 @@ export default class FieldForComponent extends Component {
    * @param {Object} values
    * @public
    */
-  didCommitValues(/* values */) {}
+  @arg(func)
+  didCommitValues = (/* values */) => {};
 
   /**
    * Cancels the current intermediary value, only really useful
@@ -467,9 +470,9 @@ export default class FieldForComponent extends Component {
    * @public
    */
   @arg(func)
-  formDidSubmit() {
+  formDidSubmit = () => {
     this._lastValidValue = isArray(this.value) ? this.value.toArray() : this.value;
-  }
+  };
 
   /**
    * Callback for when the form resets
@@ -477,9 +480,9 @@ export default class FieldForComponent extends Component {
    * @public
    */
   @arg(func)
-  formDidReset() {
+  formDidReset = () => {
     this._resetField();
-  }
+  };
 
   /**
    * Resets the field to the backup value by re-committing the value

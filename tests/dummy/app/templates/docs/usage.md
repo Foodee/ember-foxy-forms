@@ -68,6 +68,7 @@ The various features can be toggled on / off below.
          <form.submit/>
          <form.reset/>
          <form.destroy/>
+         <h2>Logs</h2>
          <ul>
           {{#each this.logs as |log|}}
             <li>{{log}}</li>
@@ -111,8 +112,8 @@ The various features can be toggled on / off below.
   <div class="columns">
     <div>
       <h2>Submit</h2>
-      <form.field @for="stopSubmit" @using="checkbox" class="push-right" as |f|>
-        <f.control @label="Disable" />
+      <form.field @for="enableSubmit" @using="checkbox" class="push-right" as |f|>
+        <f.control @label="Enabled" />
       </form.field>
       <form.field 
         @for="successfulSubmitMessage"
@@ -127,8 +128,8 @@ The various features can be toggled on / off below.
     </div>
     <div>
       <h2>Reset</h2>
-      <form.field @for="stopReset" @using="checkbox" class="push-right" as |f|>
-        <f.control @label="Disable" />
+      <form.field @for="enableReset" @using="checkbox" class="push-right" as |f|>
+        <f.control @label="Enabled" />
       </form.field>
       <form.field 
         @for="successfulResetMessage"
@@ -143,8 +144,8 @@ The various features can be toggled on / off below.
     </div>
     <div>
       <h2>Destroy</h2>
-      <form.field @for="stopReset" @using="checkbox" class="push-right" as |f|>
-        <f.control @label="Disable" />
+      <form.field @for="enableDestroy" @using="checkbox" class="push-right" as |f|>
+        <f.control @label="Enabled" />
       </form.field>
       <form.field 
         @for="successfulDestroyMessage"
