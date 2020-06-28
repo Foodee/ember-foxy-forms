@@ -8,6 +8,7 @@ import { readOnly } from '@ember/object/computed';
 import { A } from '@ember/array';
 import { inject as service } from '@ember/service';
 import { Promise } from 'rsvp';
+import { tracked } from '@glimmer/tracking';
 
 export default class FormForComponent extends Component {
   @service formFor;
@@ -53,6 +54,17 @@ export default class FormForComponent extends Component {
    */
   @arg(bool)
   requireConfirm = false;
+
+  /**
+   * Wether or not the fields have control callouts (popups / popovers) when in
+   * inline-edit mode
+   * @property hasControlCallout
+   * @type Boolean
+   * @default false
+   * @public
+   */
+  @arg(bool)
+  hasControlCallout = false;
 
   /**
    * Whether or not this form notifies of its success by way of the formFor service
@@ -223,6 +235,9 @@ export default class FormForComponent extends Component {
    */
   @arg(string)
   allowSubmitQueue = false;
+
+  @tracked
+  isDestroyingRecord = false;
 
   constructor() {
     super(...arguments);
@@ -741,6 +756,7 @@ export default class FormForComponent extends Component {
    * @param {Object} model
    * @public
    */
+  @action
   confirmDestroy(model) {
     this.isDestroyingRecord = true;
     this.formFor
@@ -758,14 +774,14 @@ export default class FormForComponent extends Component {
 
   @arg(func)
   notifySuccess = (message) => {
-    if (message && this.args.notifyOfSuccess) {
+    if (message && this.notifyOfSuccess) {
       this.formFor.notifySuccess(message);
     }
   };
 
   @arg(func)
   notifyError = (message) => {
-    if (message && this.args.notifyOfError) {
+    if (message && this.notifyOfError) {
       this.formFor.notifyError(message);
     }
   };

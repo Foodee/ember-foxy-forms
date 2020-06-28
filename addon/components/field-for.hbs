@@ -14,15 +14,20 @@
   }}
   ...attributes
   data-test-field-for
->
+  data-test-resource-id={{this._testingSelector}}
+  >
   <LabelFor @label={{@label}} @controlId={{this.controlId}} />
   {{#if this._showValue}}
-    <div
-      class="field-for-value-container"
+    <button
+      class="field-for-value-container {{if this._showControl "field-for-value-showing-control-callout"}}"
       data-tooltip={{@valueTooltip}}
-      role="button"
       {{on "click" this.edit}}
     >
+      {{#if @valueTooltip}}
+        {{#attach-tooltip}}
+          {{@valueTooltip}}
+        {{/attach-tooltip}}
+      {{/if}}
       {{#if this.displayValue includeZero=true}}
         {{this.displayValue}}
       {{else}}
@@ -30,67 +35,121 @@
           {{@placeholder}}
         </span>
       {{/if}}
-    </div>
+    </button>
   {{/if}}
-
-  {{#if this._showControl}}
-    <div
-      class={{
-        concat
-        "field-for-control-container "
-        (if @hasControlCallout @fieldForControlCalloutClasses)
-        " "
-        (if @hasControlCallout @calloutPosition)
-      }}
-    >
-      <div class="field-for-control-and-commit-buttons">
-        {{#if (hasBlock)}}
-          {{yield
-            (hash
-              control=(component
-                this.control
-                value=(readonly this._value)
-                values=(readonly this._values)
-                errors=(readonly this.errors)
-                placeholder=this.placeholder
-                readonly=@readonly
-                disabled=@disabled
-                controlId=this.controlId
-                doSubmit=this.doSubmit
-                doReset=this.doReset
-                onChange=this.handleChange
+  {{#if this.hasControlCallout}}
+    {{#attach-popover
+      id=this.guid
+      isShown=this._showControl
+      showOn=''
+      hideOn=''
+      showDuration=0
+      hideDuration=0
+      arrow=true
+    }}
+      <div class="field-for-control-container field-for-control-callout">
+        <div class="field-for-control-and-commit-buttons">
+          {{#if (hasBlock)}}
+            {{yield
+              (hash
+                control=(component
+                  this.control
+                  value=(readonly this._value)
+                  values=(readonly this._values)
+                  errors=(readonly this.errors)
+                  placeholder=this.placeholder
+                  readonly=@readonly
+                  disabled=@disabled
+                  controlId=this.controlId
+                  doSubmit=this.doSubmit
+                  doReset=this.doReset
+                  onChange=this.handleChange
+                )
+                self=this
               )
-              self=this
-            )
-            this
-          }}
-        {{else}}
-          {{component
-            this.control
-            value=(readonly this._value)
-            values=(readonly this._values)
-            errors=(readonly this.errors)
-            placeholder=@placeholder
-            readonly=@readonly
-            disabled=@disabled
-            controlId=this.controlId
-            doSubmit=this.doSubmit
-            doReset=this.doReset
-            onChange=this.handleChange
-          }}
-        {{/if}}
+              this
+            }}
+          {{else}}
+            {{component
+              this.control
+              value=(readonly this._value)
+              values=(readonly this._values)
+              errors=(readonly this.errors)
+              placeholder=@placeholder
+              readonly=@readonly
+              disabled=@disabled
+              controlId=this.controlId
+              doSubmit=this.doSubmit
+              doReset=this.doReset
+              onChange=this.handleChange
+            }}
+          {{/if}}
 
-        <CommitButtons
-          @visible={{this._showConfirm}}
-          @isActing={{this.form.isSubmitting}}
-          @customCommitCancelComponent={{this.customCommitCancelComponent}}
-          @buttonClasses={{this.buttonClasses}}
-          @commit={{this.commit}}
-          @cancel={{this.cancel}}
-        />
+          <CommitButtons
+            @visible={{this._showConfirm}}
+            @isActing={{this.form.isSubmitting}}
+            @customCommitCancelComponent={{this.customCommitCancelComponent}}
+            @buttonClasses={{this.buttonClasses}}
+            @commit={{this.commit}}
+            @cancel={{this.cancel}}
+          />
+        </div>
+
+        <ErrorsFor @errors={{this.errors}} @customErrorComponent={{this.customErrorComponent}} />
       </div>
+    {{/attach-popover}}
+  {{else}}
+    {{#if this._showControl}}
+      <div class="field-for-control-container">
+        <div class="field-for-control-and-commit-buttons">
+          {{#if (hasBlock)}}
+            {{yield
+              (hash
+                control=(component
+                  this.control
+                  value=(readonly this._value)
+                  values=(readonly this._values)
+                  errors=(readonly this.errors)
+                  placeholder=this.placeholder
+                  readonly=@readonly
+                  disabled=@disabled
+                  controlId=this.controlId
+                  doSubmit=this.doSubmit
+                  doReset=this.doReset
+                  onChange=this.handleChange
+                )
+                self=this
+              )
+              this
+            }}
+          {{else}}
+            {{component
+              this.control
+              value=(readonly this._value)
+              values=(readonly this._values)
+              errors=(readonly this.errors)
+              placeholder=@placeholder
+              readonly=@readonly
+              disabled=@disabled
+              controlId=this.controlId
+              doSubmit=this.doSubmit
+              doReset=this.doReset
+              onChange=this.handleChange
+            }}
+          {{/if}}
 
-      <ErrorsFor @errors={{this.errors}} @customErrorComponent={{this.customErrorComponent}} />
-    </div>
+          <CommitButtons
+            @visible={{this._showConfirm}}
+            @isActing={{this.form.isSubmitting}}
+            @customCommitCancelComponent={{this.customCommitCancelComponent}}
+            @buttonClasses={{this.buttonClasses}}
+            @commit={{this.commit}}
+            @cancel={{this.cancel}}
+          />
+        </div>
+
+        <ErrorsFor @errors={{this.errors}} @customErrorComponent={{this.customErrorComponent}} />
+      </div>
+    {{/if}}
   {{/if}}
 </div>

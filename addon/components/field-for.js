@@ -8,7 +8,7 @@ import { isArray } from '@ember/array';
 import { action, defineProperty, computed } from '@ember/object';
 import { assert } from '@ember/debug';
 import { guidFor } from '@ember/object/internals';
-import { run } from '@ember/runloop';
+import { later } from '@ember/runloop';
 import { inject as service } from '@ember/service';
 
 export default class FieldForComponent extends Component {
@@ -117,6 +117,27 @@ export default class FieldForComponent extends Component {
   withMapping = {};
 
   /**
+   * Whether or not this form is setup for inline editing
+   * @property inlineEditing
+   * @type boolean
+   * @default false
+   * @public
+   */
+  @arg(bool)
+  inlineEditing = false;
+
+  /**
+   * Whether or not this field requires confirmation to apply values to
+   * the model
+   * @property requireConfirm
+   * @type boolean
+   * @default false
+   * @public
+   */
+  @arg(bool)
+  requireConfirm = false;
+
+  /**
    * Wether or not the fields have control callouts (popups / popovers) when in
    * inline-edit mode
    * @property hasControlCallout
@@ -216,7 +237,11 @@ export default class FieldForComponent extends Component {
    * @private
    */
   get _testingClass() {
-    return `${this.args.testingClassPrefix}field-for__${this.args.form._modelName}_${this.params
+    return `${this.args.testingClassPrefix}field-for__${this._testingSelector}`;
+  }
+
+  get _testingSelector() {
+    return `${this.args.form._modelName}_${this.params
       .map((_) => _.toString())
       .map(dasherize)
       .join('_')
@@ -231,7 +256,18 @@ export default class FieldForComponent extends Component {
    * @private
    */
   get _requiresConfirm() {
-    return (this.args.requireConfirm && this.isDirty) || this.args.inlineEditing;
+    return (this.requireConfirm && this.isDirty) || this.inlineEditing;
+  }
+
+  /**
+   * Guid for this field
+   * @property guid
+   * @type String
+   * @default '<guidForField>'
+   * @public
+   */
+  get guid() {
+    return guidFor(this);
   }
 
   /**
@@ -242,7 +278,7 @@ export default class FieldForComponent extends Component {
    * @public
    */
   get controlId() {
-    return `control-for-${guidFor(this)}`;
+    return `control-for-${this.guid}`;
   }
 
   /**
@@ -300,8 +336,9 @@ export default class FieldForComponent extends Component {
    * @param {Object} value
    * @returns string
    */
-  formatValue(value) {
-    return JSON.stringify(value);
+  @arg(func)
+  formatValue = (value) => {
+    return this._hasCompositeValue ? JSON.stringify(value) : value;
   }
 
   /**
@@ -332,7 +369,9 @@ export default class FieldForComponent extends Component {
    * @private
    */
   get _showControl() {
-    return !this.args.inlineEditing || (this.args.inlineEditing && this.isEditing);
+    return !this.inlineEditing ||
+      this.inlineEditing && this.isEditing ||
+      this.hasControlCallout && this.hasErrors;
   }
 
   @tracked isEditing = false;
@@ -344,9 +383,7 @@ export default class FieldForComponent extends Component {
    * @private
    */
   get _showValue() {
-    return (
-      (this.args.inlineEditing && !this.isEditing) || this.args.hasControlCallout || this.hasErrors
-    );
+    return (this.inlineEditing && !this.isEditing) || this.hasControlCallout;
   }
 
   /**
@@ -440,7 +477,7 @@ export default class FieldForComponent extends Component {
    * @public
    */
   @arg(func)
-  didCommitValue = (/* value */) => {};
+  didCommitValue = (/* value */) => {}
 
   /**
    * Triggered after the commit method is called for multiple values
@@ -449,7 +486,7 @@ export default class FieldForComponent extends Component {
    * @public
    */
   @arg(func)
-  didCommitValues = (/* values */) => {};
+  didCommitValues = (/* values */) => {}
 
   /**
    * Cancels the current intermediary value, only really useful
@@ -504,11 +541,11 @@ export default class FieldForComponent extends Component {
   @action
   edit() {
     this.isEditing = true;
-    run.next(() => {
+    later(() => {
       if (this._showControl) {
         document.querySelector(`#${this.controlId}`).focus();
       }
-    });
+    },100);
   }
 
   @action
