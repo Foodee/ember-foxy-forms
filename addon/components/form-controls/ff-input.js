@@ -1,9 +1,9 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
-import { arg, string} from 'ember-arg-types';
+import { arg } from 'ember-arg-types';
+import { string } from 'prop-types';
 
 export default class FormControlsFfInputComponent extends Component {
-
   @arg(string)
   inputType;
 

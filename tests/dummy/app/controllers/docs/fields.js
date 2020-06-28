@@ -3,7 +3,6 @@ import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
 
 export default class FieldsController extends Controller {
-
   object = {
     @tracked
     attribute: '',
@@ -13,7 +12,7 @@ export default class FieldsController extends Controller {
     attribute2: '',
     @tracked
     number: 1,
-  }
+  };
 
   @action
   handleDidCommitValue(value) {
