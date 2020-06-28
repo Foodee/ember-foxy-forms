@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { arg, func } from 'ember-arg-types';
-import { bool, string, object } from 'prop-types';
+import { arg } from 'ember-arg-types';
+import { array, func, bool, string, object } from 'prop-types';
 import { oneWay, notEmpty, gt, union } from '@ember/object/computed';
 import { dasherize } from '@ember/string';
 import { isArray } from '@ember/array';
@@ -301,7 +301,8 @@ export default class FieldForComponent extends Component {
    * @returns string
    */
   formatValue(value) {
-    return JSON.stringify(value);
+    return value;
+    // return JSON.stringify(value); // TODO why?
   }
 
   /**
@@ -370,7 +371,7 @@ export default class FieldForComponent extends Component {
    */
   @gt('params.length', 1) _hasCompositeValue;
 
-  // TODO annotate me
+  @arg(array)
   get params() {
     return this.args.params ?? isArray(this.args.for) ? this.args.for : [this.args.for];
   }

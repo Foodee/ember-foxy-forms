@@ -7,20 +7,8 @@ module('Integration | Component | form-controls/ff-textarea', function (hooks) {
   setupRenderingTest(hooks);
 
   test('it renders', async function (assert) {
-    // Set any properties with this.set('myProperty', 'value');
-    // Handle any actions with this.set('myAction', function(val) { ... });
-
     await render(hbs`<FormControls::FfTextarea />`);
 
-    assert.equal(this.element.textContent.trim(), '');
-
-    // Template block usage:
-    await render(hbs`
-      <FormControls::FfTextarea>
-        template block text
-      </FormControls::FfTextarea>
-    `);
-
-    assert.equal(this.element.textContent.trim(), 'template block text');
+    assert.dom('[data-test-ff-control-textarea]').exists();
   });
 });
