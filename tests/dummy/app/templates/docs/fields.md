@@ -2,7 +2,6 @@
 
 Fields are responsible for connecting form-controls to fields.
 
-
 ## Standard and Composite Values
 
 Fields typically control a single value, but sometimes it's valuable to have them control multiple, for instance when 
@@ -20,8 +19,8 @@ controlling a date range. This can be done by simply passing an array of keys to
 
 ## Labels
 
-FieldFor has the option to label controls, if you provide a label, field for will automatically wire the label's 'for' attribute 
-to the correct id, to allow for a11y.
+FieldFor has the option to label controls, if you provide a label, field for will automatically wire the label's 'for' 
+attribute to the correct id, to allow for a11y.
 
 {{#docs-demo as |demo|}}
   {{#demo.example name="label.hbs"}}
@@ -90,9 +89,8 @@ run processes when individual field values change without using an observer.
 
 When customizations to the control are needed the field can yield the control for direct configuration. 
 
-
 {{#docs-demo as |demo|}}
-  {{#demo.example name="label.hbs"}}
+  {{#demo.example name="yielding.hbs"}}
     <Form @for={{this.object}} as |f|>
       <f.field @for='number' @using='number' as |f|>
         <f.control @max=100 @min=0 @step=10 />
@@ -102,15 +100,24 @@ When customizations to the control are needed the field can yield the control fo
       </f.field>
     </Form> 
   {{/demo.example}}
-  {{demo.snippet "label.hbs"}}
+  {{demo.snippet "yielding.hbs"}}
 {{/docs-demo}}
 
 ## Control Callout 
 
 When in inline editing mode, it's sometimes useful to have a control callout so you can view the uncommitted values
-while you edit in a calout pane. This is support with an attribute on the form, however you must provide styles to 
-place the control callout relative to your component.
+while you edit in a callout pane. 
 
-TODO: Example
-
-
+{{#docs-demo as |demo|}}
+  {{#demo.example name="callout.hbs"}}
+    <Form @for={{this.object}} @inlineEditing={{true}} @hasControlCallout={{true}}  as |f|>
+      <f.field @for='number' @using='number' as |f|>
+        <f.control @max=100 @min=0 @step=10 />
+      </f.field>
+      <f.field @for='number' @using='range' as |f|>
+        <f.control @max=100 @min=0 @step=10 />
+      </f.field>
+    </Form> 
+  {{/demo.example}}
+  {{demo.snippet "callout.hbs"}}
+{{/docs-demo}}

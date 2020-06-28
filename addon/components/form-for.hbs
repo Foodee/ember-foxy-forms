@@ -7,6 +7,7 @@
     "
     ...attributes
     data-test-form-for
+    data-test-resource-id={{this._modelName}}
   >
     {{
       yield
@@ -21,6 +22,7 @@
           commitValue=this.updateValue
           commitValues=this.updateValues
           testingClassPrefix=this.testingClassPrefix
+          hasControlCallout=this.hasControlCallout
           fieldForControlCalloutClasses=this.fieldForControlCalloutClasses
         )
         fieldFor=(component
@@ -33,6 +35,7 @@
           commitValue=this.updateValue
           commitValues=this.updateValues
           testingClassPrefix=this.testingClassPrefix
+          hasControlCallout=this.hasControlCallout
           fieldForControlCalloutClasses=this.fieldForControlCalloutClasses
         )
         button=(component

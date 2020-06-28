@@ -49,6 +49,7 @@ must manually implement this mode at the control level, it can be helpful for fo
 (disabled controls typically do not respond to mouse events).
 
 ### Disabled 
+
 {{#docs-demo as |demo|}}
   {{#demo.example name="disabled.hbs"}}
     <Form @disabled={{true}} as |f|>
@@ -59,6 +60,7 @@ must manually implement this mode at the control level, it can be helpful for fo
 {{/docs-demo}}
 
 ### Readonly
+
 {{#docs-demo as |demo|}}
   {{#demo.example name="readonly.hbs"}}
     <Form @readonly={{true}} as |f|>
@@ -102,7 +104,6 @@ Forms can be configured to notify the user when a form either succeeds or fails.
   {{demo.snippet "notification.hbs"}}
 {{/docs-demo}}
 
-
 {{#docs-snippet name="initialize.js"}}
   export function initialize(appInstance) {
     const formFor = appInstance.lookup("service:form-for");
@@ -127,6 +128,12 @@ Forms can be configured to notify the user when a form either succeeds or fails.
 The form-for service can be extended to provide custom popups, or messages by injecting it into your application.
 
 
+## Navigation Guards
+
+By default a dirty form will require confirmation of navigation both of the ember-router and the browser. The form-for
+service can be extended to provide custom popups, or messages by injecting it into your application.
+
+
 {{#docs-snippet name="navigation.js"}}
   class SomeController extends Controller {
   
@@ -144,17 +151,11 @@ The form-for service can be extended to provide custom popups, or messages by in
   }
 {{/docs-snippet}}
 
-## Navigation Guards
-
-By default a dirty form will require confirmation of navigation both of the ember-router and the browser. The form-for
-service can be extended to provide custom popups, or messages by injecting it into your application.
-
 ## Lifecycle hooks
 
 FoxyForms exposes a number of lifecycle hooks that allow for the extension of its three primary actions 'submit' 'reset' 'destroy'.
 
 ### will(Submit|Reset|Destroy)
-
 
 {{#docs-snippet name="will.js"}}
   willSubmit(model):boolean
@@ -211,13 +212,18 @@ Sometimes you'd like a form to be a row in a table instead of an actual form tag
   <Form @tagName='tr' as |tr| />
 {{/docs-snippet}}
 
-
 ## Testing classes
 
 Form for will automatically generate some testing classes on both the form and the field. They take the following pattern:
+
+NOTE: these will be deprecated
 
 forms: '--form-for\_\_model-name'
 
 fields: '--form-for\_\_model-name_key(s)'
 
-TODO: Extend to allow for ember test selectors
+## Testing Selectors
+
+forms: ```[data-test-form-for] [data-test-resource-id=<model-name>]```
+
+fieldl: ```[data-test-field-for] [data-test-resource-id=<model-name>-<params>]```

@@ -4,6 +4,7 @@ import { action } from '@ember/object';
 import { A } from '@ember/array';
 
 export default class UsageController extends Controller {
+
   anObject = {
     @tracked string: 'string',
     @tracked text: 'text',
@@ -17,32 +18,36 @@ export default class UsageController extends Controller {
     @tracked time: new Date().toString(),
     @tracked datetime: new Date().toString(),
     @tracked boolean: false,
-    @tracked select: '1',
-    @tracked start: '1',
-    @tracked end: '1',
-    @tracked
-    errors: {
-      @tracked
-      text: [],
-      @tracked
-      select: [],
-      @tracked
-      start: [],
-      @tracked
-      end: [],
-    },
-  };
+    @tracked select: "1",
+    @tracked start: "1",
+    @tracked end: "1",
+    @tracked errors: {}
+  }
 
   @tracked
   errors = false;
 
   @action
   toggleErrors() {
-    if (!this.errors) {
-      this.anObject.errors.text = ['Text Error'];
-      this.anObject.errors.select = ['Select Error'];
-      this.anObject.errors.start = ['Start Error'];
-      this.anObject.errors.end = ['End Error'];
+    if (this.errors) {
+      this.anObject.errors = {
+        string: ['String Error'],
+        password: ['Password Error'],
+        text: ['Text Error'],
+        email: ['Email Error'],
+        url: ['URL Error'],
+        tel: ['TEL Error'],
+        search: ['Search Error'],
+        number: ['Number Error'],
+        color: ['Color Error'],
+        date: ['Date Error'],
+        time: ['Time Error'],
+        datetime: ['Datetime Error'],
+        boolean: ['Boolean Error'],
+        select: ['Select Error'],
+        start: ['Start Error'],
+        end: ['End Error'],
+      };
     } else {
       this.anObject.errors = {
         text: [],
@@ -64,16 +69,17 @@ export default class UsageController extends Controller {
   @tracked enableSubmit = true;
   @tracked successfulSubmitMessage = 'We submitted!';
   @tracked failedSubmitMessage = 'We failed to submit!';
+  @tracked didNotSubmitMessage = 'We did not submit!';
 
   @action
-  async willSubmit() {
+  willSubmit() {
     return this.enableSubmit;
   }
 
   @action
   async submit() {
     this.logs.pushObject('submitting');
-    await new Promise((r) => setTimeout(r, 2000));
+    await new Promise(r => setTimeout(r, 2000));
   }
 
   @action
@@ -89,16 +95,17 @@ export default class UsageController extends Controller {
   @tracked enableReset = true;
   @tracked successfulResetMessage = 'We Reset!';
   @tracked failedResetMessage = 'We failed to reset!';
+  @tracked didNotResetMessage = 'We did not reset!';
 
   @action
-  async willReset() {
+  willReset() {
     return this.enableReset;
   }
 
   @action
   async reset() {
     this.logs.pushObject('resetting');
-    await new Promise((r) => setTimeout(r, 2000));
+    await new Promise(r => setTimeout(r, 2000));
   }
 
   @action
@@ -114,16 +121,17 @@ export default class UsageController extends Controller {
   @tracked enableDestroy = true;
   @tracked successfulDestroyMessage = 'We Destroyed';
   @tracked failedDestroyMessage = 'We failed to destroy!';
+  @tracked didNotDestroyMessage = 'We did not destroy!';
 
   @action
-  async willDestroy() {
+  willDestroy() {
     return this.enableDestroy;
   }
 
   @action
   async destroy() {
     this.logs.pushObject('destroying');
-    await new Promise((r) => setTimeout(r, 2000));
+    await new Promise(r => setTimeout(r, 2000));
   }
 
   @action
@@ -135,4 +143,5 @@ export default class UsageController extends Controller {
   async didNotDestroy() {
     this.logs.pushObject('did not destroy!');
   }
+
 }

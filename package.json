@@ -40,6 +40,7 @@
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
     "ember-arg-types": "^0.2.1",
+    "ember-attacher": "^1.1.1",
     "ember-auto-import": "^1.6.0",
     "ember-cli": "~3.19.0",
     "ember-cli-addon-docs": "^0.7.0",

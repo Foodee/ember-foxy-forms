@@ -9,6 +9,7 @@ attribute.
         <div class="columns">
           <div>
             <form.field @for="string" @using="input" @label="Text" />
+            <form.field @for="password" @using="input" @label="Password" />
             <form.field @for="text" @using="textarea" @label="Text" />
             <form.field @for="email" @using="email" @label="Email" />
             <form.field @for="url" @using="url" @label="Url" />
