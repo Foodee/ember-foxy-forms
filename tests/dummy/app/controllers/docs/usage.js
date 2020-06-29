@@ -4,7 +4,6 @@ import { action } from '@ember/object';
 import { A } from '@ember/array';
 
 export default class UsageController extends Controller {
-
   anObject = {
     @tracked string: 'string',
     @tracked text: 'text',
@@ -18,11 +17,11 @@ export default class UsageController extends Controller {
     @tracked time: new Date().toString(),
     @tracked datetime: new Date().toString(),
     @tracked boolean: false,
-    @tracked select: "1",
-    @tracked start: "1",
-    @tracked end: "1",
-    @tracked errors: {}
-  }
+    @tracked select: '1',
+    @tracked start: '1',
+    @tracked end: '1',
+    @tracked errors: {},
+  };
 
   @tracked
   errors = false;
@@ -79,7 +78,7 @@ export default class UsageController extends Controller {
   @action
   async submit() {
     this.logs.pushObject('submitting');
-    await new Promise(r => setTimeout(r, 2000));
+    await new Promise((r) => setTimeout(r, 2000));
   }
 
   @action
@@ -105,7 +104,7 @@ export default class UsageController extends Controller {
   @action
   async reset() {
     this.logs.pushObject('resetting');
-    await new Promise(r => setTimeout(r, 2000));
+    await new Promise((r) => setTimeout(r, 2000));
   }
 
   @action
@@ -131,7 +130,7 @@ export default class UsageController extends Controller {
   @action
   async destroy() {
     this.logs.pushObject('destroying');
-    await new Promise(r => setTimeout(r, 2000));
+    await new Promise((r) => setTimeout(r, 2000));
   }
 
   @action
@@ -143,5 +142,4 @@ export default class UsageController extends Controller {
   async didNotDestroy() {
     this.logs.pushObject('did not destroy!');
   }
-
 }
