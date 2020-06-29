@@ -3,12 +3,14 @@ import { action } from '@ember/object';
 import { arg, string, bool } from 'ember-arg-types';
 
 export default class FormControlsFfInputComponent extends Component {
-
   @arg(bool)
   live = true;
 
   @arg(bool)
   readonly = true;
+
+  @arg(string)
+  inputType = true;
 
   @action
   handleClick(event) {

@@ -59,7 +59,6 @@ export default class FieldForComponent extends Component {
       defineProperty(this, 'errors', oneWay(`args.form.model.errors.${propertyPath}`));
     }
 
-
     // Capture backup value that will allow full roll back if there are errors on cancel
     // update the backup value after successful commit
     this._lastValidValue = isArray(this.value) ? this.value.toArray() : this.value;
@@ -339,7 +338,7 @@ export default class FieldForComponent extends Component {
   @arg(func)
   formatValue = (value) => {
     return this._hasCompositeValue ? JSON.stringify(value) : value;
-  }
+  };
 
   /**
    * Stringifies a value, we can't just use JSON.stringify directly as it can create circular refs
@@ -369,9 +368,11 @@ export default class FieldForComponent extends Component {
    * @private
    */
   get _showControl() {
-    return !this.inlineEditing ||
-      this.inlineEditing && this.isEditing ||
-      this.hasControlCallout && this.hasErrors;
+    return (
+      !this.inlineEditing ||
+      (this.inlineEditing && this.isEditing) ||
+      (this.hasControlCallout && this.hasErrors)
+    );
   }
 
   @tracked isEditing = false;
@@ -477,7 +478,7 @@ export default class FieldForComponent extends Component {
    * @public
    */
   @arg(func)
-  didCommitValue = (/* value */) => {}
+  didCommitValue = (/* value */) => {};
 
   /**
    * Triggered after the commit method is called for multiple values
@@ -486,7 +487,7 @@ export default class FieldForComponent extends Component {
    * @public
    */
   @arg(func)
-  didCommitValues = (/* values */) => {}
+  didCommitValues = (/* values */) => {};
 
   /**
    * Cancels the current intermediary value, only really useful
@@ -545,7 +546,7 @@ export default class FieldForComponent extends Component {
       if (this._showControl) {
         document.querySelector(`#${this.controlId}`).focus();
       }
-    },100);
+    }, 100);
   }
 
   @action
