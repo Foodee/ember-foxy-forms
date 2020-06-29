@@ -14,18 +14,19 @@
   }}
   ...attributes
   data-test-field-for={{this._testingSelector}}
-  >
+>
   <LabelFor @label={{@label}} @controlId={{this.controlId}} />
   {{#if this._showValue}}
     <button
       class="field-for-value-container {{if this._showControl "field-for-value-showing-control-callout"}}"
       data-tooltip={{@valueTooltip}}
+      type="button"
       {{on "click" this.edit}}
     >
       {{#if @valueTooltip}}
-        {{#attach-tooltip}}
+        <AtttachTooltip>
           {{@valueTooltip}}
-        {{/attach-tooltip}}
+        </AtttachTooltip>
       {{/if}}
       {{#if this.displayValue includeZero=true}}
         {{this.displayValue}}
@@ -37,15 +38,14 @@
     </button>
   {{/if}}
   {{#if this.hasControlCallout}}
-    {{#attach-popover
-      id=this.guid
-      isShown=this._showControl
-      showOn=''
-      hideOn=''
-      showDuration=0
-      hideDuration=0
-      arrow=true
-    }}
+    <AttachPopover>
+      @id={{this.guid}}
+      @isShown={{this._showControl}}
+      @showOn=""
+      @hideOn=""
+      @showDuration=0
+      @hideDuration=0
+      @arrow={{true}}
       <div class="field-for-control-container field-for-control-callout">
         <div class="field-for-control-and-commit-buttons">
           {{#if (hasBlock)}}
@@ -96,7 +96,7 @@
 
         <ErrorsFor @errors={{this.errors}} @customErrorComponent={{this.customErrorComponent}} />
       </div>
-    {{/attach-popover}}
+    </AttachPopover>
   {{else}}
     {{#if this._showControl}}
       <div class="field-for-control-container">
