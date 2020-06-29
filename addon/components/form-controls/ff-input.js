@@ -1,11 +1,14 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
-import { arg } from 'ember-arg-types';
-import { string } from 'prop-types';
+import { arg, string, bool } from 'ember-arg-types';
 
 export default class FormControlsFfInputComponent extends Component {
-  @arg(string)
-  inputType = 'text';
+
+  @arg(bool)
+  live = true;
+
+  @arg(bool)
+  readonly = true;
 
   @action
   handleClick(event) {
@@ -25,6 +28,31 @@ export default class FormControlsFfInputComponent extends Component {
   handleBlur(event) {
     if (this.args.onBlur) {
       return this.args.onBlur(event.target.value);
+    }
+  }
+
+  @action
+  handleKeyUp(event) {
+    if (this.readonly) {
+      event.preventDefault();
+    }
+
+    if (this.live) {
+      this.handleChange(event);
+    }
+  }
+
+  @action
+  handleKeyDown(event) {
+    if (this.readonly) {
+      event.preventDefault();
+    }
+  }
+
+  @action
+  handleCut(event) {
+    if (this.readonly) {
+      event.preventDefault();
     }
   }
 
