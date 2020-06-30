@@ -5,11 +5,10 @@ import { action } from '@ember/object';
 
 export default class FormControlsFfCurrencyComponent extends FormControlsFfInputComponent {
   @arg(string)
-  prefix = '$ '
+  prefix = '$ ';
 
   @action
   handleChange(value) {
-
     if (this.readonly && value.preventDefault) {
       value.preventDefault();
       return false;
