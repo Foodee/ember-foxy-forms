@@ -18,7 +18,9 @@
   <LabelFor @label={{@label}} @controlId={{this.controlId}} />
   {{#if this._showValue}}
     <button
-      class="field-for-value-container {{if this._showControl "field-for-value-showing-control-callout"}}"
+      class="field-for-value-container {{
+        if this._showControl "field-for-value-showing-control-callout"
+      }}"
       data-tooltip={{@valueTooltip}}
       type="button"
       {{on "click" this.edit}}
