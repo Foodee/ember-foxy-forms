@@ -9,5 +9,6 @@ module('Integration | Component | form-controls/ff-password', function (hooks) {
   test('it renders', async function (assert) {
     await render(hbs`<FormControls::FfPassword />`);
     assert.dom('input[type=password]').exists({ count: 1 }, 'Should render a password input');
+
   });
 });
