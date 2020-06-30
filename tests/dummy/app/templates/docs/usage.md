@@ -52,6 +52,7 @@ The various features can be toggled on / off below.
             <form.field @for="search" @using="search" @label="Search" @valueTooltip="An Search"/>
             <form.field @for="number" @using="number" @label="Number" @valueTooltip="An Number"/>
             <form.field @for="number" @using="range" @label="Number" @valueTooltip="An Number"/>
+            <form.field @for="currency" @using="currency" @label="Currency" @valueTooltip="An Currency"/>
           </div>
           <div>
             <form.field @for="color" @using="color" @label="Color" @valueTooltip="An Color"/>
