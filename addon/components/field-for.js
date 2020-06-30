@@ -19,7 +19,7 @@ export default class FieldForComponent extends Component {
 
     if (this._hasCompositeValue) {
       // property paths to watch
-      const propertyPaths = this.params.join(',');
+      const propertyPaths = this.propertyPath;
       const _withMapping = this.args.withMapping || {};
 
       // bind to the value
@@ -48,7 +48,7 @@ export default class FieldForComponent extends Component {
       const errorPaths = this.params.map((param) => `args.form.model.errors.${param}`);
       defineProperty(this, 'errors', union(...errorPaths));
     } else {
-      const propertyPath = this.params[0];
+      const propertyPath = this.propertyPath;
 
       assert('<FieldFor /> Requires a propertyPath to bind to', !!propertyPath);
 
@@ -411,6 +411,10 @@ export default class FieldForComponent extends Component {
   @arg(array)
   get params() {
     return this.args.params ?? isArray(this.args.for) ? this.args.for : [this.args.for];
+  }
+
+  get propertyPath() {
+    return this.params.join(',')
   }
 
   /**

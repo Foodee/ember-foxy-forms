@@ -51,7 +51,7 @@ The various features can be toggled on / off below.
             <form.field @for="tel" @using="tel" @label="Telephone" @valueTooltip="An Telephone"/>
             <form.field @for="search" @using="search" @label="Search" @valueTooltip="An Search"/>
             <form.field @for="number" @using="number" @label="Number" @valueTooltip="An Number"/>
-            <form.field @for="number" @using="range" @label="Number Range" @valueTooltip="An Number Range"/>
+            <form.field @for="number" @using="range" @label="Number" @valueTooltip="An Number"/>
           </div>
           <div>
             <form.field @for="color" @using="color" @label="Color" @valueTooltip="An Color"/>
@@ -65,6 +65,13 @@ The various features can be toggled on / off below.
               @label="Select" 
               @values="1:one,2:two,3:three" 
               @valueTooltip="An Select"
+            />
+            <form.field 
+              @for="radio" 
+              @using="radio" 
+              @label="Radio" 
+              @values="1:one,2:two,3:three" 
+              @valueTooltip="An Radio"
             />
             <form.field 
               @for={{array "start" "end"}} 

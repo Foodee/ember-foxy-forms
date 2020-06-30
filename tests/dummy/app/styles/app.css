@@ -170,3 +170,7 @@ button:hover {
 .hljs.model {
   font-size: 12px;
 }
+
+.form-controls-ff-radio {
+  display: block;
+}
