@@ -16,6 +16,6 @@ module('Integration | Component | form-controls/ff-multiple-input', function (ho
 
     await render(hbs`<FormControls::FfMultipleInput @value={{this.value}} />`);
 
-    assert.dom('[data-test-multiple-input]').exists();
+    assert.dom('[data-test-multiple-input]').exists({ count: 3 }, 'Should render three inputs');
   });
 });

@@ -8,5 +8,4 @@ export default class FormControlsFfRadioComponent extends Component {
       return this.args.onChange(event.target.value);
     }
   }
-
 }

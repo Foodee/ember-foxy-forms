@@ -414,7 +414,7 @@ export default class FieldForComponent extends Component {
   }
 
   get propertyPath() {
-    return this.params.join(',')
+    return this.params.join(',');
   }
 
   /**

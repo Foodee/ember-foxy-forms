@@ -9,6 +9,9 @@ module('Integration | Component | form-controls/ff-tel', function (hooks) {
   test('it renders', async function (assert) {
     await render(hbs`<FormControls::FfTel />`);
 
-    assert.dom('[data-test-ff-control-input]').exists();
+    assert
+      .dom('[data-test-ff-control-input]')
+      .exists({ count: 1 })
+      .hasAttribute('type', 'tel', 'Should render a telephone input');
   });
 });

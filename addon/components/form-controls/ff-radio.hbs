@@ -5,9 +5,13 @@
       name="{{@for}}"
       value="{{item.id}}"
       id="{{@for}}-{{item.id}}"
+      ...attributes
+      data-test-ff-control-radio
       data-test-ff-control-radio-option="{{item.id}}"
       {{on "change" this.handleChange}}
-    >
-    <label for="{{@for}}-{{item.id}}">{{item.label}}</label>
+    />
+    <label for="{{@for}}-{{item.id}}">
+      {{item.label}}
+    </label>
   </div>
 {{/each}}

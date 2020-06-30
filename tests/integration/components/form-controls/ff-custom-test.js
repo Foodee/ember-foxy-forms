@@ -9,6 +9,6 @@ module('Integration | Component | form-controls/ff-custom', function (hooks) {
   test('it renders', async function (assert) {
     await render(hbs`<FormControls::FfCustom />`);
 
-    assert.dom('[data-test-ff-control-custom]').exists();
+    assert.dom('[data-test-ff-control-custom]').exists({ count: 1 });
   });
 });

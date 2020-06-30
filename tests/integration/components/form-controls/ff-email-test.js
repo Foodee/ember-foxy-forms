@@ -9,6 +9,9 @@ module('Integration | Component | form-controls/ff-email', function (hooks) {
   test('it renders', async function (assert) {
     await render(hbs`<FormControls::FfEmail />`);
 
-    assert.dom('[data-test-ff-control-input]').exists();
+    assert
+      .dom('[data-test-ff-control-input]')
+      .exists({ count: 1 })
+      .hasAttribute('type', 'email', 'Should render a email input');
   });
 });

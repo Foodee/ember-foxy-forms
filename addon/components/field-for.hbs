@@ -18,18 +18,18 @@
   <LabelFor @label={{@label}} @controlId={{this.controlId}} />
   {{#if this._showValue}}
     <button
-      class="field-for-value-container {{
-        if this._showControl "field-for-value-showing-control-callout"
-      }}"
+      class="
+      field-for-value-container
+      {{if this._showControl "field-for-value-showing-control-callout"}}"
       data-tooltip={{@valueTooltip}}
       type="button"
       {{on "click" this.edit}}
     >
-      {{#if @valueTooltip}}
+      {{!-- {{#if @valueTooltip}}
         <AtttachTooltip>
           {{@valueTooltip}}
         </AtttachTooltip>
-      {{/if}}
+      {{/if}} --}}
       {{#if this.displayValue includeZero=true}}
         {{this.displayValue}}
       {{else}}
@@ -40,14 +40,15 @@
     </button>
   {{/if}}
   {{#if this.hasControlCallout}}
-    <AttachPopover>
+    <AttachPopover
       @id={{this.guid}}
       @isShown={{this._showControl}}
       @showOn=""
       @hideOn=""
-      @showDuration=0
-      @hideDuration=0
+      @showDuration="0"
+      @hideDuration="0"
       @arrow={{true}}
+    >
       <div class="field-for-control-container field-for-control-callout">
         <div class="field-for-control-and-commit-buttons">
           {{#if (hasBlock)}}

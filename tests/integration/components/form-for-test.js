@@ -222,7 +222,7 @@ module('Integration | Component | form for', function (hooks) {
   });
 
   test('it does not hide the control when inline-editing when there are errors', async function (assert) {
-    this.model = { foo: 'bar', errors: { foo: ['bar'] } };
+    this.model = { foo: 'bar', errors: { foo: ['bar error'] } };
 
     await render(hbs`
       <FormFor @model={{this.model}} as |f|>
@@ -231,12 +231,10 @@ module('Integration | Component | form for', function (hooks) {
     `);
     await click('.field-for-value-container');
     assert.dom('input').hasValue('bar');
-    await click('button.commit');
+    await click('[data-test-commit-buttons-commit]');
     assert.dom('input').hasValue('bar');
-
-    await click('.field-for-value-container');
-    assert.dom('input').hasValue('bar');
-    await click('button.cancel');
+    assert.dom('[data-test-form-error]').hasText('bar error');
+    await click('[data-test-commit-buttons-cancel]');
     assert.dom('input').doesNotExist();
     assert.dom('.field-for-value-container').hasText('bar');
   });

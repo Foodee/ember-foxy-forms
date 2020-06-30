@@ -9,6 +9,8 @@ module('Integration | Component | form-controls/ff-textarea', function (hooks) {
   test('it renders', async function (assert) {
     await render(hbs`<FormControls::FfTextarea />`);
 
-    assert.dom('[data-test-ff-control-textarea]').exists();
+    assert
+      .dom('[data-test-ff-control-textarea]')
+      .exists({ count: 1 }, 'Should render a textarea control');
   });
 });

@@ -14,7 +14,7 @@ module('Integration | Component | errors for', function (hooks) {
 
     await render(hbs`<ErrorsFor @errors={{this.errors}} />`);
 
-    assert.dom('.error').exists({ count: 2 }, 'should display two errors');
+    assert.dom('[data-test-form-error]').exists({ count: 2 }, 'should display two errors');
   });
 
   test('can configure custom error component', async function (assert) {
@@ -45,7 +45,7 @@ module('Integration | Component | errors for', function (hooks) {
       hbs`<ErrorsFor @errors={{this.errors}} @customErrorComponent="custom-errors-for" />`
     );
 
-    assert.dom('.error').doesNotExist('should not display default error element');
+    assert.dom('[data-test-form-error]').doesNotExist('should not display default error element');
     assert.dom('.custom-error').exists({ count: 1 }, 'should use custom errors-for component');
   });
 });
