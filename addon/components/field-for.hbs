@@ -25,11 +25,11 @@
       type="button"
       {{on "click" this.edit}}
     >
-      {{!-- {{#if @valueTooltip}}
+      {{#if @valueTooltip}}
         <AtttachTooltip>
           {{@valueTooltip}}
         </AtttachTooltip>
-      {{/if}} --}}
+      {{/if}}
       {{#if this.displayValue includeZero=true}}
         {{this.displayValue}}
       {{else}}
