@@ -4,7 +4,7 @@ import { arg, string, bool } from 'ember-arg-types';
 
 export default class FormControlsFfInputComponent extends Component {
   @arg(bool)
-  live = true;
+  live = false;
 
   @arg(bool)
   readonly = true;

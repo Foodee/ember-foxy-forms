@@ -1,17 +1,19 @@
 {{#each @values as |item|}}
   <div class="form-controls-ff-radio">
-    <input
-      type="radio"
-      name="{{@for}}"
-      value="{{item.id}}"
-      id="{{@for}}-{{item.id}}"
-      ...attributes
-      data-test-ff-control-radio
-      data-test-ff-control-radio-option="{{item.id}}"
-      {{on "change" this.handleChange}}
-    />
-    <label for="{{@for}}-{{item.id}}">
-      {{item.label}}
-    </label>
+    {{#let (compute this.idFor item) as |id|}}
+      <input
+        type="radio"
+        name="{{@for}}"
+        value="{{id}}"
+        id="{{@for}}-{{id}}"
+        ...attributes
+        data-test-ff-control-radio
+        data-test-ff-control-radio-option="{{id}}"
+        {{on "change" this.handleChange}}
+      />
+      <label for="{{@for}}-{{id}}">
+        {{compute this.labelFor item}}
+      </label>
+    {{/let}}
   </div>
 {{/each}}

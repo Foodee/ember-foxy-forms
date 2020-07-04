@@ -62,16 +62,44 @@ The various features can be toggled on / off below.
             <form.field 
               @for="select" 
               @using="select" 
-              @label="Select" 
+              @label="Select Primitive" 
+              @values="1,2,3" 
+              @valueTooltip="An Select"
+            />
+            <form.field 
+              @for="selectObject" 
+              @using="select" 
+              @label="Select Object" 
               @values="1:one,2:two,3:three" 
               @valueTooltip="An Select"
             />
             <form.field 
+              @for="checkboxSelect" 
+              @using="checkbox-select" 
+              @label="Checkbox Select Primitive" 
+              @values="1,2,3" 
+              @valueTooltip="An Checkbox Select"
+            />
+            <form.field 
+              @for="checkboxSelectObject" 
+              @using="checkbox-select" 
+              @label="Checkbox Select Object" 
+              @values="1:one,2:two,3:three" 
+              @valueTooltip="An Checkbox Select"
+            />
+            <form.field 
               @for="radio" 
               @using="radio" 
-              @label="Radio" 
+              @label="Radio Primitive" 
+              @values="1,2,3" 
+              @valueTooltip="An Primitive Radio"
+            />
+            <form.field 
+              @for="radioObject" 
+              @using="radio" 
+              @label="Radio Object" 
               @values="1:one,2:two,3:three" 
-              @valueTooltip="An Radio"
+              @valueTooltip="An Object Radio"
             />
             <form.field 
               @for={{array "start" "end"}} 

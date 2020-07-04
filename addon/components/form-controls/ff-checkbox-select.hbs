@@ -1,0 +1,24 @@
+<div data-test-ff-control-checkbox-select ...attributes>
+  {{#each @values as |value index|}}
+    <div
+      class="form-controls-ff-checkbox"
+      role="button"
+      {{on "change" (fn this.handleChange value)}}
+    >
+      {{#let (compute this.idFor value) as |id|}}
+        {{! template-lint-disable no-nested-interactive }}
+        <input
+          value="true"
+          type="checkbox"
+          id="{{id}}"
+          checked={{compute this.isSelected value}}
+          disabled={{@disabled}}
+          data-test-ff-control-checkbox-select-input={{index}}
+        />
+        <label for="{{id}}">
+          {{compute this.labelFor value}}
+        </label>
+      {{/let}}
+    </div>
+  {{/each}}
+</div>

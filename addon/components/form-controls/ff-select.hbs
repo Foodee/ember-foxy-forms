@@ -1,14 +1,14 @@
 <select
   id={{@controlId}}
-  value={{@value}}
+  value={{this.selected}}
   disabled={{@disabled}}
   ...attributes
   data-test-ff-control-select
   {{on "change" this.handleChange}}
 >
-  {{#each @values as |item|}}
-    <option value={{item.id}} data-test-ff-control-select-option>
-      {{item.label}}
+  {{#each this.values as |item index|}}
+    <option value={{compute this.idFor item}} data-test-ff-control-select-option={{index}}>
+      {{compute this.labelFor item}}
     </option>
   {{/each}}
 </select>
