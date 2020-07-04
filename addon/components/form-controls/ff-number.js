@@ -5,9 +5,9 @@ export default class FormControlsFfNumberComponent extends FormControlsFfInputCo
   inputType = 'number';
 
   @action
-  handleChange(value) {
+  handleChange(event) {
     if (this.args.onChange) {
-      return this.args.onChange(parseFloat(value));
+      return this.args.onChange(event.target.value);
     }
   }
 }

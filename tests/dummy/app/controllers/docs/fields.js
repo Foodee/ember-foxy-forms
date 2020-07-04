@@ -4,14 +4,13 @@ import { action } from '@ember/object';
 
 export default class FieldsController extends Controller {
   object = {
-    @tracked
-    attribute: '',
-    @tracked
-    attribute1: '',
-    @tracked
-    attribute2: '',
-    @tracked
-    number: 1,
+    @tracked singleValue: '',
+    @tracked labeledAttribute: '',
+    @tracked composite1: '',
+    @tracked composite2: '',
+    @tracked number: 1,
+    @tracked select: 1,
+    @tracked placeholder: null,
   };
 
   @action

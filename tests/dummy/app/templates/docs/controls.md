@@ -1,45 +1,124 @@
 # Controls
 
-Ember foxy forms comes packed with support with the default set of html5 controls. They can be selected using the 'using' 
-attribute.
+Ember foxy forms comes packed with support with the default set of html5 controls, as well as a few 'emberized' ones that
+make interacting with ember-data / ember-objects a little more straight forward. They can be selected using the 'using' 
+attribute. If you provide no ```@using``` or ```@control``` attribute the form will default to using the text type. 
+
+## Text Input Variants 
 
 {{#docs-demo as |demo|}}
-  {{#demo.example name="controls.hbs"}}
+  {{#demo.example name="text-input.hbs"}}
+    <Form @for={{this.model}} as |form|>
+      <form.field @for="string" @using="input" @label="Text" />
+      <form.field @for="string" @using="password" @label="Password" />
+      <form.field @for="password" @using="input" @label="Password" />
+      <form.field @for="email" @using="email" @label="Email" />
+      <form.field @for="url" @using="url" @label="Url" />
+      <form.field @for="tel" @using="tel" @label="Telephone" />
+      <form.field @for="search" @using="search" @label="Search" />
+      <form.field @for="number" @using="number" @label="Number" />
+    </Form>
+  {{/demo.example}}
+  {{demo.snippet "text-input.hbs"}}
+{{/docs-demo}}
+
+## Textarea
+
+{{#docs-demo as |demo|}}
+  {{#demo.example name="textarea-control.hbs"}}
       <Form @for={{this.model}} as |form|>
-        <div class="columns">
-          <div>
-            <form.field @for="string" @using="input" @label="Text" />
-            <form.field @for="password" @using="input" @label="Password" />
-            <form.field @for="text" @using="textarea" @label="Text" />
-            <form.field @for="email" @using="email" @label="Email" />
-            <form.field @for="url" @using="url" @label="Url" />
-            <form.field @for="tel" @using="tel" @label="Telephone" />
-            <form.field @for="search" @using="search" @label="Search" />
-            <form.field @for="number" @using="number" @label="Number" />
-            <form.field @for="number" @using="range" @label="Number Range" />
-          </div>
-          <div>
-            <form.field @for="color" @using="color" @label="Color" />
-            <form.field @for="date" @using="date" @label="Date" />
-            <form.field @for="time" @using="time" @label="Time" />
-            <form.field @for="datetime" @using="datetime" @label="Datetime" />
-            <form.field @for="boolean" @using="checkbox" @label="Boolean" />
-            <form.field 
-              @for="select"
-              @using="select" 
-              @label="Select"
-              @values="1:one,2:two,3:three"
-             />
-            <form.field 
-              @for={{array "start" "end"}} 
-              @using="multiple-input" 
-              @label="Multiple Input"
-             />
-          </div>
-        </div>
+        <form.field @for="text" @using="textarea" />
       </Form>
   {{/demo.example}}
-  {{demo.snippet "controls.hbs"}}
+  {{demo.snippet "textarea-control.hbs"}}
+{{/docs-demo}}
+
+## Range Slider 
+
+{{#docs-demo as |demo|}}
+  {{#demo.example name="range-control.hbs"}}
+      <Form @for={{this.model}} as |form|>
+        <form.field @for="number" @using="range" />
+      </Form>
+  {{/demo.example}}
+  {{demo.snippet "range-control.hbs"}}
+{{/docs-demo}}
+
+## Color Selector 
+
+{{#docs-demo as |demo|}}
+  {{#demo.example name="color-control.hbs"}}
+      <Form @for={{this.model}} as |form|>
+        <form.field @for="color" @using="color" />
+      </Form>
+  {{/demo.example}}
+  {{demo.snippet "color-control.hbs"}}
+{{/docs-demo}}
+
+## Date & Time Selector 
+
+{{#docs-demo as |demo|}}
+  {{#demo.example name="date-time-control.hbs"}}
+      <Form @for={{this.model}} as |form|>
+        <form.field @for="date" @using="date" @label="Date" />
+        <form.field @for="time" @using="time" @label="Time" />
+        <form.field @for="datetime" @using="datetime" @label="Datetime" />
+      </Form>
+  {{/demo.example}}
+  {{demo.snippet "date-time-control.hbs"}}
+{{/docs-demo}}
+
+## Checkbox 
+
+A checkbox can take an optional label attribute.
+
+{{#docs-demo as |demo|}}
+  {{#demo.example name="checkbox-control.hbs"}}
+      <Form @for={{this.model}} as |form|>
+        <form.field @for="boolean" @using="checkbox" @label="Boolean" as |ff|>
+          <ff.control @label="Checkbox Label" />
+        </form.field>
+      </Form>
+  {{/demo.example}}
+  {{demo.snippet "checkbox-control.hbs"}}
+{{/docs-demo}}
+
+## Select 
+
+FoxyForms comes with two select controls out of the box that work with both primitive arrays (numbers and strings) or 
+ember objects. When working with objects you can specify an identifier key ```@idKey``` and a label key ```@labelKey```
+these will be used to identify your object and to label the drop down.
+
+{{#docs-demo as |demo|}}
+  {{#demo.example name="select-control.hbs"}}
+      <Form @for={{this.model}} as |form|>
+        <form.field 
+          @for="objectSelect"
+          @using="select" 
+          @label="Object Select"
+          @values="1:one,2:two,3:three"
+         />
+        <form.field 
+          @for="primitiveSelect"
+          @using="select" 
+          @label="Primitive Select"
+          @values="1,2,3"
+         />
+        <form.field 
+          @for="objectCheckboxSelect"
+          @using="checkbox-select" 
+          @label="Object Select"
+          @values="1:one,2:two,3:three"
+         />
+        <form.field 
+          @for="primitiveCheckboxSelect"
+          @using="checkbox-select" 
+          @label="Primitive Select"
+          @values="1,2,3"
+         />
+      </Form>
+  {{/demo.example}}
+  {{demo.snippet "select-control.hbs"}}
 {{/docs-demo}}
 
 ## Custom Controls
@@ -92,3 +171,5 @@ full path to the control.
 ## Control Paths and Prefixes
 
 TODO: 
+
+

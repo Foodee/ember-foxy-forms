@@ -264,7 +264,8 @@ export default class FieldForComponent extends Component {
     const chunks = value.split(':');
     const [id, label, icon] = chunks;
 
-    return { id, label, icon };
+    // if we only have an ID we just pass the ID
+    return chunks.length === 1 ? id : { id, label, icon };
   }
 
   /**

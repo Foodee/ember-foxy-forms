@@ -32,7 +32,7 @@ by a field.
 
 {{#docs-demo as |demo|}}
   {{#demo.example name="auto-submit.hbs"}}
-    <Form @autoSubmit={{true}} @successfulSubmitMessage='Submitted' as |f|>
+    <Form @for={{this.object}} @onSubmit={{this.handleSubmit}} @autoSubmit={{true}} @successfulSubmitMessage='Submitted' as |f|>
       <f.field @for="attribute" />
     </Form>
   {{/demo.example}}
@@ -52,7 +52,7 @@ must manually implement this mode at the control level, it can be helpful for fo
 
 {{#docs-demo as |demo|}}
   {{#demo.example name="disabled.hbs"}}
-    <Form @disabled={{true}} as |f|>
+    <Form @for={{this.object}} @disabled={{true}} as |f|>
       <f.field @for="attribute" />
     </Form>
   {{/demo.example}}
@@ -63,7 +63,7 @@ must manually implement this mode at the control level, it can be helpful for fo
 
 {{#docs-demo as |demo|}}
   {{#demo.example name="readonly.hbs"}}
-    <Form @readonly={{true}} as |f|>
+    <Form @for={{this.object}} @readonly={{true}} as |f|>
       <f.field @for="attribute" />
     </Form>
   {{/demo.example}}
@@ -78,7 +78,7 @@ the confirm button. If you click the reject button the changes will be rolled ba
 
 {{#docs-demo as |demo|}}
   {{#demo.example name="inline.hbs"}}
-    <Form @inlineEditing={{true}} as |f|>
+    <Form @for={{this.object}} @inlineEditing={{true}} as |f|>
       <f.field @for="attribute" />
     </Form>
   {{/demo.example}}
@@ -92,7 +92,7 @@ Forms can be configured to notify the user when a form either succeeds or fails.
 {{#docs-demo as |demo|}}
   {{#demo.example name="notification.hbs"}}
     <Form 
-      @for={{model}} 
+      @for={{object}} 
       @successfulSubmitMessage="Hello World" 
       @successfulResetMessage="Hello World" 
       as |f|>

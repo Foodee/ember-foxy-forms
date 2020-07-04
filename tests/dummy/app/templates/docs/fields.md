@@ -9,9 +9,9 @@ controlling a date range. This can be done by simply passing an array of keys to
 
 {{#docs-demo as |demo|}}
   {{#demo.example name="multiple.hbs"}}
-    <Form @for={{this.object}} as |f|>
+    <Form @for={{this.object}} @preventsNavigation={{false}}  as |f|>
       <f.field @for='attribute' @label='Single Value' />
-      <f.field @for={{array "attribute1" "attribute2"}} @label='Multiple' />
+      <f.field @for={{array "composite1" "composite2"}} @label='Multiple' />
     </Form> 
   {{/demo.example}}
   {{demo.snippet "multiple.hbs"}}
@@ -24,8 +24,8 @@ attribute to the correct id, to allow for a11y.
 
 {{#docs-demo as |demo|}}
   {{#demo.example name="label.hbs"}}
-    <Form @for={{this.object}} as |f|>
-      <f.field @for='attribute' @label='An Label' />
+    <Form @for={{this.object}} @preventsNavigation={{false}}  as |f|>
+      <f.field @for='labeledAttribute' @label='An Label' />
     </Form> 
   {{/demo.example}}
   {{demo.snippet "label.hbs"}}
@@ -38,9 +38,9 @@ string of the format 'id:label:icon'.
 
 {{#docs-demo as |demo|}}
   {{#demo.example name="values.hbs"}}
-    <Form @for={{this.object}} as |f|>
+    <Form @for={{this.object}} @preventsNavigation={{false}}  as |f|>
       <f.field 
-        @for='attribute' 
+        @for='select' 
         @using='select' 
         @values='1:One,2:Two,3:Three'
        />
@@ -55,8 +55,8 @@ A placeholder may be provided which will be delegated down to the control, and e
 
 {{#docs-demo as |demo|}}
   {{#demo.example name="placeholder.hbs"}}
-    <Form @for={{this.object}} as |f|>
-      <f.field @for='attribute' @placeholder='placeholder' />
+    <Form @for={{this.object}} @preventsNavigation={{false}}  as |f|>
+      <f.field @for='placeholder' @placeholder='placeholder' />
     </Form> 
   {{/demo.example}}
   {{demo.snippet "placeholder.hbs"}}
@@ -69,14 +69,14 @@ run processes when individual field values change without using an observer.
 
 {{#docs-demo as |demo|}}
   {{#demo.example name="did-commit.hbs"}}
-    <Form @for={{this.object}} as |f|>
+    <Form @for={{this.object}} @preventsNavigation={{false}}  as |f|>
       <f.field 
-         @for="attribute" 
-         @label="Atribute"
+         @for="singleAttribute" 
+         @label="Attribute"
          @didCommitValue=this.didCommitValue
       />
       <f.field 
-        @for={{array "attribute1" "attribute2"}} 
+        @for={{array "composite1" "composite2"}} 
         @label="Atribute1 & Atribute2"
         @didCommitValues=this.didCommitValues 
       />
@@ -91,7 +91,7 @@ When customizations to the control are needed the field can yield the control fo
 
 {{#docs-demo as |demo|}}
   {{#demo.example name="yielding.hbs"}}
-    <Form @for={{this.object}} as |f|>
+    <Form @for={{this.object}} @preventsNavigation={{false}} as |f|>
       <f.field @for='number' @using='number' as |f|>
         <f.control @max=100 @min=0 @step=10 />
       </f.field>
@@ -110,7 +110,7 @@ while you edit in a callout pane.
 
 {{#docs-demo as |demo|}}
   {{#demo.example name="callout.hbs"}}
-    <Form @for={{this.object}} @inlineEditing={{true}} @hasControlCallout={{true}}  as |f|>
+    <Form @for={{this.object}} @inlineEditing={{true}} @hasControlCallout={{true}} @preventsNavigation={{false}} as |f|>
       <f.field @for='number' @using='number' as |f|>
         <f.control @max=100 @min=0 @step=10 />
       </f.field>
@@ -138,7 +138,7 @@ fully qualified path a component that respects the display value component inter
 
 {{#docs-demo as |demo|}}
   {{#demo.example name="custom-display-component.hbs"}}
-    <Form @for={{this.object}} @inlineEditing={{true}} as |f|>
+    <Form @for={{this.object}} @inlineEditing={{true}} @preventsNavigation={{false}} as |f|>
       <f.field @for='number' @using='number' @displayValueComponent='form-controls/ff-custom-display-value'/>
     </Form> 
   {{/demo.example}}
