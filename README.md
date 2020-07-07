@@ -25,7 +25,7 @@ Not just forms, Foxy Forms.
 This addon allows you to build simple declarative forms with some snazy features. It is UI framework agnostic and generates
 minimal dom, so as to not interfere with what ever UI framework you might be using.
 
-You can read more in the docs
+You can read more in the [docs here](https://foodee.github.io/ember-foxy-forms/)
 
 ## Contributing
 
