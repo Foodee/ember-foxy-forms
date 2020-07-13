@@ -1,6 +1,6 @@
 # Usage 
 
-Below is a configurable example of the basic usage of ember-foxy-forms, it showcases all of the htm5 input controls
+Below is a configurable example of the basic usage of ember-foxy-forms, it showcases all of the html5 input controls
 that can be mounted to your data model.
 
 The various features can be toggled on / off below.
