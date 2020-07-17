@@ -174,6 +174,26 @@ export default class FormForComponent extends Component {
   model = {};
 
   /**
+   * The tag name that we use for this form
+   * @property tagName
+   * @type String
+   * @default form
+   * @public
+   */
+  @arg(string)
+  tagName = 'form';
+
+  /**
+   * The tag name that we use for this form's fields
+   * @property fieldTagName
+   * @type String
+   * @default form
+   * @public
+   */
+  @arg(string)
+  fieldTagName = 'div';
+
+  /**
    * Whether or not this form is disabled
    * @property disabled
    * @type boolean

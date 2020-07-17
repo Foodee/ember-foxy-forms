@@ -1,6 +1,6 @@
-{{#let (-element (or @tagName "div")) as |Tag|}}
+{{#let (-element this.tagName) as |Tag|}}
   <Tag
-    @tagName={{or @tagName "div"}}
+    @tagName={{this.tagName}}
     class={{
       concat
       "field-for "
