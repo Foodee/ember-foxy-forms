@@ -330,6 +330,16 @@ export default class FieldForComponent extends Component {
   form = null;
 
   /**
+   * The tag name that we use for this field
+   * @property tagName
+   * @type String
+   * @default form
+   * @public
+   */
+  @arg(string)
+  tagName = 'div';
+
+  /**
    * The label for this field
    * @property field
    * @type String

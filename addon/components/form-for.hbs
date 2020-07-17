@@ -1,6 +1,6 @@
-{{#let (-element (or @tagName "form")) as |Tag|}}
+{{#let (-element this.tagName) as |Tag|}}
   <Tag
-    @tagName={{or @tagName "form"}}
+    @tagName={{this.tagName}}
     class="
     form-for
     {{if this.formClasses this.formClasses}}
@@ -17,7 +17,7 @@
         field=(component
           "field-for"
           form=this
-          tagName=@fieldTagName
+          tagName=this.fieldTagName
           disabled=this.disabled
           readonly=this.readonly
           inlineEditing=this.inlineEditing
@@ -31,7 +31,7 @@
         fieldFor=(component
           "field-for"
           form=this
-          tagName=@fieldTagName
+          tagName=this.fieldTagName
           disabled=this.disabled
           readonly=this.readonly
           inlineEditing=this.inlineEditing
