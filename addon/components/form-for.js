@@ -610,10 +610,11 @@ export default class FormForComponent extends Component {
    * @return {boolean}
    * @public
    */
-  runValidations(validationOptions = null) {
+  @arg(func)
+  runValidations = (validationOptions = null) => {
     const model = this.model;
     return model?.validate
-      ? model.validate(validationOptions || this.args.validationOptions)
+      ? model.validate(validationOptions || this.validationOptions)
       : true;
   }
 
@@ -622,7 +623,8 @@ export default class FormForComponent extends Component {
    * @method clearValidations
    * @public
    */
-  clearValidations() {
+  @arg(func)
+  clearValidations = () => {
     const model = this.model;
     return model.validate && model.validate({ only: [] });
   }
