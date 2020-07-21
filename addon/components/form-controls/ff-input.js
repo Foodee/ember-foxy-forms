@@ -10,7 +10,7 @@ export default class FormControlsFfInputComponent extends Component {
   readonly = true;
 
   @arg(string)
-  inputType = true;
+  inputType = 'text';
 
   @action
   handleClick(event) {
