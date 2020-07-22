@@ -155,8 +155,8 @@ we have built are:
 - Rich Text editor
 - JSON editor
 
-By default Foxy Forms looks for your custom controls in the component directory form-controls, but you can also specify the
-full path to the control.
+By default Foxy Forms looks for your custom controls in the component directory form-controls of your application, 
+but you can also specify the full path to the control.
 
 {{#docs-demo as |demo|}}
   {{#demo.example name="custom-controls-usage.hbs"}}
