@@ -5,7 +5,7 @@
         {{component @customErrorComponent error=error}}
       {{else}}
         <label class="error" data-test-form-error>
-          {{error}}
+          {{error.message}}
         </label>
       {{/if}}
     {{/each}}

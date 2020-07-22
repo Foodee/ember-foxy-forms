@@ -99,13 +99,13 @@
               @visible={{this._showConfirm}}
               @buttonClass={{this.buttonClasses}}
               @isActing={{this.form.isSubmitting}}
-              @customCommitCancelComponent={{this.customCommitCancelComponent}}
+              @customCommitCancelComponent={{this.formFor.customCommitCancelComponent}}
               @commit={{this.commit}}
               @cancel={{this.cancel}}
             />
           </div>
 
-          <ErrorsFor @errors={{this.errors}} @customErrorComponent={{this.customErrorComponent}} />
+          <ErrorsFor @errors={{this.errors}} @customErrorComponent={{this.formFor.customErrorComponent}} />
         </div>
       </AttachPopover>
     {{else}}
@@ -154,13 +154,13 @@
               @visible={{this._showConfirm}}
               @buttonClass={{this.buttonClasses}}
               @isActing={{this.form.isSubmitting}}
-              @customCommitCancelComponent={{this.customCommitCancelComponent}}
+              @customCommitCancelComponent={{this.formFor.customCommitCancelComponent}}
               @commit={{this.commit}}
               @cancel={{this.cancel}}
             />
           </div>
 
-          <ErrorsFor @errors={{this.errors}} @customErrorComponent={{this.customErrorComponent}} />
+          <ErrorsFor @errors={{this.errors}} @customErrorComponent={{this.formFor.customErrorComponent}} />
         </div>
       {{/if}}
     {{/if}}
