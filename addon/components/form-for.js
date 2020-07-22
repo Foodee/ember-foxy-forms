@@ -613,10 +613,8 @@ export default class FormForComponent extends Component {
   @arg(func)
   runValidations = (validationOptions = null) => {
     const model = this.model;
-    return model?.validate
-      ? model.validate(validationOptions || this.validationOptions)
-      : true;
-  }
+    return model?.validate ? model.validate(validationOptions || this.validationOptions) : true;
+  };
 
   /**
    * Clears the validations on the model
@@ -627,7 +625,7 @@ export default class FormForComponent extends Component {
   clearValidations = () => {
     const model = this.model;
     return model.validate && model.validate({ only: [] });
-  }
+  };
 
   /**
    * Used to inform parent forms that either this form, or one of its children submitted
