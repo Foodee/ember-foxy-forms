@@ -17,6 +17,24 @@ controlling a date range. This can be done by simply passing an array of keys to
   {{demo.snippet "multiple.hbs"}}
 {{/docs-demo}}
 
+## Specifying the control
+
+FieldFor accepts a @using parameter, which instructs it to use a particular form control for the field. It uses the following
+rubric to lookup your component based on that name.FieldFor
+
+1. It looks for a custom control in your application with a path matching ```form-controls/<@using>```
+2. It looks for a custom control in your application with a path matching ```form-controls/<@using>-control``` this affordance is for legacy projects and will be removed in version 3.0.0
+3. It looks for a pre-packaged control in foxy-forms with a path matching ```form-controls/ff-<@using>```
+
+{{#docs-demo as |demo|}}
+  {{#demo.example name="using.hbs"}}
+    <Form @for={{this.object}} @preventsNavigation={{false}}  as |f|>
+      <f.field @for='labeledAttribute' @using='input' />
+    </Form> 
+  {{/demo.example}}
+  {{demo.snippet "using.hbs"}}
+{{/docs-demo}}
+
 ## Labels
 
 FieldFor has the option to label controls, if you provide a label, field for will automatically wire the label's 'for' 

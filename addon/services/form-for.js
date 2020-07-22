@@ -24,8 +24,6 @@ export default class FormForService extends Service {
     this.destroyButtonClasses = this.config.destroyButtonClasses;
     this.customCommitCancelComponent = this.config.customCommitCancelComponent;
     this.customErrorComponent = this.config.customErrorComponent;
-    this.controlPrefix = this.config.controlPrefix;
-    this.controlsFolder = this.config.controlsFolder;
 
     this.router.on('routeWillChange', (transition) => {
       if (

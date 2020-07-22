@@ -11,6 +11,8 @@ import { guidFor } from '@ember/object/internals';
 import { later } from '@ember/runloop';
 import { isBlank } from '@ember/utils';
 import { inject as service } from '@ember/service';
+import { debug } from '@ember/debug';
+import { getOwner } from '@ember/application';
 
 export default class FieldForComponent extends Component {
   @service formFor;
@@ -427,6 +429,25 @@ export default class FieldForComponent extends Component {
   }
 
   /**
+   * The control name for this field to use.
+   *
+   * The field uses the following rubric to lookup the control for this field
+   *
+   * 1. It looks for a custom control in your application with a path matching ```form-controls/<@using>```
+   * 2. It looks for a custom control in your application with a path matching ```form-controls/<@using>-control``` this affordance is for legacy projects and will be removed in version 3.0.0
+   * 3. It looks for a pre-packaged control in foxy-forms with a path matching ```form-controls/ff-<@using>```
+   *
+   * @property using
+   * @type String
+   * @default input
+   * @public
+   */
+  @arg(string)
+  get using() {
+    return this._hasCompositeValue ? 'multiple-input' : 'input';
+  }
+
+  /**
    * The fully qualified path to the control for this component
    * @property control
    * @type String
@@ -435,18 +456,24 @@ export default class FieldForComponent extends Component {
    */
   @arg(string)
   get control() {
-    const controlsFolder = this.formFor.controlsFolder;
-    const controlPrefix = this.formFor.controlPrefix;
+    const name = this.using;
+    const owner = getOwner(this);
+    const lookup = owner.lookup('component-lookup:main');
 
-    let controlName = `${controlPrefix}${this.args.using}`;
+    if (lookup.componentFor(`form-controls/${name}`, owner)) {
+      return `form-controls/${name}`;
+    } else if (lookup.componentFor(`form-controls/${this.name}-control`, owner)) {
+      debug.deprecate(
+        'This method of looking up form controls will be removed in version 3.0.0',
+        true
+      );
 
-    if (!this.args.using) {
-      controlName = this._hasCompositeValue
-        ? `${controlPrefix}multiple-input`
-        : `${controlPrefix}input`;
+      return `form-controls/${name}-control`;
+    } else if (lookup.componentFor(`form-controls/ff-${name}`, owner)) {
+      return `form-controls/ff-${name}`;
+    } else {
+      throw `Could not find component ${name} in either form-controls/${name}, form-controls/${name}-control, or form-controls/ff-${name}, are you sure you've provided the correct value of @using`;
     }
-
-    return `${controlsFolder}/${controlName}`;
   }
 
   @arg(array)
