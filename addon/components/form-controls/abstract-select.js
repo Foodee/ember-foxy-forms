@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 import { arg } from 'ember-arg-types';
-import { string, array } from 'prop-types';
+import { string } from 'prop-types';
 import { typeOf } from '@ember/utils';
 import { get } from '@ember/object';
 import { action } from '@ember/object';
@@ -12,7 +12,7 @@ export default class FormControlsAbstractSelectComponent extends Component {
   @arg(string)
   idKey = 'id';
 
-  @arg(array)
+  @arg
   values = [];
 
   get isPrimitive() {

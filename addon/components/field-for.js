@@ -223,7 +223,7 @@ export default class FieldForComponent extends Component {
     return (
       !this.inlineEditing ||
       (this.inlineEditing && this.isEditing) ||
-      (this.hasControlCallout && this.hasErrors)
+      (this.inlineEditing && this.hasErrors)
     );
   }
 
@@ -472,7 +472,13 @@ export default class FieldForComponent extends Component {
    */
   @arg(func)
   formatValue = (value) => {
-    return this._hasCompositeValue ? JSON.stringify(value) : value;
+    if (this._hasCompositeValue) {
+      return JSON.stringify(value);
+    } else if (isArray(value)) {
+      return value.map((v) => JSON.stringify(v));
+    } else {
+      return value;
+    }
   };
 
   /**
@@ -575,7 +581,11 @@ export default class FieldForComponent extends Component {
     this.isEditing = true;
     later(() => {
       if (this._showControl) {
-        document.querySelector(`#${this.controlId}`).focus();
+        const control = document.querySelector(`#${this.controlId}`);
+
+        if (control) {
+          control.focus();
+        }
       }
     }, 100);
   }
