@@ -20,7 +20,12 @@
     <LabelFor @label={{@label}} @controlId={{this.controlId}} />
     {{#if this._showValue}}
       {{#if this.displayValueComponent}}
-        {{component this.displayValueComponent value=this.value editValue=this.edit}}
+        {{component thisedisplayValueComponent
+                    value=this.value
+                    editValue=this.edit
+                    editText=this.editText
+                    placeholder=this.placeholder
+        }}
       {{else}}
         <button
           class="
@@ -39,7 +44,13 @@
             {{this.displayValue}}
           {{else}}
             <span class="field-for-placeholder">
-              {{@placeholder}}
+              {{this.placeholder}}
+            </span>
+          {{/if}}
+
+          {{#if this.editText}}
+            <span class="field-for-edit-text">
+              {{this.editText}}
             </span>
           {{/if}}
         </button>

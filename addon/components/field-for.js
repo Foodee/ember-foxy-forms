@@ -417,6 +417,26 @@ export default class FieldForComponent extends Component {
   valueTooltip = null;
 
   /**
+   * Placeholder text to display when no value is present
+   * @property placeholder
+   * @type String
+   * @default null
+   * @private
+   */
+  @arg(string)
+  placeholder = null;
+
+  /**
+   * Edit text text to display when in inline mode and you hover over the element
+   * @property editText
+   * @type String
+   * @default null
+   * @private
+   */
+  @arg(string)
+  editText = null;
+
+  /**
    * The position of the control callout (up to the client to decide how to use this info)
    * @property calloutPosition
    * @type String

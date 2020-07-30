@@ -42,7 +42,7 @@ The various features can be toggled on / off below.
         <h2 class="docs-md__h2">Form</h2>
         <div class="columns">
           <div>
-            <form.field @for="string" @using="input" @label="String" @valueTooltip="An String" />
+            <form.field @for="string" @using="input" @label="String" @valueTooltip="An String" @editText='Click to edit'/>
             <form.field @for="password" @using="password" @label="Password" @valueTooltip="An Password" />
             <form.field @for="text" @using="textarea" @label="Text" @valueTooltip="An Text"/>
             <form.field @for="email" @using="email" @label="Email" @valueTooltip="An Email"/>
