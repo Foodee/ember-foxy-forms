@@ -133,6 +133,19 @@ button:hover {
 .field-for .field-for-value-container:focus,
 .field-for .field-for-value-showing-control-callout {
   outline: 1px dashed lightblue;
+  cursor: pointer;
+}
+
+.field-for-edit-text {
+  display: none;
+}
+
+.field-for .field-for-value-container:hover .field-for-edit-text,
+.field-for .field-for-value-container:focus .field-for-edit-text,
+.field-for .field-for-value-showing-control-callout .field-for-edit-text {
+  color: lightblue;
+  display: inline-block;
+  float: right;
 }
 
 .field-for.push-right {
