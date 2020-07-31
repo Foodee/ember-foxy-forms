@@ -15,6 +15,10 @@ export default class FormControlsFfCheckboxSelectComponent extends FormControlsA
   @arg(bool)
   showClearAll = false;
 
+  get _showClearAll() {
+    return this.showClearAll && this.value.length > 0;
+  }
+
   @action
   idFor(item) {
     return `${this.for}-${this.isPrimitive ? item : get(item, this.idKey)}`;
