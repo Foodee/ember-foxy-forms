@@ -20,11 +20,12 @@
     <LabelFor @label={{@label}} @controlId={{this.controlId}} />
     {{#if this._showValue}}
       {{#if this.displayValueComponent}}
-        {{component this.displayValueComponent
-                    value=this.value
-                    editValue=this.edit
-                    editText=this.editText
-                    placeholder=this.placeholder
+        {{component
+          this.displayValueComponent
+          value=this.value
+          editValue=this.edit
+          editText=this.editText
+          placeholder=this.placeholder
         }}
       {{else}}
         <button
