@@ -1,8 +1,8 @@
-<div data-test-ff-control-checkbox-select ...attributes>
+<div class="ff-control-checkbox-select" data-test-ff-control-checkbox-select ...attributes>
   {{#if this._showClearAll}}
     <button
       type="button"
-      class="ff-control-checkbox-select-clear-all"
+      class="ff-control-checkbox-select__clear-all"
       data-test-ff-control-checkbox-select-clear-all
       {{on "click" this.clearAll}}
     >
@@ -10,7 +10,7 @@
     </button>
   {{/if}}
 
-  <div class="ff-control-checkbox-select-values">
+  <div class="ff-control-checkbox-select__values">
     {{#each @values as |value index|}}
       <div
         class="form-controls-ff-checkbox"
