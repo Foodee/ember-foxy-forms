@@ -2,6 +2,7 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 
 export default class FormButtonComponent extends Component {
+  isActing = false;
   @action
   handleClick() {
     if (!this.args.isActing && this.args.onClick) {
