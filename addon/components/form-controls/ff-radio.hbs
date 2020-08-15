@@ -9,6 +9,7 @@
         ...attributes
         data-test-ff-control-radio
         data-test-ff-control-radio-option="{{id}}"
+        disabled={{@disabled}}
         {{on "change" this.handleChange}}
       />
       <label for="{{@for}}-{{id}}">
