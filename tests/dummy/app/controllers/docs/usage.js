@@ -25,7 +25,7 @@ export default class UsageController extends Controller {
     @tracked checkboxSelect: A(['1']),
     @tracked checkboxSelectObject: A([{ id: '1', label: 'One' }]),
     @tracked radio: '1',
-    @tracked radioSelectObject: { id: '1', label: 'One' },
+    @tracked radioObject: { id: '1', label: 'One' },
     @tracked start: '1',
     @tracked end: '1',
     @tracked errors: {},

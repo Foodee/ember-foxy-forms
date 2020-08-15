@@ -10,6 +10,7 @@
         data-test-ff-control-radio
         data-test-ff-control-radio-option="{{id}}"
         disabled={{@disabled}}
+        checked={{compute this.isSelected item}}
         {{on "change" this.handleChange}}
       />
       <label for="{{@for}}-{{id}}">

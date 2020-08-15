@@ -20,6 +20,11 @@ export default class FormControlsAbstractSelectComponent extends Component {
   }
 
   @action
+  isSelected(item) {
+    return this._compare(item, this.args.value);
+  }
+
+  @action
   idFor(item) {
     return this.isPrimitive ? item : get(item, this.idKey);
   }
