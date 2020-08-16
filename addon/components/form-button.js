@@ -10,7 +10,7 @@ export default class FormButtonComponent extends Component {
     if (!this.isActing && this.args.onClick) {
       const ret = this.args.onClick();
 
-      if (ret.finally) {
+      if (ret && ret.finally) {
         this.isActing = true;
         ret.finally(() => (this.isActing = false));
       }
