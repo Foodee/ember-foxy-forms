@@ -47,6 +47,7 @@
           text="Button"
           class=this.buttonClasses
           buttonActingClass=this.buttonActingClass
+          buttonType='button'
         )
         submit=(component
           "form-button"
@@ -55,6 +56,7 @@
           buttonActingClass=this.buttonActingClass
           isActing=this.isSubmitting
           onClick=this.submit
+          buttonType='submit'
         )
         reset=(component
           "form-button"
@@ -63,6 +65,7 @@
           buttonActingClass=this.buttonActingClass
           isActing=this.isResetting
           onClick=this.reset
+          buttonType='reset'
         )
         destroy=(component
           "form-button"
@@ -71,6 +74,7 @@
           buttonActingClass=this.buttonActingClass
           isActing=this.isDestroyingRecord
           onClick=(fn this.confirmDestroy this.model)
+          buttonType='destroy'
         )
         errors=(component
           "errors-for" errors=this.errors customErrorComponent=this.formFor.customErrorComponent

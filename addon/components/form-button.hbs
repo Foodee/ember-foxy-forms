@@ -8,7 +8,7 @@
   type="button"
   disabled={{@disabled}}
   ...attributes
-  data-test-form-button
+  data-test-form-button="{{@buttonType}}"
   {{on "click" (stop-propagation this.handleClick)}}
 >
   {{#if @icon}}
