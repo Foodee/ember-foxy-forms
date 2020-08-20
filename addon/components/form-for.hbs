@@ -8,8 +8,9 @@
      {{if this.readonly " readonly"}}
      {{this._testingClass}}
     "
-    ...attributes
     data-test-form-for={{this._modelName}}
+    {{on 'submit' (prevent-default)}}
+    ...attributes
   >
     {{
       yield
