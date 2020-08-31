@@ -44,14 +44,14 @@
           fieldForControlCalloutClasses=this.fieldForControlCalloutClasses
         )
         button=(component
-          "form-button"
+          this.buttonComponent
           text="Button"
           class=this.buttonClasses
           buttonActingClass=this.buttonActingClass
           buttonType='button'
         )
         submit=(component
-          "form-button"
+          this.buttonComponent
           text="Submit"
           class=(concat this.submitButtonClasses " " this.buttonClasses)
           buttonActingClass=this.buttonActingClass
@@ -60,7 +60,7 @@
           buttonType='submit'
         )
         reset=(component
-          "form-button"
+          this.buttonComponent
           text="Reset"
           class=(concat this.resetButtonClasses " " this.buttonClasses)
           buttonActingClass=this.buttonActingClass
@@ -69,7 +69,7 @@
           buttonType='reset'
         )
         destroy=(component
-          "form-button"
+          this.buttonComponent
           text="Delete"
           class=(concat this.destroyButtonClasses " " this.buttonClasses)
           buttonActingClass=this.buttonActingClass
