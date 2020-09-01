@@ -27,9 +27,14 @@
             disabled={{@disabled}}
             data-test-ff-control-checkbox-select-input={{index}}
           />
-          <label for="{{id}}">
-            {{compute this.labelFor value}}
-          </label>
+
+          {{#if has-block}}
+            {{yield value id}}
+          {{else}}
+            <label for="{{id}}">
+              {{compute this.labelFor value}}
+            </label>
+          {{/if}}
         {{/let}}
       </div>
     {{/each}}
