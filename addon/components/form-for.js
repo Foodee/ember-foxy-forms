@@ -107,9 +107,9 @@ export default class FormForComponent extends Component {
   get _modelName() {
     return dasherize(
       this.args.modelName ||
-      this.model?.modelName ||
-      this.model?._internalModel?.modelName ||
-      'object'
+        this.model?.modelName ||
+        this.model?._internalModel?.modelName ||
+        'object'
     );
   }
 
@@ -161,7 +161,9 @@ export default class FormForComponent extends Component {
   }
 
   get buttonComponent() {
-    return this.useCustomButtonComponent && this.formFor.customButtonComponent ? this.formFor.customButtonComponent : 'form-button';
+    return this.useCustomButtonComponent && this.formFor.customButtonComponent
+      ? this.formFor.customButtonComponent
+      : 'form-button';
   }
 
   // --------------------------------------------------------------------------------
@@ -330,6 +332,16 @@ export default class FormForComponent extends Component {
   didNotResetMessage = null;
 
   /**
+   * Whether or not to confirm destruction
+   * @property confirmDestroy
+   * @type Boolean
+   * @default true
+   * @public
+   */
+  @arg(boolean)
+  confirmDestroy = true;
+
+  /**
    * The message displayed to confirm destruction
    * @property confirmDestroyMessage
    * @type String
@@ -439,8 +451,7 @@ export default class FormForComponent extends Component {
    * @public
    */
   @arg(func)
-  didNotSubmit = () => {
-  };
+  didNotSubmit = () => {};
 
   /**
    * Called when the submit action is called
@@ -461,8 +472,7 @@ export default class FormForComponent extends Component {
    * @public
    */
   @arg(func)
-  childDidSubmit = (/*model*/) => {
-  };
+  childDidSubmit = (/*model*/) => {};
 
   /**
    * Called when a child of this form's onSubmit is reject
@@ -471,8 +481,7 @@ export default class FormForComponent extends Component {
    * @public
    */
   @arg(func)
-  childFailedSubmit = (/*model*/) => {
-  };
+  childFailedSubmit = (/*model*/) => {};
 
   /**
    * Called when the onSubmit is fulfilled
@@ -481,8 +490,7 @@ export default class FormForComponent extends Component {
    * @public
    */
   @arg(func)
-  didSubmit = (/*model*/) => {
-  };
+  didSubmit = (/*model*/) => {};
 
   /**
    * Called when the onSubmit is rejected
@@ -491,8 +499,7 @@ export default class FormForComponent extends Component {
    * @public
    */
   @arg(func)
-  failedSubmit = (/*reason*/) => {
-  };
+  failedSubmit = (/*reason*/) => {};
 
   /**
    * Called before the form resets
@@ -513,8 +520,7 @@ export default class FormForComponent extends Component {
    * @public
    */
   @arg(func)
-  didNotReset = (/*model*/) => {
-  };
+  didNotReset = (/*model*/) => {};
 
   /**
    * Called when the reset action is called
@@ -535,8 +541,7 @@ export default class FormForComponent extends Component {
    * @public
    */
   @arg(func)
-  didReset = (/*model*/) => {
-  };
+  didReset = (/*model*/) => {};
 
   /**
    * Called when the onReset is rejected
@@ -545,8 +550,7 @@ export default class FormForComponent extends Component {
    * @public
    */
   @arg(func)
-  failedReset = (/*reason*/) => {
-  };
+  failedReset = (/*reason*/) => {};
 
   /**
    * Called when values are updated in the form. Useful for knowing when a field has
@@ -556,8 +560,7 @@ export default class FormForComponent extends Component {
    * @public
    */
   @arg(func)
-  onUpdateValues = (/*keyValues*/) => {
-  };
+  onUpdateValues = (/*keyValues*/) => {};
 
   /**
    * Called when the form is marked dirty
@@ -565,8 +568,7 @@ export default class FormForComponent extends Component {
    * @public
    */
   @arg(func)
-  onMarkedDirty = () => {
-  };
+  onMarkedDirty = () => {};
 
   /**
    * Called when the form is marked clean
@@ -574,8 +576,7 @@ export default class FormForComponent extends Component {
    * @public
    */
   @arg(func)
-  onMarkedClean = () => {
-  };
+  onMarkedClean = () => {};
 
   @arg(func)
   willDestroyModel = () => {
@@ -588,8 +589,7 @@ export default class FormForComponent extends Component {
    * @public
    */
   @arg(func)
-  didDestroyModel = () => {
-  };
+  didDestroyModel = () => {};
 
   /**
    * Called when will destroy returned false
@@ -598,8 +598,7 @@ export default class FormForComponent extends Component {
    * @public
    */
   @arg(func)
-  didNotDestroyModel = () => {
-  };
+  didNotDestroyModel = () => {};
 
   /**
    * Called when the onDestroy is fulfilled
@@ -608,8 +607,7 @@ export default class FormForComponent extends Component {
    * @public
    */
   @arg(func)
-  failedDestroyModel = (/* reason */) => {
-  };
+  failedDestroyModel = (/* reason */) => {};
 
   @arg(func)
   notifySuccess = (message) => {
@@ -645,7 +643,7 @@ export default class FormForComponent extends Component {
   @arg(func)
   clearValidations = () => {
     const model = this.model;
-    return model.validate && model.validate({only: []});
+    return model.validate && model.validate({ only: [] });
   };
 
   /**
@@ -806,7 +804,7 @@ export default class FormForComponent extends Component {
    */
   updateValueFn(key, value) {
     // better code reuse this way
-    return this.updateValues({[key]: value});
+    return this.updateValues({ [key]: value });
   }
 
   /**
@@ -866,7 +864,7 @@ export default class FormForComponent extends Component {
   }
 
   resetValue(key, value) {
-    this.resetValues({[key]: value});
+    this.resetValues({ [key]: value });
   }
 
   /**
@@ -1027,8 +1025,11 @@ export default class FormForComponent extends Component {
     this.isDestroyingRecord = true;
 
     if (this.willDestroyModel()) {
-      this.formFor
-        .confirmDestroy(model, this.args.confirmDestroyMessage)
+      const promise = this.confirmDestroy
+        ? this.formFor.confirmDestroy(model, this.args.confirmDestroyMessage)
+        : Promise.resolve();
+
+      promise
         .then(() => {
           this.notifySuccess(this.args.successfulDestroyMessage);
 
