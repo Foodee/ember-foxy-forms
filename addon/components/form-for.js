@@ -339,7 +339,7 @@ export default class FormForComponent extends Component {
    * @public
    */
   @arg(boolean)
-  confirmDestroy = true;
+  confirmsDestroy = true;
 
   /**
    * The message displayed to confirm destruction
@@ -1025,7 +1025,7 @@ export default class FormForComponent extends Component {
     this.isDestroyingRecord = true;
 
     if (this.willDestroyModel()) {
-      const promise = this.confirmDestroy
+      const promise = this.confirmsDestroy
         ? this.formFor.confirmDestroy(model, this.args.confirmDestroyMessage)
         : Promise.resolve();
 

@@ -5,7 +5,7 @@ import { string, bool } from 'prop-types';
 import { get } from '@ember/object';
 import { A } from '@ember/array';
 import { guidFor } from '@ember/object/internals';
-import { dasherize } from '@ember/string'
+import { dasherize } from '@ember/string';
 
 export default class FormControlsFfCheckboxSelectComponent extends FormControlsAbstractSelectComponent {
   @arg(string)

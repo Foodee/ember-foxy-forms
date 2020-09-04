@@ -1,10 +1,17 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
+import { arg } from 'ember-arg-types';
+import { string } from 'prop-types';
 
 export default class FormButtonComponent extends Component {
+
+  @arg
+  buttonType = 'button';
+
   @tracked
   isActing = false;
+
   @action
   handleClick() {
     if (!this.isActing && this.args.onClick) {
