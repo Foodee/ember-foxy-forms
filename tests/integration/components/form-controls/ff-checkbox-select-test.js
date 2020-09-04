@@ -77,4 +77,21 @@ module('Integration | Component | form-controls/ff-checkbox-select', function (h
 
     assert.equal(this.value[0], '1');
   });
+
+
+  test('it allows yielding to provide a custom label', async function (assert) {
+    this.values = ['1'];
+
+    await render(
+      hbs`
+          <FormControls::FfCheckboxSelect @values={{this.values}} as |value inputId| >
+            <div data-test-custom-element>{{value}}</div>
+          </FormControls::FfCheckboxSelect>
+      `
+    );
+
+    assert
+      .dom('[data-test-custom-element]')
+      .hasText('1');
+ });
 });
