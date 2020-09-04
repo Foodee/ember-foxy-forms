@@ -5,6 +5,7 @@ import { string, bool } from 'prop-types';
 import { get } from '@ember/object';
 import { A } from '@ember/array';
 import { guidFor } from '@ember/object/internals';
+import { dasherize } from '@ember/string'
 
 export default class FormControlsFfCheckboxSelectComponent extends FormControlsAbstractSelectComponent {
   @arg(string)
@@ -22,7 +23,7 @@ export default class FormControlsFfCheckboxSelectComponent extends FormControlsA
 
   @action
   idFor(item) {
-    return `${this.for}-${this.isPrimitive ? item : get(item, this.idKey)}-${guidFor(this)}`;
+    return dasherize(`${this.for}-${this.isPrimitive ? item : get(item, this.idKey)}-${guidFor(this)}`);
   }
 
   @action
