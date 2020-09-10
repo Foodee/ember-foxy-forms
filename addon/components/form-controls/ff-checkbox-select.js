@@ -1,7 +1,7 @@
 import FormControlsAbstractSelectComponent from './abstract-select';
 import { action } from '@ember/object';
 import { arg } from 'ember-arg-types';
-import { string, bool } from 'prop-types';
+import { string, bool, number } from 'prop-types';
 import { get } from '@ember/object';
 import { A } from '@ember/array';
 import { guidFor } from '@ember/object/internals';
@@ -10,6 +10,9 @@ import { dasherize } from '@ember/string';
 export default class FormControlsFfCheckboxSelectComponent extends FormControlsAbstractSelectComponent {
   @arg(string)
   for = 'id';
+
+  @arg(number)
+  selectionMax;
 
   @arg
   value = [];
@@ -23,7 +26,9 @@ export default class FormControlsFfCheckboxSelectComponent extends FormControlsA
 
   @action
   idFor(item) {
-    return dasherize(`${this.for}-${this.isPrimitive ? item : get(item, this.idKey)}-${guidFor(this)}`);
+    return dasherize(
+      `${this.for}-${this.isPrimitive ? item : get(item, this.idKey)}-${guidFor(this)}`
+    );
   }
 
   @action
@@ -33,7 +38,12 @@ export default class FormControlsFfCheckboxSelectComponent extends FormControlsA
 
   @action
   handleChange(value) {
-    if (this.isSelected(value)) {
+    const isSelected = this.isSelected(value);
+    if (this.atMax && !isSelected) {
+      return;
+    }
+
+    if (isSelected) {
       this.args.onChange(this.value.filter((_) => !this._compare(_, value)));
     } else {
       this.args.onChange(A(this.value).toArray().concat(value));
@@ -52,5 +62,9 @@ export default class FormControlsFfCheckboxSelectComponent extends FormControlsA
 
   _compare(a, b) {
     return this.isPrimitive ? a === b : get(a, this.idKey) === get(b, this.idKey);
+  }
+
+  get atMax() {
+    return this.selectionMax !== undefined && this.selectionMax === this.value.length;
   }
 }

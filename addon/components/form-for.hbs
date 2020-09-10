@@ -9,8 +9,8 @@
      {{this._testingClass}}
     "
     data-test-form-for={{this._modelName}}
-    {{on 'submit' (prevent-default)}}
     ...attributes
+    {{on "submit" (prevent-default)}}
   >
     {{
       yield
@@ -48,7 +48,7 @@
           text="Button"
           class=this.buttonClasses
           buttonActingClass=this.buttonActingClass
-          buttonType='button'
+          buttonType="button"
         )
         submit=(component
           this.buttonComponent
@@ -57,7 +57,7 @@
           buttonActingClass=this.buttonActingClass
           isActing=this.isSubmitting
           onClick=this.submit
-          buttonType='submit'
+          buttonType="submit"
         )
         reset=(component
           this.buttonComponent
@@ -66,7 +66,7 @@
           buttonActingClass=this.buttonActingClass
           isActing=this.isResetting
           onClick=this.reset
-          buttonType='reset'
+          buttonType="reset"
         )
         destroy=(component
           this.buttonComponent
@@ -75,7 +75,7 @@
           buttonActingClass=this.buttonActingClass
           isActing=this.isDestroyingRecord
           onClick=(fn this.confirmDestroy this.model)
-          buttonType='destroy'
+          buttonType="destroy"
         )
         errors=(component
           "errors-for" errors=this.errors customErrorComponent=this.formFor.customErrorComponent
