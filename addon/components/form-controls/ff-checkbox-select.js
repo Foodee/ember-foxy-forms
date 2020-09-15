@@ -11,6 +11,9 @@ export default class FormControlsFfCheckboxSelectComponent extends FormControlsA
   @arg(string)
   for = 'id';
 
+  @arg(bool)
+  isInverted = false;
+
   @arg(number)
   selectionMax;
 
@@ -52,7 +55,8 @@ export default class FormControlsFfCheckboxSelectComponent extends FormControlsA
 
   @action
   isSelected(value) {
-    return !!this.value.find((_) => this._compare(_, value));
+    const isSelected = !!this.value.find((_) => this._compare(_, value));
+    return this.isInverted ? !isSelected : isSelected;
   }
 
   @action
