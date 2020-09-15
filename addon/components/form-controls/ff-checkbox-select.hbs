@@ -29,7 +29,7 @@
           />
 
           {{#if (has-block)}}
-            {{yield value id}}
+            {{yield value id index}}
           {{else}}
             <label for="{{id}}">
               {{compute this.labelFor value}}
