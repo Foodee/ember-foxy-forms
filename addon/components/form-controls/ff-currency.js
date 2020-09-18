@@ -15,9 +15,9 @@ export default class FormControlsFfCurrencyComponent extends FormControlsFfInput
     }
 
     if (this.args.onChange) {
-      const value = parseFloat(value);
-      if (value) {
-        return this.args.onChange(value);
+      const parsedValue = parseFloat(value);
+      if (parsedValue) {
+        return this.args.onChange(parsedValue);
       }
     }
   }
