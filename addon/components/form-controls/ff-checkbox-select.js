@@ -14,6 +14,9 @@ export default class FormControlsFfCheckboxSelectComponent extends FormControlsA
   @arg(bool)
   isInverted = false;
 
+  @arg(bool)
+  storeAsPrimitive = false;
+
   @arg(number)
   selectionMax;
 
@@ -46,16 +49,36 @@ export default class FormControlsFfCheckboxSelectComponent extends FormControlsA
       return;
     }
 
-    if (isSelected) {
-      this.args.onChange(this.value.filter((_) => !this._compare(_, value)));
+    if (this.isInverted) {
+      if (isSelected) {
+        this.add(value);
+      } else {
+        this.remove(value);
+      }
     } else {
-      this.args.onChange(A(this.value).toArray().concat(value));
+      if (isSelected) {
+        this.remove(value);
+      } else {
+        this.add(value);
+      }
     }
+  }
+
+  remove(value) {
+    this.args.onChange(this.value.filter((_) => !this._compare(_, this.coerceValue(value))));
+  }
+
+  add(value) {
+    this.args.onChange(A(this.value).toArray().concat(this.coerceValue(value)));
+  }
+
+  coerceValue(value) {
+    return this.storeAsPrimitive ? get(value, this.idKey) : value;
   }
 
   @action
   isSelected(value) {
-    const isSelected = !!this.value.find((_) => this._compare(_, value));
+    const isSelected = !!this.value.find((_) => this._compare(_, this.coerceValue(value)));
     return this.isInverted ? !isSelected : isSelected;
   }
 
