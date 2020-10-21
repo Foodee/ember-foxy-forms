@@ -1041,7 +1041,7 @@ export default class FormForComponent extends Component {
     if (this.willDestroyModel()) {
       const promise = this.confirmsDestroy
         ? this.formFor.confirmDestroy(model, this.args.confirmDestroyMessage)
-        : (this.model.destroyRecord ? this.model.destroyRecord() : Promise.resolve(this.model);
+        : (this.model.destroyRecord ? this.model.destroyRecord() : Promise.resolve(this.model));
 
       promise
         .then(() => {
