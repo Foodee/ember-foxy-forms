@@ -604,7 +604,7 @@ export default class FieldForComponent extends Component {
     }
 
     commitPromise.finally(() => {
-      if (!this.hasErrors) {
+      if (!this.isDestroyed && !this.hasErrors) {
         this.isEditing = false;
       }
     });
