@@ -396,6 +396,17 @@ export default class FieldForComponent extends Component {
   requireConfirm = false;
 
   /**
+   * Whether or not this field is required
+   * the model
+   * @property required
+   * @type boolean
+   * @default false
+   * @public
+   */
+  @arg(bool)
+  required = false;
+
+  /**
    * Wether or not the fields have control callouts (popups / popovers) when in
    * inline-edit mode
    * @property hasControlCallout

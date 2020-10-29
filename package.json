@@ -29,7 +29,7 @@
   "dependencies": {
     "@ember/render-modifiers": "^1.0.2",
     "ember-arg-types": "^0.2.1",
-    "ember-attacher": "^1.1.1",
+    "ember-attacher": "^1.2.1",
     "ember-cli-babel": "^7.23.0",
     "ember-cli-htmlbars": "^5.3.1",
     "ember-composable-helpers": "^4.3.0",
@@ -70,9 +70,9 @@
     "ember-template-lint-plugin-prettier": "^2.0.0",
     "ember-test-selectors": "^5.0.0",
     "ember-try": "^1.4.0",
-    "eslint": "^7.11.0",
-    "eslint-config-prettier": "^6.14.0",
-    "eslint-plugin-ember": "^9.3.0",
+    "eslint": "^7.12.1",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-ember": "^9.4.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.1.4",
     "faker": "^5.1.0",
@@ -82,7 +82,7 @@
     "prettier": "^2.1.2",
     "prop-types": "^15.7.2",
     "qunit-dom": "^1.5.0",
-    "sinon": "^9.2.0"
+    "sinon": "^9.2.1"
   },
   "engines": {
     "node": "10.* || >= 12"

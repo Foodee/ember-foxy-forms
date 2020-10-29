@@ -97,6 +97,14 @@ export default class FormForComponent extends Component {
     return (this.useEmberDataDirtyTracking && this.model?.hasDirtyAttributes) || this.isModelDirty;
   }
 
+  get hasCompletedAllRequiredFields() {
+    return this.fields.some((_) => _.required && _.value);
+  }
+
+  get isSubmitButtonDisabled() {
+    return this.enforceRequiredFields && !this.hasCompletedAllRequiredFields;
+  }
+
   /**
    * Computed model name
    * @property _modelName
@@ -430,6 +438,9 @@ export default class FormForComponent extends Component {
   // --------------------------------------------------------------------------------
   // Methods
   //
+
+  @arg(bool)
+  enforceRequiredFields = false;
 
   /**
    * Called before the form submits, this is where we do

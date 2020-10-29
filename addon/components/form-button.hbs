@@ -5,7 +5,7 @@
    {{if @icon " icon"}}
    {{if @disabled " disabled"}}
   "
-  type="button"
+  type={{if (eq this.buttonType "submit") "submit" "button"}}
   disabled={{@disabled}}
   ...attributes
   data-test-form-button="{{this.buttonType}}"

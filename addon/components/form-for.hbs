@@ -10,7 +10,7 @@
     "
     data-test-form-for={{this._modelName}}
     ...attributes
-    {{on "submit" (prevent-default)}}
+    {{on "submit" (prevent-default this.submit)}}
   >
     {{yield
       (hash
@@ -55,8 +55,8 @@
           class=(concat this.submitButtonClasses " " this.buttonClasses)
           buttonActingClass=this.buttonActingClass
           isActing=this.isSubmitting
-          onClick=this.submit
           buttonType="submit"
+          disabled=this.isSubmitButtonDisabled
         )
         reset=(component
           this.buttonComponent

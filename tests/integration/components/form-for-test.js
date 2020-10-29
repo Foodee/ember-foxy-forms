@@ -1,6 +1,14 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { render, click, findAll, fillIn, triggerEvent } from '@ember/test-helpers';
+import {
+  render,
+  click,
+  findAll,
+  fillIn,
+  focus,
+  triggerEvent,
+  triggerKeyEvent,
+} from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import Model from '@ember-data/model';
 import { run } from '@ember/runloop';
@@ -413,7 +421,6 @@ module('Integration | Component | form for', function (hooks) {
         <form.destroy/>
       </FormFor>
     `);
-
     assert.dom('[data-test-form-for]').exists();
     await click('.submit');
     assert.ok(this.willSubmit.calledOnce);
@@ -526,5 +533,74 @@ module('Integration | Component | form for', function (hooks) {
     await fillIn('input', newValue);
     await click('.reset');
     assert.equal(this.model.foo, value);
+  });
+
+  test('able to submit form with enter key', async function (assert) {
+    const value = faker.lorem.word();
+    this.model = { foo: value };
+
+    this.onSubmit = sinon.stub().usingPromise(Promise).resolves();
+
+    await render(hbs`
+      <FormFor @model={{this.model}} @onSubmit={{this.onSubmit}} as |form|>
+        <form.fieldFor
+          @params={{array "foo"}}
+        />
+        <form.submit />
+      </FormFor>
+    `);
+
+    await focus('[data-test-ff-control-input]');
+    await triggerKeyEvent('[data-test-form-for="object"]', 'keypress', 'Enter');
+
+    assert.ok(this.onSubmit.resolves());
+
+    await triggerEvent('[data-test-form-for="object"]', 'submit');
+    assert.ok(this.onSubmit.calledOnce);
+  });
+
+  test('submit button should be disabled if required fields are not filled', async function (assert) {
+    this.model = { foo: null, bar: null };
+
+    await render(hbs`
+      <FormFor @model={{this.model}} @enforceRequiredFields={{true}} as |form|>
+        <form.fieldFor
+          @params={{array "foo"}}
+          @required={{true}}
+        />
+        <form.submit />
+      </FormFor>
+    `);
+
+    assert.dom('[data-test-field-for="object_foo"]').hasClass('required');
+    assert.dom('[data-test-ff-control-input]').hasAttribute('required');
+    assert.dom('[data-test-ff-control-input]').hasAttribute('aria-required');
+    assert.dom('[data-test-form-button="submit"]').hasClass('disabled');
+    assert.dom('[data-test-form-button="submit"]').hasAttribute('disabled');
+
+    await fillIn('input', 'hello');
+
+    assert.dom('[data-test-form-button="submit"]').doesNotHaveClass('disabled');
+    assert.dom('[data-test-form-button="submit"]').doesNotHaveAttribute('disabled');
+  });
+
+  test('submit button should not be disabled if required fields are not filled and `enforceRequiredFields` is not set', async function (assert) {
+    this.model = { foo: null, bar: null };
+
+    await render(hbs`
+      <FormFor @model={{this.model}} as |form|>
+        <form.fieldFor
+          @params={{array "foo"}}
+          @required={{true}}
+        />
+        <form.submit />
+      </FormFor>
+    `);
+
+    assert.dom('[data-test-field-for="object_foo"]').hasClass('required');
+    assert.dom('[data-test-ff-control-input]').hasAttribute('required');
+    assert.dom('[data-test-ff-control-input]').hasAttribute('aria-required');
+    assert.dom('[data-test-form-button="submit"]').doesNotHaveClass('disabled');
+    assert.dom('[data-test-form-button="submit"]').doesNotHaveAttribute('disabled');
   });
 });
