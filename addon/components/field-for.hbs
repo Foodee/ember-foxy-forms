@@ -8,6 +8,7 @@
       (if this.errors.length " error")
       (if @disabled " disabled")
       (if @readonly " readonly")
+      (if this.required " required")
       " "
       this._testingClass
       " "
@@ -83,6 +84,7 @@
                     placeholder=this.placeholder
                     readonly=@readonly
                     disabled=@disabled
+                    required=this.required
                     controlId=this.controlId
                     doSubmit=this.doSubmit
                     doReset=this.doReset
@@ -102,6 +104,7 @@
                 placeholder=@placeholder
                 readonly=@readonly
                 disabled=@disabled
+                required=this.required
                 controlId=this.controlId
                 doSubmit=this.doSubmit
                 doReset=this.doReset
@@ -141,6 +144,7 @@
                     placeholder=this.placeholder
                     readonly=@readonly
                     disabled=@disabled
+                    required=this.required
                     controlId=this.controlId
                     doSubmit=this.doSubmit
                     doReset=this.doReset
@@ -160,6 +164,7 @@
                 placeholder=@placeholder
                 readonly=@readonly
                 disabled=@disabled
+                required=this.required
                 controlId=this.controlId
                 doSubmit=this.doSubmit
                 doReset=this.doReset
