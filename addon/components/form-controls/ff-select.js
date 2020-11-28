@@ -1,7 +1,12 @@
-import { action, get } from '@ember/object';
+import { action } from '@ember/object';
+import { arg } from 'ember-arg-types';
+import { string } from 'prop-types';
+
 import FormControlsAbstractSelectComponent from './abstract-select';
 
 export default class FormControlsFfSelectComponent extends FormControlsAbstractSelectComponent {
+  @arg(string) placeholder = 'Please select an option...';
+
   get selected() {
     return this.values.find((_) => this._compare(_, this.value));
   }
@@ -10,12 +15,10 @@ export default class FormControlsFfSelectComponent extends FormControlsAbstractS
   handleChange(event) {
     let value = event.target.value;
 
-    if (!this.isPrimitive) {
-      value = this.values.find((_) => get(_, this.idKey) === value);
-    }
+    value = this.values.find((_) => this._compare(_, value));
 
     if (this.args.onChange) {
-      return this.args.onChange(value);
+      return this.args.onChange(this.coerceValue(value));
     }
   }
 }

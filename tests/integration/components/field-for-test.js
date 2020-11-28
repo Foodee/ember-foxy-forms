@@ -172,7 +172,7 @@ module('Integration | Component | field container', function (hooks) {
   });
 
   test('it delegates values to the control', async function (assert) {
-    this.model = { foo: 'bar' };
+    this.model = { foo: 'bar', select: '1' };
 
     await render(hbs`
       <FormFor @model={{this.model}} as |form|>
