@@ -86,6 +86,8 @@ export default class FieldForComponent extends Component {
 
   @tracked isEditing = false;
 
+  @tracked controlShouldStoreAsPrimitive = false;
+
   // --------------------------------------------------------------------------------
   // Computed Properties
   //
@@ -125,6 +127,7 @@ export default class FieldForComponent extends Component {
     if (this.args.values && !isArray(this.args.values)) {
       // if the values provided is not an array but in fact a string
       // we transform it into a POJO
+      this.controlShouldStoreAsPrimitive = true;
 
       return this.args.values.split(',').map((value) => this.valuesExtractor(value));
     }

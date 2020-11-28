@@ -14,9 +14,6 @@ export default class FormControlsFfCheckboxSelectComponent extends FormControlsA
   @arg(bool)
   isInverted = false;
 
-  @arg(bool)
-  storeAsPrimitive = false;
-
   @arg(number)
   selectionMax;
 
@@ -33,13 +30,8 @@ export default class FormControlsFfCheckboxSelectComponent extends FormControlsA
   @action
   idFor(item) {
     return dasherize(
-      `${this.for}-${this.isPrimitive ? item : get(item, this.idKey)}-${guidFor(this)}`
+      `${this.for}-${this._isPrimitive(item) ? item : get(item, this.idKey)}-${guidFor(this)}`
     );
-  }
-
-  @action
-  labelFor(item) {
-    return this.isPrimitive ? item : get(item, this.labelKey);
   }
 
   @action
@@ -65,30 +57,22 @@ export default class FormControlsFfCheckboxSelectComponent extends FormControlsA
   }
 
   remove(value) {
-    this.args.onChange(this.value.filter((_) => !this._compare(_, this.coerceValue(value))));
+    this.args.onChange(this.value.filter((_) => !this._compare(_, value)));
   }
 
   add(value) {
     this.args.onChange(A(this.value).toArray().concat(this.coerceValue(value)));
   }
 
-  coerceValue(value) {
-    return this.storeAsPrimitive ? get(value, this.idKey) : value;
-  }
-
   @action
   isSelected(value) {
-    const isSelected = !!this.value.find((_) => this._compare(_, this.coerceValue(value)));
+    const isSelected = !!this.value.find((_) => this._compare(_, value));
     return this.isInverted ? !isSelected : isSelected;
   }
 
   @action
   clearAll() {
     return this.args.onChange([]);
-  }
-
-  _compare(a, b) {
-    return this.isPrimitive ? a === b : get(a, this.idKey) === get(b, this.idKey);
   }
 
   get atMax() {
