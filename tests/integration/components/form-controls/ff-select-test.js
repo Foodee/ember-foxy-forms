@@ -13,4 +13,63 @@ module('Integration | Component | form-controls/ff-select', function (hooks) {
       .dom('[data-test-ff-control-select]')
       .exists({ count: 1 }, 'Should render select control');
   });
+
+  test('selects the correct value on first render', async function (assert) {
+    this.model = { foo: 'bar', select: '2' };
+
+    await render(hbs`
+      <FormFor @model={{this.model}} as |form|>
+        <form.field
+          @for="select"
+          @using="select"
+          @label="Select"
+          @values="1:one,2:two,3:three"
+          @valueTooltip="An Select"
+        />
+      </FormFor>
+    `);
+
+    assert.dom('[data-test-field-for]').exists();
+    assert.dom('select').hasValue('2');
+  });
+
+  test('it renders placeholder when no value is set', async function (assert) {
+    this.model = { foo: 'bar' };
+
+    await render(hbs`
+      <FormFor @model={{this.model}} as |form|>
+        <form.field
+          @for="select"
+          @using="select"
+          @label="Select"
+          @values="1:one,2:two,3:three"
+          @valueTooltip="An Select"
+        />
+      </FormFor>
+    `);
+
+    assert.dom('[data-test-field-for]').exists();
+    assert.dom('[data-tests-ff-control-select-placeholder]').exists();
+    assert.dom('select').hasNoValue();
+  });
+
+  test('it renders unknown value when value isnt present in the values set', async function (assert) {
+    this.model = { foo: 'bar', select: '4' };
+
+    await render(hbs`
+      <FormFor @model={{this.model}} as |form|>
+        <form.field
+          @for="select"
+          @using="select"
+          @label="Select"
+          @values="1:one,2:two,3:three"
+          @valueTooltip="An Select"
+        />
+      </FormFor>
+    `);
+
+    assert.dom('[data-test-field-for]').exists();
+    assert.dom('[data-tests-ff-control-select-unknown-value]').exists();
+    assert.dom('select').hasValue('4');
+  });
 });

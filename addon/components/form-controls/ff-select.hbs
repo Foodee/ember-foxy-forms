@@ -1,13 +1,32 @@
 <select
   id={{@controlId}}
-  value={{this.selected}}
   disabled={{@disabled}}
   ...attributes
   data-test-ff-control-select
   {{on "change" this.handleChange}}
 >
+  {{#if (and (not this.selected) (not this.value))}}
+    <option selected disabled hidden data-tests-ff-control-select-placeholder>
+      {{@placeholder}}
+    </option>
+  {{else if (not this.selected)}}
+    <option
+      value={{this.value}}
+      selected
+      disabled
+      hidden
+      data-tests-ff-control-select-unknown-value
+    >
+      {{compute this.labelFor this.value}}
+    </option>
+  {{/if}}
+
   {{#each this.values as |item index|}}
-    <option value={{compute this.idFor item}} data-test-ff-control-select-option={{index}}>
+    <option
+      value={{compute this.idFor item}}
+      data-test-ff-control-select-option={{index}}
+      selected={{eq item this.selected}}
+    >
       {{compute this.labelFor item}}
     </option>
   {{/each}}

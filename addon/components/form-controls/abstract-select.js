@@ -1,7 +1,6 @@
 import Component from '@glimmer/component';
 import { arg } from 'ember-arg-types';
-import { string } from 'prop-types';
-import { typeOf } from '@ember/utils';
+import { string, bool } from 'prop-types';
 import { get } from '@ember/object';
 import { action } from '@ember/object';
 
@@ -15,26 +14,49 @@ export default class FormControlsAbstractSelectComponent extends Component {
   @arg
   values = [];
 
+  @arg
+  value;
+
+  @arg(bool)
+  storeAsPrimitive = false;
+
   get isPrimitive() {
-    return this.values.every((_) => ['string', 'number'].includes(typeOf(_)));
+    return this.values.every((_) => this._isPrimitive(_));
   }
 
   @action
   isSelected(item) {
-    return this._compare(item, this.args.value);
+    return this._compare(item, this.value);
   }
 
   @action
   idFor(item) {
-    return this.isPrimitive ? item : get(item, this.idKey);
+    return this._isPrimitive(item) ? item : get(item, this.idKey);
   }
 
   @action
   labelFor(item) {
-    return this.isPrimitive ? item : get(item, this.labelKey);
+    return this._isPrimitive(item) ? item : get(item, this.labelKey);
+  }
+
+  coerceValue(value) {
+    if (this._isPrimitive(value)) {
+      return value;
+    }
+
+    return this.storeAsPrimitive ? get(value, this.idKey) : value;
   }
 
   _compare(a, b) {
-    return this.isPrimitive ? a === b : a && b && get(a, this.idKey) === get(b, this.idKey);
+    return this.coerceValue(a) === this.coerceValue(b);
+  }
+
+  /** Borrowed from https://github.com/jonschlinkert/is-primitive */
+  _isPrimitive(val) {
+    if (typeof val === 'object') {
+      return val === null;
+    }
+
+    return typeof val !== 'function';
   }
 }
