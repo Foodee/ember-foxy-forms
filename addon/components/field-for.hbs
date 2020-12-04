@@ -44,7 +44,7 @@
               {{@valueTooltip}}
             </AttachTooltip>
           {{/if}}
-          {{#if this.displayValue includeZero=true}}
+          {{#if (or this.displayValue (eq this.displayValue 0))}}
             {{this.displayValue}}
           {{else}}
             <span class="field-for-placeholder">

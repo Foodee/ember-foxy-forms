@@ -208,7 +208,7 @@ module('Integration | Component | field container', function (hooks) {
     `);
 
     assert.dom('[data-test-field-for]').exists();
-    assert.ok(this.formatValue.calledOnce);
+    assert.ok(this.formatValue.called);
     assert.dom(`[data-tooltip=${this.valueTooltip}]`).exists();
   });
 
