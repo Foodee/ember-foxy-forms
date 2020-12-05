@@ -29,7 +29,7 @@
   "dependencies": {
     "@ember/render-modifiers": "^1.0.2",
     "ember-arg-types": "^0.2.1",
-    "ember-attacher": "^1.1.1",
+    "ember-attacher": "1.1.1",
     "ember-cli-babel": "^7.23.0",
     "ember-cli-htmlbars": "^5.3.1",
     "ember-composable-helpers": "^4.3.0",
