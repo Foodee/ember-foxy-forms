@@ -9,7 +9,7 @@
 ## Installation
 
 ```bash
-ember install my-addon
+ember install ember-foxy-forms
 ```
 
 ## Usage
