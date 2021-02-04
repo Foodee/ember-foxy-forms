@@ -435,12 +435,23 @@ export default class FormForComponent extends Component {
   @arg(boolean)
   useCustomButtonComponent = true;
 
+  @arg(bool)
+  enforceRequiredFields = false;
+
+  /**
+   * Resets the dirty model properties to their previous values on the form destruction. Turning this off will
+   * leave the model in a dirty state, even when the user navigates away.
+   * @property reset-on-destroy
+   * @type Boolean
+   * @default true
+   * @public
+   */
+  @arg(bool)
+  resetOnDestroy = true;
+
   // --------------------------------------------------------------------------------
   // Methods
   //
-
-  @arg(bool)
-  enforceRequiredFields = false;
 
   /**
    * Called before the form submits, this is where we do
@@ -1004,7 +1015,7 @@ export default class FormForComponent extends Component {
   }
 
   willDestroy() {
-    if (this.isDirty) {
+    if (this.isDirty && this.resetOnDestroy) {
       this.doReset();
     }
 
