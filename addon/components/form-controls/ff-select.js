@@ -18,7 +18,7 @@ export default class FormControlsFfSelectComponent extends FormControlsAbstractS
     value = this.values.find((_) => this._compare(_, value));
 
     if (this.args.onChange) {
-      return this.args.onChange(this.coerceValue(value));
+      return this.args.onChange(this.storeValue(value));
     }
   }
 }

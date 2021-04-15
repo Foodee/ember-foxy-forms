@@ -39,7 +39,19 @@ export default class FormControlsAbstractSelectComponent extends Component {
     return this._isPrimitive(item) ? item : get(item, this.labelKey);
   }
 
+  /**
+   * Coerces the value to lowest possible identity, useful for comparison
+   * @param {*} value
+   */
   coerceValue(value) {
+    return this._isPrimitive(value) ? value : get(value, this.idKey);
+  }
+
+  /**
+   * Returns the value as it's supposed to be stored
+   * @param {*} value
+   */
+  storeValue(value) {
     if (this._isPrimitive(value)) {
       return value;
     }
