@@ -61,7 +61,7 @@ export default class FormControlsFfCheckboxSelectComponent extends FormControlsA
   }
 
   add(value) {
-    this.args.onChange(A(this.value).toArray().concat(this.coerceValue(value)));
+    this.args.onChange(A(this.value).toArray().concat(this.storeValue(value)));
   }
 
   @action
