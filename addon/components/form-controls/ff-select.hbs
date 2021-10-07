@@ -5,8 +5,13 @@
   data-test-ff-control-select
   {{on "change" this.handleChange}}
 >
-  {{#if (and (not this.selected) (not this.value))}}
-    <option selected disabled hidden data-tests-ff-control-select-placeholder>
+  {{#if (or this.isNoneSelected this.allowNone)}}
+    <option
+      selected={{this.isNoneSelected}}
+      disable={{not this.allowNone}}
+      hidden={{not this.allowNone}}
+      data-tests-ff-control-select-placeholder
+    >
       {{@placeholder}}
     </option>
   {{else if (not this.selected)}}

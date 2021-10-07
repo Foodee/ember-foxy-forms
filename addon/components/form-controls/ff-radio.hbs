@@ -1,21 +1,47 @@
-{{#each @values as |item|}}
+{{#each (if this.allowNone (union (array null) @values) @values) as |item|}}
   <div class="form-controls-ff-radio">
     {{#let (compute this.idFor item) as |id|}}
-      <input
-        type="radio"
-        name="{{@for}}"
-        value="{{id}}"
-        id="{{@for}}-{{id}}"
-        ...attributes
-        data-test-ff-control-radio
-        data-test-ff-control-radio-option="{{id}}"
-        disabled={{@disabled}}
-        checked={{compute this.isSelected item}}
-        {{on "change" this.handleChange}}
-      />
-      <label for="{{@for}}-{{id}}">
-        {{compute this.labelFor item}}
-      </label>
+      {{#if item}}
+        <input
+          type="radio"
+          name="{{@for}}"
+          value="{{id}}"
+          id="{{@for}}-{{id}}"
+          ...attributes
+          data-test-ff-control-radio
+          data-test-ff-control-radio-option="{{id}}"
+          disabled={{@disabled}}
+          checked={{compute this.isSelected item}}
+          {{on "change" this.handleChange}}
+        />
+        {{#if (has-block)}}
+          {{yield item (concat @for "-" id)}}
+        {{else}}
+          <label for="{{@for}}-{{id}}">
+            {{compute this.labelFor item}}
+          </label>
+        {{/if}}
+      {{else}}
+        <input
+          type="radio"
+          name="{{@for}}"
+          id="{{@for}}-none"
+          ...attributes
+          data-test-ff-control-radio
+          data-test-ff-control-radio-option="none"
+          data-tests-ff-control-select-none
+          disabled={{@disabled}}
+          checked={{this.isNoneSelected}}
+          {{on "change" this.handleChange}}
+        />
+        {{#if (has-block)}}
+          {{yield item (concat @for "-none")}}
+        {{else}}
+          <label for="{{@for}}-none">
+            {{@placeholder}}
+          </label>
+        {{/if}}
+      {{/if}}
     {{/let}}
   </div>
 {{/each}}
