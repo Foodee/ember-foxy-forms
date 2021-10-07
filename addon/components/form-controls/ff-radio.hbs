@@ -1,21 +1,28 @@
-{{#each @values as |item|}}
+{{#each this.values as |item|}}
   <div class="form-controls-ff-radio">
     {{#let (compute this.idFor item) as |id|}}
-      <input
-        type="radio"
-        name="{{@for}}"
-        value="{{id}}"
-        id="{{@for}}-{{id}}"
-        ...attributes
-        data-test-ff-control-radio
-        data-test-ff-control-radio-option="{{id}}"
-        disabled={{@disabled}}
-        checked={{compute this.isSelected item}}
-        {{on "change" this.handleChange}}
-      />
-      <label for="{{@for}}-{{id}}">
-        {{compute this.labelFor item}}
-      </label>
+      {{#let (compute this.radioElementIdFor item) as |elementId|}}
+        <input
+          type="radio"
+          name="{{@for}}"
+          value="{{id}}"
+          id="{{elementId}}"
+          ...attributes
+          data-test-ff-control-radio
+          data-test-ff-control-radio-option="{{id}}"
+          disabled={{@disabled}}
+          checked={{compute this.isSelected item}}
+          {{on "change" this.handleChange}}
+        />
+
+        {{#if (has-block)}}
+          {{yield item elementId id}}
+        {{else}}
+          <label for="{{elementId}}">
+            {{compute this.labelFor item}}
+          </label>
+        {{/if}}
+      {{/let}}
     {{/let}}
   </div>
 {{/each}}

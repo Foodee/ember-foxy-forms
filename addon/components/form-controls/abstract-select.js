@@ -3,8 +3,11 @@ import { arg } from 'ember-arg-types';
 import { string, bool } from 'prop-types';
 import { get } from '@ember/object';
 import { action } from '@ember/object';
-
 export default class FormControlsAbstractSelectComponent extends Component {
+
+  @arg(string)
+  for;
+
   @arg(string)
   labelKey = 'label';
 

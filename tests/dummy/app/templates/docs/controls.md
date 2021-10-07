@@ -111,11 +111,43 @@ these will be used to identify your object and to label the drop down.
           @values="1:one,2:two,3:three"
          />
         <form.field 
+          @for="objectCheckboxSelect"
+          @using="checkbox-select" 
+          @label="Object Select With Custom Label"
+          @values="1:one,2:two,3:three"
+          as |ff|
+         >
+          <ff.control as |value id|>
+            <label for={{id}}>
+              <strong>Custom Checkbox <em>Select</em></strong>: {{value.label}}
+            </label>
+          </ff.control>
+        </form.field>
+        <form.field 
           @for="primitiveCheckboxSelect"
           @using="checkbox-select" 
           @label="Primitive Select"
           @values="1,2,3"
          />
+        <form.field 
+          @for="radio"
+          @using="radio" 
+          @label="Radio Control"
+          @values="1:One,2:Two,3:Three"
+         />
+        <form.field
+          @for="radioCustom"
+          @using="radio"
+          @label="Custom Radio Control Label"
+          @values="1:One,2:Two,3:Three"
+          as |ff|
+          >
+          <ff.control @noneText="None" as |value id|>
+            <label for={{id}}>
+              <strong>Custom Radio<em>Select</em></strong>: {{value.label}}
+            </label>
+          </ff.control>
+        </form.field>
       </Form>
   {{/demo.example}}
   {{demo.snippet "select-control.hbs"}}
