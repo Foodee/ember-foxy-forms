@@ -1,14 +1,20 @@
 import { action } from '@ember/object';
 import { arg } from 'ember-arg-types';
-import { string } from 'prop-types';
+import { string, bool } from 'prop-types';
 
 import FormControlsAbstractSelectComponent from './abstract-select';
 
 export default class FormControlsFfSelectComponent extends FormControlsAbstractSelectComponent {
   @arg(string) placeholder = 'Please select an option...';
 
+  @arg(bool) allowNone = false;
+
   get selected() {
     return this.values.find((_) => this._compare(_, this.value));
+  }
+
+  get isNoneSelected() {
+    return !this.selected && !this.value;
   }
 
   @action
