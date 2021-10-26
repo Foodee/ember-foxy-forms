@@ -1,4 +1,4 @@
-{{#each (if this.allowNone (union (array null) @values) @values) as |item|}}
+{{#each (if this.allowNone this.valuesWithNone this.values) as |item|}}
   <div class="form-controls-ff-radio">
     {{#let (compute this.idFor item) as |id|}}
       {{#if item}}
