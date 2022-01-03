@@ -70,7 +70,7 @@
     "ember-template-lint-plugin-prettier": "^2.0.0",
     "ember-test-selectors": "^5.0.0",
     "ember-try": "^1.4.0",
-    "eslint": "^7.12.1",
+    "eslint": "^8.6.0",
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-ember": "^9.4.0",
     "eslint-plugin-node": "^11.1.0",
