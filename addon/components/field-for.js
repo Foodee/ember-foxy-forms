@@ -142,6 +142,7 @@ export default class FieldForComponent extends Component {
    * @default value
    * @private
    */
+  @arg(string)
   get displayValue() {
     return this.formatValue(this.value);
   }
