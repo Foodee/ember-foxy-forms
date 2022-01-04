@@ -11,7 +11,7 @@ import { guidFor } from '@ember/object/internals';
 import { later } from '@ember/runloop';
 import { isBlank } from '@ember/utils';
 import { inject as service } from '@ember/service';
-import { debug } from '@ember/debug';
+import { deprecate } from '@ember/debug';
 import { getOwner } from '@ember/application';
 
 export default class FieldForComponent extends Component {
@@ -497,11 +497,8 @@ export default class FieldForComponent extends Component {
 
     if (lookup.componentFor(`form-controls/${name}`, owner)) {
       return `form-controls/${name}`;
-    } else if (lookup.componentFor(`form-controls/${this.name}-control`, owner)) {
-      debug.deprecate(
-        'This method of looking up form controls will be removed in version 3.0.0',
-        true
-      );
+    } else if (lookup.componentFor(`form-controls/${name}-control`, owner)) {
+      deprecate('This method of looking up form controls will be removed in version 3.0.0', true);
 
       return `form-controls/${name}-control`;
     } else if (lookup.componentFor(`form-controls/ff-${name}`, owner)) {

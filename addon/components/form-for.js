@@ -397,7 +397,9 @@ export default class FormForComponent extends Component {
    * @public
    */
   @arg(bool)
-  preventsNavigation = true;
+  get preventsNavigation() {
+    return this.formFor.preventsNavigationByDefault ?? false;
+  }
 
   /**
    * Parent form. Used to connect nested form state. Currently used to propagate dirty state to parent.
