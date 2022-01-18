@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { arg } from 'ember-arg-types';
-import { array, func, bool, string, object } from 'prop-types';
+import { array, func, bool, string, object, any } from 'prop-types';
 import { oneWay, notEmpty, gt, union, readOnly } from '@ember/object/computed';
 import { dasherize } from '@ember/string';
 import { isArray } from '@ember/array';
@@ -138,11 +138,11 @@ export default class FieldForComponent extends Component {
   /**
    * The result of applying the formatValue function to the value
    * @property _formattedValue
-   * @type String
    * @default value
+   * @type {*}
    * @private
    */
-  @arg(string)
+  @arg(any)
   get displayValue() {
     return this.formatValue(this.value);
   }
@@ -527,7 +527,7 @@ export default class FieldForComponent extends Component {
    * Function for formatting the value override for custom behavior
    * @method formatValue
    * @param {Object} value
-   * @returns string
+   * @returns {*}
    */
   @arg(func)
   formatValue = (value) => {
