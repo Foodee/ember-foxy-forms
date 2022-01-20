@@ -13,6 +13,7 @@ import { isBlank } from '@ember/utils';
 import { inject as service } from '@ember/service';
 import { deprecate } from '@ember/debug';
 import { getOwner } from '@ember/application';
+import { isPlainObject } from 'is-plain-object';
 
 export default class FieldForComponent extends Component {
   @service formFor;
@@ -284,9 +285,19 @@ export default class FieldForComponent extends Component {
    * @private
    */
   _stringify(value) {
-    return isArray(value) ? value.map((_) => this._stringify(_)).join(',') : JSON.stringify(value);
+    if (isArray(value)) {
+      return value.map((_) => this._stringify(_)).join(',');
+    } else if (typeof value === 'object' && !isPlainObject(value)) {
+      /**
+       * Prevents .toJSON from being called on an ember models (deprecated)
+       * All plain objects can be safely identified through JSON.stringify, while
+       * anything not plain will be mapped to a universal identifier.
+       */
+      return guidFor(value);
+    } else {
+      return JSON.stringify(value);
+    }
   }
-
   _extractKeyValueMapping(_value) {
     const params = this.params;
     const _withMapping = this.args.withMapping || {};
