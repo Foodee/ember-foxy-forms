@@ -6,12 +6,11 @@ import { oneWay, notEmpty, gt, union, readOnly } from '@ember/object/computed';
 import { dasherize } from '@ember/string';
 import { isArray } from '@ember/array';
 import { action, defineProperty, computed } from '@ember/object';
-import { assert } from '@ember/debug';
+import { assert, deprecate } from '@ember/debug';
 import { guidFor } from '@ember/object/internals';
 import { later } from '@ember/runloop';
 import { isBlank } from '@ember/utils';
 import { inject as service } from '@ember/service';
-import { deprecate } from '@ember/debug';
 import { getOwner } from '@ember/application';
 import { isPlainObject } from 'is-plain-object';
 
@@ -88,6 +87,8 @@ export default class FieldForComponent extends Component {
   @tracked isEditing = false;
 
   @tracked controlShouldStoreAsPrimitive = false;
+
+  @tracked hideDefaultLabel = false;
 
   // --------------------------------------------------------------------------------
   // Computed Properties
@@ -358,13 +359,23 @@ export default class FieldForComponent extends Component {
 
   /**
    * The label for this field
-   * @property field
+   * @property infoText
    * @type String
    * @default null
    * @public
    */
   @arg(string)
   label = null;
+
+  /**
+   * The info-text for this field
+   * @property infoText
+   * @type String
+   * @default null
+   * @public
+   */
+  @arg(string)
+  infoText = null;
 
   /**
    * Generated ID to tie together the label and the control
@@ -533,6 +544,16 @@ export default class FieldForComponent extends Component {
    */
   @arg(string)
   displayValueComponent = null;
+
+  /**
+   * Custom Label Component for rendering the label on this field
+   * @property customLabelComponent
+   * @type String
+   * @default null
+   * @public
+   */
+  @arg(string)
+  customLabelComponent;
 
   /**
    * Function for formatting the value override for custom behavior
