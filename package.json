@@ -30,12 +30,14 @@
     "@ember/render-modifiers": "^1.0.2",
     "ember-arg-types": "^0.2.1",
     "ember-attacher": "1.1.1",
+    "ember-auto-import": "^1.12.1",
     "ember-cli-babel": "^7.23.0",
     "ember-cli-htmlbars": "^5.3.1",
     "ember-composable-helpers": "^4.3.0",
     "ember-element-helper": "^0.3.1",
     "ember-event-helpers": "^0.1.1",
-    "is-plain-object": "^5.0.0"
+    "is-plain-object": "^5.0.0",
+    "webpack": "^5.66.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.12.1",
@@ -45,7 +47,6 @@
     "@glimmer/tracking": "^1.0.2",
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
-    "ember-auto-import": "^1.6.0",
     "ember-cli": "~3.22.0",
     "ember-cli-addon-docs": "^0.10.0",
     "ember-cli-addon-docs-esdoc": "^0.2.3",
