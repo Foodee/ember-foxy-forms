@@ -93,6 +93,21 @@ export default class FormForComponent extends Component {
   @readOnly('formFor.customCommitCancelComponent') customCommitCancelComponent;
   @readOnly('formFor.customErrorComponent') customErrorComponent;
 
+
+  /**
+   * Custom Label Component for rendering all labels on this form
+   * @property customLabelComponent
+   * @type String
+   * @default null
+   * @public
+   */
+  @arg(string)
+  customLabelComponent;
+
+  get _customLabelComponent() {
+    return this.customLabelComponent || this.formFor.customLabelComponent;
+  }
+
   get isDirty() {
     return (this.useEmberDataDirtyTracking && this.model?.hasDirtyAttributes) || this.isModelDirty;
   }

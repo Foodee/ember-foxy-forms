@@ -18,7 +18,9 @@
     ...attributes
     data-test-field-for={{this._testingSelector}}
   >
-    <LabelFor @label={{@label}} @controlId={{this.controlId}} />
+    {{#unless this.hideDefaultLabel}}
+      <LabelFor @label={{@label}} @controlId={{this.controlId}} @infoText={{this.infoText}}/>
+    {{/unless}}
     {{#if this._showValue}}
       {{#if this.displayValueComponent}}
         {{component
@@ -152,6 +154,13 @@
                     doSubmit=this.doSubmit
                     doReset=this.doReset
                     onChange=this.handleChange
+                  )
+                  label=(component
+                    'label-for'
+                    label=label
+                    controlId=controlId
+                    infoText=infoText
+                    field=this
                   )
                   self=this
                 )
