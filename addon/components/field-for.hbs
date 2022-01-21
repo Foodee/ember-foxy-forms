@@ -62,7 +62,7 @@
         </button>
       {{/if}}
     {{/if}}
-    {{#if this.hasControlCallout}}
+    {{#if (and this.hasControlCallout this._showControl)}}
       <AttachPopover
         @id={{this.guid}}
         @isShown={{this._showControl}}
