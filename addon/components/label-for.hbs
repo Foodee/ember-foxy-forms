@@ -14,9 +14,9 @@
       {{/if}}
 
       {{#if @infoText}}
-        {{#if this.form.customInfoTextComponent}}
+        {{#if this.formFor.customInfoTextComponent}}
           {{component
-            this.form.customInfoTextComponent
+            this.formFor.customInfoTextComponent
             infoText=@infoText
           }}
         {{else}}
