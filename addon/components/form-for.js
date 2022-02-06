@@ -93,7 +93,6 @@ export default class FormForComponent extends Component {
   @readOnly('formFor.customCommitCancelComponent') customCommitCancelComponent;
   @readOnly('formFor.customErrorComponent') customErrorComponent;
 
-
   /**
    * Custom Label Component for rendering all labels on this form
    * @property customLabelComponent
@@ -1051,6 +1050,13 @@ export default class FormForComponent extends Component {
   @action
   reset() {
     this.doReset();
+  }
+
+  @action
+  alternativeSubmit() {
+    if (this.tagName !== 'form') {
+      this.submit();
+    }
   }
 
   /**
