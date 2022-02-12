@@ -5,7 +5,7 @@ import { array, func, bool, string, object, any } from 'prop-types';
 import { oneWay, notEmpty, gt, union, readOnly } from '@ember/object/computed';
 import { dasherize } from '@ember/string';
 import { isArray } from '@ember/array';
-import { action, defineProperty, computed } from '@ember/object';
+import { action, defineProperty, computed, get } from '@ember/object';
 import { assert, deprecate } from '@ember/debug';
 import { guidFor } from '@ember/object/internals';
 import { later } from '@ember/runloop';
@@ -24,6 +24,7 @@ export default class FieldForComponent extends Component {
       // property paths to watch
       const propertyPaths = this.propertyPath;
       const _withMapping = this.args.withMapping || {};
+      const modelPropertyPaths = propertyPaths.split(',').map(_ => `model.${_}`).join(',')
 
       // bind to the value
       defineProperty(
@@ -31,7 +32,7 @@ export default class FieldForComponent extends Component {
         'value',
         computed(
           // eslint-disable-next-line ember/use-brace-expansion
-          `args.form.{model,model.${propertyPaths}}`,
+          `args.form.{model,${modelPropertyPaths}}`,
           'args.form.model',
           'args.{for,params}',
           'params',
@@ -40,14 +41,13 @@ export default class FieldForComponent extends Component {
               // we either use the key map provided by the user, or the
               // default key value
               const key = _withMapping[param] || param;
-              acc[key] = this.args.form.model[param];
+              acc[key] = get(this.args.form.model, param);
 
               return acc;
             }, {});
           }
         )
       );
-
       const errorPaths = this.params.map((param) => `args.form.model.errors.${param}`);
       defineProperty(this, 'errors', union(...errorPaths));
     } else {
