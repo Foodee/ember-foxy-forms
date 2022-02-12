@@ -289,7 +289,7 @@ export default class FieldForComponent extends Component {
   _stringify(value) {
     if (isArray(value)) {
       return value.map((_) => this._stringify(_)).join(',');
-    } else if (typeof value === 'object' && !isPlainObject(value)) {
+    } else if (typeof value === 'object' && !isPlainObject(value) && !this.forceStringifyComparison) {
       /**
        * Prevents .toJSON from being called on an ember models (deprecated)
        * All plain objects can be safely identified through JSON.stringify, while
@@ -473,6 +473,16 @@ export default class FieldForComponent extends Component {
    */
   @arg(string)
   editText = null;
+
+  /**
+   * Force dirty comparison using JSON
+   * @property forceStringifyComparison
+   * @type Boolean
+   * @default false
+   * @public
+   */
+  @arg()
+  forceStringifyComparison = false;
 
   /**
    * The position of the control callout (up to the client to decide how to use this info)
