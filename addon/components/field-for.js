@@ -40,7 +40,8 @@ export default class FieldForComponent extends Component {
             return this.params.reduce((acc, param) => {
               // we either use the key map provided by the user, or the
               // default key value
-              const key = _withMapping[param] || param;
+              const param_chunks = param.split('.');
+              const key = _withMapping[param] || param_chunks[param_chunks.length - 1];
               acc[key] = get(this.args.form.model, param);
 
               return acc;
