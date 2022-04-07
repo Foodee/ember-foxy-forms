@@ -44,7 +44,9 @@ The various features can be toggled on / off below.
           <div>
             <form.field @for="string" @using="input" @label="String" @valueTooltip="An String" @editText='Click to edit' @infoText='A String'/>
             <form.field @for="password" @using="password" @label="Password" @valueTooltip="An Password" />
-            <form.field @for="text" @using="textarea" @label="Text" @valueTooltip="An Text"/>
+            <form.field @for="text" @using="textarea" @label="Text" @valueTooltip="An Text" as |ff|>
+                <ff.control @maxLength='10' @showMaxLength={{true}} />
+            </form.field>
             <form.field @for="email" @using="email" @label="Email" @valueTooltip="An Email"/>
             <form.field @for="url" @using="url" @label="Url" @valueTooltip="An Url"/>
             <form.field @for="tel" @using="tel" @label="Telephone" @valueTooltip="An Telephone"/>
