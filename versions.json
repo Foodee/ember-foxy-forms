@@ -1,1 +1,8 @@
-{}
+{
+  "master": {
+    "path": "versions/master",
+    "name": "master",
+    "sha": "6e8819a2f1af1ddb1266a19c7ea45046a6cb609c",
+    "tag": null
+  }
+}
