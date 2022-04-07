@@ -1,10 +1,11 @@
+<div class="form-controls-ff-textarea">
 <textarea
   id={{@controlId}}
   value={{@value}}
   placeholder={{@placeholder}}
   disabled={{@disabled}}
   readonly={{@isReadonly}}
-  maxlength={{@maxLength}}
+  maxlength={{this.maxLength}}
   max={{@max}}
   min={{@min}}
   step={{@step}}
@@ -14,5 +15,11 @@
   {{on "focus" this.handleFocus}}
   {{on "click" this.handleClick}}
   {{on "change" this.handleChange}}
-  {{on "keyUp" this.handleChange}}
+  {{on "keyup" this.handleChange}}
 ></textarea>
+  {{#if this._showMaxLength}}
+    <div class="form-controls-ff-textarea__maxlength">
+      {{this.length}} / {{this.maxLength}}
+    </div>
+  {{/if}}
+</div>
