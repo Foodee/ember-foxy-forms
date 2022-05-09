@@ -22,6 +22,10 @@ export default class FormControlsFfTextareaComponent extends FormControlsFfInput
     return this.showMaxLength && this.maxLength;
   }
 
+  get isAtMaxLength() {
+    return this.length === this.maxLength;
+  }
+
   @action
   handleChange(event) {
     this.length = event.target.value.length;
