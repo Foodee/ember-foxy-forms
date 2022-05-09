@@ -18,7 +18,7 @@
   {{on "keyup" this.handleChange}}
 ></textarea>
   {{#if this._showMaxLength}}
-    <div class="form-controls-ff-textarea__maxlength">
+    <div class="form-controls-ff-textarea__maxlength {{if this.isAtMaxLength 'form-controls-ff-textarea__maxlength--at-max-length'}}">
       {{this.length}} / {{this.maxLength}}
     </div>
   {{/if}}
