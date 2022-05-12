@@ -422,12 +422,12 @@ module('Integration | Component | form for', function (hooks) {
       </FormFor>
     `);
     assert.dom('[data-test-form-for]').exists();
-    await click('.submit');
-    assert.ok(this.willSubmit.calledOnce);
-    await click('.reset');
-    assert.ok(this.willReset.calledOnce);
-    await click('.destroy');
-    assert.ok(this.willDestroy.calledOnce);
+    await click('[data-test-form-button="submit"]');
+    assert.ok(this.willSubmit.calledOnce, 'Expected will submit to be called once');
+    await click('[data-test-form-button="reset"]');
+    assert.ok(this.willReset.calledOnce, 'Expected will reset to be called once');
+    await click('[data-test-form-button="destroy"]');
+    assert.ok(this.willDestroy.calledOnce, 'Expectedc will destroy to be called once');
 
     this.didSubmit = sinon.spy();
     this.didReset = sinon.spy();
@@ -450,11 +450,11 @@ module('Integration | Component | form for', function (hooks) {
     `);
 
     assert.dom('[data-test-form-for]').exists();
-    await click('.submit');
-    assert.ok(this.didSubmit.calledOnce);
-    await click('.reset');
-    assert.ok(this.didReset.calledOnce);
-    await click('.destroy');
+    await click('[data-test-form-button="submit"]');
+    assert.ok(this.didSubmit.calledOnce, 'Expected to call didSubmit');
+    await click('[data-test-form-button="reset"]');
+    assert.ok(this.didReset.calledOnce, 'Expected to call didReset');
+    await click('[data-test-form-button="destroy"]');
     assert.ok(this.didDestroy.calledOnce);
 
     this.didNotSubmit = sinon.spy();
@@ -482,12 +482,12 @@ module('Integration | Component | form for', function (hooks) {
     `);
 
     assert.dom('[data-test-form-for]').exists();
-    await click('.submit');
-    assert.ok(this.didNotSubmit.calledOnce);
-    await click('.reset');
-    assert.ok(this.didNotReset.calledOnce);
-    await click('.destroy');
-    assert.ok(this.didNotDestroy.calledOnce);
+    await click('[data-test-form-button="submit"]');
+    assert.ok(this.didNotSubmit.calledOnce, 'Expected did not submit to be called once');
+    await click('[data-test-form-button="reset"]');
+    assert.ok(this.didNotReset.calledOnce, 'Expected did not reset to be called once');
+    await click('[data-test-form-button="destroy"]');
+    assert.ok(this.didNotDestroy.calledOnce, 'Expected did not destroy to be called once');
   });
 
   test('submitting the form calls save on the model by default', async function (assert) {
