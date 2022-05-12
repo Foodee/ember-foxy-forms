@@ -1,6 +1,6 @@
 # Form Features in detail
 
-FoxyForms is a fully featured forms framework, mostly designed for dealing with ember-data models. It comes with a number
+FoxyForms is a fully featured form framework, mostly designed for dealing with ember-data models. It comes with a number
 of features that make composing UIs very simple.
 
 ## Value & Error Mapping
@@ -154,6 +154,16 @@ service can be extended to provide custom popups, or messages by injecting it in
 ## Lifecycle hooks
 
 FoxyForms exposes a number of lifecycle hooks that allow for the extension of its three primary actions 'submit' 'reset' 'destroy'.
+
+
+### confirm(Submit|Reset)
+
+{{#docs-snippet name="will.js"}}
+  confirmSubmit(model):Promise[boolean]
+  confirmSubmit(model):Promise[boolean]
+{{/docs-snippet}}
+
+Called at the beginning of the submit / reset process, expected to be a function which returns a promise for a boolean that is used to determine whether to continue the process.
 
 ### will(Submit|Reset|DestroyModel)
 

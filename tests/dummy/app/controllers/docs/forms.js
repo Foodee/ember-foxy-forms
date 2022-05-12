@@ -4,7 +4,7 @@ import { action } from '@ember/object';
 
 export default class FormsController extends Controller {
   object = {
-    @tracked atttribute: '',
+    @tracked attribute: '',
   };
 
   @action

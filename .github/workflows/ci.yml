@@ -21,7 +21,7 @@ jobs:
       - name: Install Node
         uses: actions/setup-node@v1
         with:
-          node-version: 12.x
+          node-version: 14.x
       - name: Install Dependencies
         run: npm install
       - name: Lint JS
@@ -38,7 +38,7 @@ jobs:
       - name: Install Node
         uses: actions/setup-node@v1
         with:
-          node-version: 10.x
+          node-version: 14.x
       - name: Install Dependencies
         run: npm install
       - name: Test
@@ -68,7 +68,7 @@ jobs:
       - name: Install Node
         uses: actions/setup-node@v1
         with:
-          node-version: 12.x
+          node-version: 14.x
       - name: Install Dependencies
         run: npm install
       - name: test

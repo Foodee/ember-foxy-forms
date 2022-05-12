@@ -10,8 +10,10 @@ controlling a date range. This can be done by simply passing an array of keys to
 {{#docs-demo as |demo|}}
   {{#demo.example name="multiple.hbs"}}
     <Form @for={{this.object}} @preventsNavigation={{false}}  as |f|>
-      <f.field @for='attribute' @label='Single Value' />
-      <f.field @for={{array "composite1" "composite2"}} @label='Multiple' />
+      <label>Single</label>
+      <f.field @for='attribute'/>
+      <label>Multiple</label>
+      <f.field @for={{array "composite1" "composite2"}}/>
     </Form> 
   {{/demo.example}}
   {{demo.snippet "multiple.hbs"}}
@@ -29,13 +31,15 @@ rubric to lookup your component based on that name.FieldFor
 {{#docs-demo as |demo|}}
   {{#demo.example name="using.hbs"}}
     <Form @for={{this.object}} @preventsNavigation={{false}}  as |f|>
-      <f.field @for='labeledAttribute' @using='input' />
+      <f.field @for='labeledAttribute' @using='input' as |ff|>
+        <ff.control/>
+      </f.field>
     </Form> 
   {{/demo.example}}
   {{demo.snippet "using.hbs"}}
 {{/docs-demo}}
 
-## Labels
+## Field Labels
 
 FieldFor has the option to label controls, if you provide a label, field for will automatically wire the label's 'for' 
 attribute to the correct id, to allow for a11y.
@@ -43,7 +47,9 @@ attribute to the correct id, to allow for a11y.
 {{#docs-demo as |demo|}}
   {{#demo.example name="label.hbs"}}
     <Form @for={{this.object}} @preventsNavigation={{false}}  as |f|>
-      <f.field @for='labeledAttribute' @label='An Label' />
+      <f.field @for='labeledAttribute' @using='input' @label='Field Label' as |ff|>
+        <ff.control/>
+      </f.field>
     </Form> 
   {{/demo.example}}
   {{demo.snippet "label.hbs"}}
@@ -52,7 +58,7 @@ attribute to the correct id, to allow for a11y.
 ## Values
 
 Fields also delegate values to their controls, this can be an array passed down from a parent context or a comma delimited
-string of the format 'id:label:icon'.
+string of the format ```id:label:icon,id:label:icon,id:label:icon```.
 
 {{#docs-demo as |demo|}}
   {{#demo.example name="values.hbs"}}
@@ -60,7 +66,7 @@ string of the format 'id:label:icon'.
       <f.field 
         @for='select' 
         @using='select' 
-        @values='1:One,2:Two,3:Three'
+        @values='1,2,3'
        />
     </Form> 
   {{/demo.example}}
@@ -92,12 +98,16 @@ run processes when individual field values change without using an observer.
          @for="singleAttribute" 
          @label="Attribute"
          @didCommitValue=this.didCommitValue
-      />
-      <f.field 
-        @for={{array "composite1" "composite2"}} 
+      as |ff|>
+        <ff.control/>
+      </f.field>
+      <f.field
+      @for={{array "composite1" "composite2"}} 
         @label="Atribute1 & Atribute2"
         @didCommitValues=this.didCommitValues 
-      />
+      as |ff|>
+        <ff.control/>
+      </f.field>
     </Form> 
   {{/demo.example}}
   {{demo.snippet "did-commit.hbs"}}
