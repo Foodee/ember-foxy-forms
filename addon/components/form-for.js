@@ -465,6 +465,17 @@ export default class FormForComponent extends Component {
   @arg(bool)
   resetOnDestroy = true;
 
+  /**
+   * If true, resets the form when confirmation is not provided
+   *
+   * @property resetOnRejectedConfirm
+   * @type Boolean
+   * @default true
+   * @public
+   */
+  @arg(bool)
+  resetOnRejectedConfirm = true;
+
   // --------------------------------------------------------------------------------
   // Methods
   //
@@ -769,12 +780,11 @@ export default class FormForComponent extends Component {
     const model = this.model;
     const isSaving = model?.isSaving;
 
-    let shouldSubmit = !isSaving ? (await this.willSubmit(model)) : false;
-    shouldSubmit &&= (await this.confirmSubmit(model));
-    shouldSubmit ||= this.allowSubmitQueue;
-
     // Guard if the model is saving
-    if (shouldSubmit) {
+    const willSubmit = !isSaving ? (await this.willSubmit(model)) : false;
+    const confirmSubmit = await this.confirmSubmit(model);
+
+    if (willSubmit && confirmSubmit || this.allowSubmitQueue) {
       this._markSubmitting();
 
       const onSubmit =
@@ -815,6 +825,10 @@ export default class FormForComponent extends Component {
       this._hasFailedToSubmit = true;
       this.didNotSubmit(model);
       this.notifyError(this.didNotSubmitMessage);
+
+      if(!confirmSubmit && this.resetOnRejectedConfirm) {
+        await this.doReset();
+      }
 
       return Promise.resolve(true);
     }
