@@ -323,8 +323,11 @@ export default class FieldForComponent extends Component {
     const form = this.args.form;
 
     if (this._hasCompositeValue) {
-      form.resetValues(this._extractKeyValueMapping(this._lastValidValue));
+      let values = this._extractKeyValueMapping(this._lastValidValue);
+      this.didResetValues(values);
+      form.resetValues(values);
     } else {
+      this.didResetValue(this._lastValidValue);
       form.resetValue(this.params[0], this._lastValidValue);
     }
 
@@ -601,6 +604,25 @@ export default class FieldForComponent extends Component {
   @arg(func)
   didCommitValues = (/* values */) => {};
 
+
+  /**
+   * Triggered after the field is reset
+   * @method didResetValue
+   * @param {*} value
+   * @public
+   */
+  @arg(func)
+  didResetValue = (/* value */) => {};
+
+  /**
+   * Triggered after the field is reset and the field controls multiple values
+   * @method didResetValues
+   * @param {Object} values
+   * @public
+   */
+  @arg(func)
+  didResetValues = (/* values */) => {};
+
   /**
    * Callback for when the form submits
    * @method formDidSubmit
@@ -653,9 +675,11 @@ export default class FieldForComponent extends Component {
         .commitValues(keyValue)
         .then(() => this.didCommitValues(keyValue, prevKeyValue));
     } else {
+      const newValue = this._value;
+      const prevValue = this.value;
       commitPromise = this.args
         .commitValue(this.params[0], this._value)
-        .then(() => this.didCommitValue(this._value, this.value));
+        .then(() => this.didCommitValue(newValue, prevValue));
     }
 
     commitPromise.finally(() => {
