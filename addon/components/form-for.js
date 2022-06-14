@@ -300,7 +300,7 @@ export default class FormForComponent extends Component {
    * @default null
    * @public
    */
-  @arg(string)
+  @arg
   successfulSubmitMessage = null;
 
   /**
@@ -310,7 +310,7 @@ export default class FormForComponent extends Component {
    * @default null
    * @public
    */
-  @arg(string)
+  @arg
   failedSubmitMessage = null;
 
   /**
@@ -320,7 +320,7 @@ export default class FormForComponent extends Component {
    * @default null
    * @public
    */
-  @arg(string)
+  @arg
   didNotSubmitMessage = null;
 
   /**
@@ -330,7 +330,7 @@ export default class FormForComponent extends Component {
    * @default null
    * @public
    */
-  @arg(string)
+  @arg
   successfulResetMessage = null;
 
   /**
@@ -340,7 +340,7 @@ export default class FormForComponent extends Component {
    * @default null
    * @public
    */
-  @arg(string)
+  @arg
   failedResetMessage = null;
 
   /**
@@ -350,7 +350,7 @@ export default class FormForComponent extends Component {
    * @default null
    * @public
    */
-  @arg(string)
+  @arg
   didNotResetMessage = null;
 
   /**
@@ -370,7 +370,7 @@ export default class FormForComponent extends Component {
    * @default null
    * @public
    */
-  @arg(string)
+  @arg
   confirmDestroyMessage = null;
 
   /**
@@ -380,7 +380,7 @@ export default class FormForComponent extends Component {
    * @default null
    * @public
    */
-  @arg(string)
+  @arg
   successfulDestroyMessage = null;
 
   /**
@@ -390,7 +390,7 @@ export default class FormForComponent extends Component {
    * @default null
    * @public
    */
-  @arg(string)
+  @arg
   failedDestroyMessage = null;
 
   /**
