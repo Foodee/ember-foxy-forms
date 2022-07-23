@@ -60,7 +60,7 @@ export default class FormControlsAbstractSelectComponent extends Component {
   }
 
   _compare(a, b) {
-    return this.coerceValue(a) === this.coerceValue(b);
+    return this.coerceValue(a) == this.coerceValue(b);
   }
 
   /** Borrowed from https://github.com/jonschlinkert/is-primitive */
