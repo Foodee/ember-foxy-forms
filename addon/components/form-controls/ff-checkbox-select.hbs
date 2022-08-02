@@ -13,7 +13,7 @@
   <div class="ff-control-checkbox-select__values">
     {{#each @values as |value index|}}
       <div
-        class="form-controls-ff-checkbox {{if this.atMax "form-controls-ff-checkbox--max"}}"
+        class="form-controls-ff-checkbox {{if this.atMax 'form-controls-ff-checkbox--max'}}"
         role="button"
         {{on "change" (fn this.handleChange value)}}
       >

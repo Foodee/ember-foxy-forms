@@ -24,7 +24,10 @@ export default class FieldForComponent extends Component {
       // property paths to watch
       const propertyPaths = this.propertyPath;
       const _withMapping = this.args.withMapping || {};
-      const modelPropertyPaths = propertyPaths.split(',').map(_ => `model.${_}`).join(',')
+      const modelPropertyPaths = propertyPaths
+        .split(',')
+        .map((_) => `model.${_}`)
+        .join(',');
 
       // bind to the value
       defineProperty(
@@ -289,7 +292,11 @@ export default class FieldForComponent extends Component {
   _stringify(value) {
     if (isArray(value)) {
       return value.map((_) => this._stringify(_)).join(',');
-    } else if (typeof value === 'object' && !isPlainObject(value) && !this.forceStringifyComparison) {
+    } else if (
+      typeof value === 'object' &&
+      !isPlainObject(value) &&
+      !this.forceStringifyComparison
+    ) {
       /**
        * Prevents .toJSON from being called on an ember models (deprecated)
        * All plain objects can be safely identified through JSON.stringify, while
@@ -603,7 +610,6 @@ export default class FieldForComponent extends Component {
    */
   @arg(func)
   didCommitValues = (/* values */) => {};
-
 
   /**
    * Triggered after the field is reset

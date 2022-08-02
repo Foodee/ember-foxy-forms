@@ -1,11 +1,10 @@
 <button
-  class="
-  {{@class}}
-   {{if this.isActing @buttonActingClass}}
-   {{if @isActing @buttonActingClass}}
-   {{if @icon " icon"}}
-   {{if @disabled " disabled"}}
-  "
+  class="{{@class}}
+    {{if this.isActing @buttonActingClass}}
+    {{if @isActing @buttonActingClass}}
+    {{if @icon ' icon'}}
+    {{if @disabled ' disabled'}}
+    "
   type={{if (eq this.buttonType "submit") "submit" "button"}}
   disabled={{@disabled}}
   ...attributes
@@ -16,7 +15,7 @@
     <i class="icon {{@icon}}" data-test-form-button-icon></i>
   {{/if}}
 
-  {{#if (hasBlock)}}
+  {{#if (has-block)}}
     {{yield}}
   {{else}}
     {{@text}}

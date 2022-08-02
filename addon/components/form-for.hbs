@@ -1,13 +1,12 @@
 {{#let (element this.tagName) as |Tag|}}
   <Tag
     @tagName={{this.tagName}}
-    class="
-    form-for
-    {{if this.formClasses this.formClasses}}
-     {{if this.disabled " disabled"}}
-     {{if this.readonly " readonly"}}
-     {{this._testingClass}}
-    "
+    class="form-for
+      {{if this.formClasses this.formClasses}}
+      {{if this.disabled ' disabled'}}
+      {{if this.readonly ' readonly'}}
+      {{this._testingClass}}
+      "
     data-test-form-for={{this._modelName}}
     ...attributes
     {{on "submit" (prevent-default this.submit)}}

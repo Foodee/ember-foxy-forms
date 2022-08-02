@@ -1,25 +1,30 @@
 <div class="form-controls-ff-textarea">
-<textarea
-  id={{@controlId}}
-  value={{@value}}
-  placeholder={{@placeholder}}
-  disabled={{@disabled}}
-  readonly={{@isReadonly}}
-  maxlength={{this.maxLength}}
-  max={{@max}}
-  min={{@min}}
-  step={{@step}}
-  ...attributes
-  data-test-ff-control-textarea
-  {{on "blur" this.handleBlur}}
-  {{on "focus" this.handleFocus}}
-  {{on "click" this.handleClick}}
-  {{on "change" this.handleChange}}
-  {{on "keyup" this.handleChange}}
-></textarea>
+  <textarea
+    id={{@controlId}}
+    value={{@value}}
+    placeholder={{@placeholder}}
+    disabled={{@disabled}}
+    readonly={{@isReadonly}}
+    maxlength={{this.maxLength}}
+    max={{@max}}
+    min={{@min}}
+    step={{@step}}
+    ...attributes
+    data-test-ff-control-textarea
+    {{on "blur" this.handleBlur}}
+    {{on "focus" this.handleFocus}}
+    {{on "click" this.handleClick}}
+    {{on "change" this.handleChange}}
+    {{on "keyup" this.handleChange}}
+  ></textarea>
   {{#if this._showMaxLength}}
-    <div class="form-controls-ff-textarea__maxlength {{if this.isAtMaxLength 'form-controls-ff-textarea__maxlength--at-max-length'}}">
-      {{this.length}} / {{this.maxLength}}
+    <div
+      class="form-controls-ff-textarea__maxlength
+        {{if this.isAtMaxLength 'form-controls-ff-textarea__maxlength--at-max-length'}}"
+    >
+      {{this.length}}
+      /
+      {{this.maxLength}}
     </div>
   {{/if}}
 </div>
