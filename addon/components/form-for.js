@@ -239,6 +239,26 @@ export default class FormForComponent extends Component {
   readonly = false;
 
   /**
+   * When an error is detected on the form, if this is set to true, scroll to failed field to
+   * visible
+   * @property scrollToFirstVisibleError
+   * @type boolean
+   * @default false
+   * @public
+   */
+  @arg(bool)
+  scrollToFirstVisibleError = false;
+
+  /**
+   * Options to pass to the field scroll into view
+   * @property scrollIntoViewOptions
+   * @type object
+   * @private
+   */
+  @arg(object)
+  scrollIntoViewOptions;
+
+  /**
    * Whether or not this form is setup for inline editing
    * @property inlineEditing
    * @type boolean
@@ -804,6 +824,12 @@ export default class FormForComponent extends Component {
       return doSubmit;
       // somehow we set out selves to the last do submit?
     } else {
+      if (!willSubmit && this.scrollToFirstVisibleError) {
+        // Find field with error and scroll to visible
+        const firstBadField = this.fields.find((_) => _.hasErrors);
+        firstBadField.scrollToVisible();
+      }
+
       this._hasFailedToSubmit = true;
       this.didNotSubmit(model);
       this.notifyError(this.didNotSubmitMessage);

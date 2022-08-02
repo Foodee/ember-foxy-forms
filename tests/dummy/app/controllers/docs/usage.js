@@ -34,6 +34,9 @@ export default class UsageController extends Controller {
   @tracked
   errors = false;
 
+  @tracked
+  scrollToVisible = false;
+
   @action
   toggleErrors() {
     if (this.errors) {

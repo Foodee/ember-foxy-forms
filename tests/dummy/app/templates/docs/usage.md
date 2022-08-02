@@ -15,6 +15,7 @@ The various features can be toggled on / off below.
         @inlineEditing={{this.inline}} 
         @hasControlCallout={{this.hasControlCallout}} 
         @autoSubmit={{this.autoSubmit}} 
+        @scrollToFirstVisibleError={{this.scrollToFirstVisibleError}}
         
         @successfulSubmitMessage={{this.successfulSubmitMessage}}
         @failedSubmitMessage={{this.failedSubmitMessage}}
@@ -129,6 +130,12 @@ The various features can be toggled on / off below.
           @didCommitValue={{this.toggleErrors}}
         as |f|>
           <f.control @label="Errors" />
+        </form.field>
+        <form.field 
+          @for="scrollToFirstVisibleError" 
+          @using="checkbox" 
+        as |f|>
+          <f.control @label="Scroll To Visible Error" />
         </form.field>
         <form.field @for="preventsNavigation" @using="checkbox" as |f|>
           <f.control @label="Prevents Navigation" />
