@@ -22,8 +22,10 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 14.x
+      - name: Upgrade NPM
+        run: npm install -g npm@8.13.2
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
       - name: Lint JS
         run: npm run lint:js
       - name: Lint Handlebars
@@ -39,8 +41,10 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 14.x
+      - name: Upgrade NPM
+        run: npm install -g npm@8.13.2
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
       - name: Test
         run: npm run test:ember
 
@@ -69,8 +73,10 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 14.x
+      - name: Upgrade NPM
+        run: npm install -g npm@8.13.2
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
       - name: test
         env:
           EMBER_TRY_SCENARIO: ${{ matrix.ember-try-scenario }}
