@@ -1,8 +1,7 @@
 {{#let (element this.tagName) as |Tag|}}
   <Tag
     @tagName={{this.tagName}}
-    class={{
-      concat
+    class={{concat
       "field-for "
       @fieldClasses
       (if this.errors.length " error")
@@ -20,7 +19,7 @@
     data-test-field-for={{this._testingSelector}}
   >
     {{#unless this.hideDefaultLabel}}
-      <LabelFor @label={{@label}} @controlId={{this.controlId}} @infoText={{this.infoText}}/>
+      <LabelFor @label={{@label}} @controlId={{this.controlId}} @infoText={{this.infoText}} />
     {{/unless}}
     {{#if this._showValue}}
       {{#if this.displayValueComponent}}
@@ -35,9 +34,8 @@
         }}
       {{else}}
         <button
-          class="
-          field-for-value-container
-          {{if this._showControl "field-for-value-showing-control-callout"}}"
+          class="field-for-value-container
+            {{if this._showControl 'field-for-value-showing-control-callout'}}"
           data-tooltip={{@valueTooltip}}
           type="button"
           {{on "click" this.edit}}
@@ -75,7 +73,7 @@
       >
         <div class="field-for-control-container field-for-control-callout">
           <div class="field-for-control-and-commit-buttons">
-            {{#if (hasBlock)}}
+            {{#if (has-block)}}
               {{yield
                 (hash
                   control=(component
@@ -137,7 +135,7 @@
       {{#if this._showControl}}
         <div class="field-for-control-container">
           <div class="field-for-control-and-commit-buttons">
-            {{#if (hasBlock)}}
+            {{#if (has-block)}}
               {{yield
                 (hash
                   control=(component
@@ -157,10 +155,10 @@
                     onChange=this.handleChange
                   )
                   label=(component
-                    'label-for'
-                    label=label
-                    controlId=controlId
-                    infoText=infoText
+                    "label-for"
+                    label=this.label
+                    controlId=this.controlId
+                    infoText=this.infoText
                     field=this
                   )
                   self=this

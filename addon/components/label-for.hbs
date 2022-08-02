@@ -1,24 +1,17 @@
 {{#if @label}}
   {{#if this.customLabelComponent}}
-    {{component
-      this.customLabelComponent
-      for=@controlId
-      label=@label
-    }}
+    {{component this.customLabelComponent for=@controlId label=@label}}
   {{else}}
     <label for="{{@controlId}}" ...attributes>
-      {{#if (hasBlock)}}
-        {{yield controlId}}
+      {{#if (has-block)}}
+        {{yield @controlId}}
       {{else}}
         {{@label}}
       {{/if}}
 
       {{#if @infoText}}
         {{#if this.formFor.customInfoTextComponent}}
-          {{component
-            this.formFor.customInfoTextComponent
-            infoText=@infoText
-          }}
+          {{component this.formFor.customInfoTextComponent infoText=@infoText}}
         {{else}}
           <span title="{{@infoText}}">ℹ️</span>
         {{/if}}

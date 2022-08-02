@@ -5,7 +5,6 @@ import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 
 export default class FormControlsFfTextareaComponent extends FormControlsFfInputComponent {
-
   @tracked length;
 
   @arg(bool) showMaxLength = false;
@@ -34,5 +33,4 @@ export default class FormControlsFfTextareaComponent extends FormControlsFfInput
       return this.args.onChange(event.target.value);
     }
   }
-
 }
