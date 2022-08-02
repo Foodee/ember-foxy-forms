@@ -31,6 +31,7 @@ export default class FormForService extends Service {
 
     this.router.on('routeWillChange', (transition) => {
       if (
+        !transition.isAborted &&
         this.shouldPreventNavigation &&
         !confirm('You have unsaved changes, are you sure you want to leave?')
       ) {

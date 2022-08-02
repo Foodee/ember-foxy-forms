@@ -127,6 +127,14 @@ Forms can be configured to notify the user when a form either succeeds or fails.
 
 The form-for service can be extended to provide custom popups, or messages by injecting it into your application.
 
+## Errors
+
+By default ember-foxy-forms wires errors from ember-data models. 
+
+
+### scrollToFirstVisibleError
+
+You can configure a form to scroll its first field with an error into view on failed submission. Using the scrollToFirstVisibleError options.
 
 ## Navigation Guards
 

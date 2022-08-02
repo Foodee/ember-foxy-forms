@@ -17,6 +17,7 @@
     {{on "change" (stop-propagation)}}
     ...attributes
     data-test-field-for={{this._testingSelector}}
+    {{did-insert this.registerElement}}
   >
     {{#unless this.hideDefaultLabel}}
       <LabelFor @label={{@label}} @controlId={{this.controlId}} @infoText={{this.infoText}} />

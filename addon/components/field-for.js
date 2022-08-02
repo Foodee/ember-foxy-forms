@@ -221,6 +221,7 @@ export default class FieldForComponent extends Component {
   get _valueIsDirty() {
     return this._stringify(this._lastValidValue) !== this._stringify(this.value);
   }
+
   get _valueIsNotBlank() {
     return !isBlank(this._lastValidValue) || !isBlank(this.value);
   }
@@ -261,6 +262,34 @@ export default class FieldForComponent extends Component {
 
   get propertyPath() {
     return this.params.join(',');
+  }
+
+  element;
+
+  /**
+   * Options to pass to the field scroll into view
+   * @property scrollIntoViewOptions
+   * @type object
+   * @private
+   */
+  @arg(object)
+  scrollIntoViewOptions = { behavior: 'smooth' };
+
+  /**
+   *
+   * Scrolls this element to visibile
+   *
+   * @method scrollToVisible
+   */
+  scrollToVisible() {
+    this.element.scrollIntoView(
+      this.scrollIntoViewOptions ?? this.form.scrollIntoViewOptions ?? {}
+    );
+  }
+
+  @action
+  registerElement(el) {
+    this.element = el;
   }
 
   /**
@@ -307,6 +336,7 @@ export default class FieldForComponent extends Component {
       return JSON.stringify(value);
     }
   }
+
   _extractKeyValueMapping(_value) {
     const params = this.params;
     const _withMapping = this.args.withMapping || {};
@@ -343,6 +373,7 @@ export default class FieldForComponent extends Component {
 
   willDestroy() {
     this.args.form.deregisterField(this);
+    this.element = null;
   }
 
   // --------------------------------------------------------------------------------
