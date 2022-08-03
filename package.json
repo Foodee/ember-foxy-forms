@@ -27,7 +27,7 @@
     "test:ember-compatibility": "ember try:each"
   },
   "dependencies": {
-    "@ember/render-modifiers": "^1.0.2",
+    "@ember/render-modifiers": "^2.0.4",
     "@glimmer/component": "^1.0.2",
     "@glimmer/tracking": "^1.0.2",
     "ember-arg-types": "^0.2.1",
