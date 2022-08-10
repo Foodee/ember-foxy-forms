@@ -79,6 +79,7 @@ export default class UsageController extends Controller {
   @tracked disabled = false;
   @tracked readonly = false;
   @tracked logs = A();
+  @tracked useBemClass = false;
 
   @tracked enableSubmit = true;
   @tracked successfulSubmitMessage = 'We submitted!';

@@ -26,6 +26,25 @@ module('Integration | Component | field container', function (hooks) {
     assert.notEqual(findAll(`.--field-for__object_${this.key}`)[0], undefined);
   });
 
+  test('it renders with bem classes when use bem class is true', async function (assert) {
+    this.key = faker.lorem.word();
+
+    await render(hbs`
+      <FormFor as |form|>
+        <form.fieldFor @params={{array this.key}} />
+      </FormFor>
+    `);
+
+    assert.equal(findAll(`.rd-form-for-object__field-for-${this.key}`)[0], undefined);
+
+    await render(hbs`
+      <FormFor @useBemClass={{true}} as |form|>
+        <form.fieldFor @params={{array this.key}} />
+      </FormFor>
+    `);
+    assert.notEqual(findAll(`.rd-form-for-object__field-for-${this.key}`)[0], undefined);
+  });
+
   test('it delegates the values param to the control', async function (assert) {
     this.key = faker.lorem.word();
 

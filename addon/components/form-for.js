@@ -81,10 +81,9 @@ export default class FormForComponent extends Component {
   @tracked isDestroyingRecord = false;
 
   @readOnly('formFor.testingClassPrefix') testingClassPrefix;
-  @readOnly('formFor.fieldClasses') fieldClasses;
+  @readOnly('formFor.bemClassPrefix') bemClassPrefix;
+  @readOnly('formFor.useBemClass') useBemClassConfig;
   @readOnly('formFor.formClasses') formClasses;
-  @readOnly('formFor.fieldForControlCalloutClasses') fieldForControlCalloutClasses;
-  @readOnly('formFor.fieldForControlCalloutPosition') fieldForControlCalloutPosition;
   @readOnly('formFor.buttonClasses') buttonClasses;
   @readOnly('formFor.buttonActingClass') buttonActingClass;
   @readOnly('formFor.submitButtonClasses') submitButtonClasses;
@@ -141,6 +140,29 @@ export default class FormForComponent extends Component {
    */
   get _testingClass() {
     return `${this.testingClassPrefix}form-for__${this._modelName}`;
+  }
+
+  /**
+   * Whether or not this form uses a bem style class prefix
+   * @property useBemClass
+   * @type boolean
+   * @default false
+   * @public
+   */
+  @arg(bool)
+  get useBemClass() {
+    return this.useBemClassConfig || false;
+  }
+
+  /**
+   * A class which will be appended to the form for styling purposes using bem style
+   * @property _bemClass
+   * @type String
+   * @default ''
+   * @private
+   */
+  get _bemClass() {
+    return this.useBemClass ? `${this.bemClassPrefix}form-for-${this._modelName}` : '';
   }
 
   /**
@@ -1168,5 +1190,8 @@ export default class FormForComponent extends Component {
   @action
   updateValues(keyValues) {
     return this.updateValuesFn(keyValues);
+  }
+  @action testClass(type) {
+    return `${type}-button`;
   }
 }

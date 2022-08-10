@@ -13,6 +13,8 @@ export default class FormForService extends Service {
     super(...arguments);
 
     this.testingClassPrefix = this.config.testingClassPrefix;
+    this.bemClassPrefix = this.config.bemClassPrefix;
+    this.useBemClass = this.config.useBemClass;
     this.fieldClasses = this.config.fieldClasses;
     this.formClasses = this.config.formClasses;
     this.fieldForControlCalloutClasses = this.config.fieldForControlCalloutClasses;

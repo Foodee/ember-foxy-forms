@@ -99,6 +99,8 @@ export default class FieldForComponent extends Component {
   //
 
   @readOnly('formFor.buttonClasses') buttonClasses;
+  @readOnly('formFor.fieldClasses') fieldClasses;
+  @readOnly('formFor.testingClassPrefix') testingClassPrefix;
 
   /**
    * Whether or not this field is a composite value, meaning
@@ -153,6 +155,14 @@ export default class FieldForComponent extends Component {
     return this.formatValue(this.value);
   }
 
+  get _dasherizedParams() {
+    return this.params
+      .map((_) => _.toString())
+      .map(dasherize)
+      .join('_')
+      .replace(/\./g, '__');
+  }
+
   /**
    * A class which will be appended to the field for testing purpose (not styling purposes)
    * @property _testingClass
@@ -161,15 +171,22 @@ export default class FieldForComponent extends Component {
    * @private
    */
   get _testingClass() {
-    return `${this.args.testingClassPrefix}field-for__${this._testingSelector}`;
+    return `${this.testingClassPrefix}field-for__${this._testingSelector}`;
+  }
+
+  /**
+   * A class which will be appended to the form for styling purposes using bem style
+   * @property _bemClass
+   * @type String
+   * @default ''
+   * @private
+   */
+  get _bemClass() {
+    return this.form._bemClass ? `${this.form._bemClass}__field-for-${this._dasherizedParams}` : '';
   }
 
   get _testingSelector() {
-    return `${this.args.form._modelName}_${this.params
-      .map((_) => _.toString())
-      .map(dasherize)
-      .join('_')
-      .replace(/\./g, '__')}`;
+    return `${this.args.form._modelName}_${this._dasherizedParams}`;
   }
 
   /**
@@ -397,7 +414,9 @@ export default class FieldForComponent extends Component {
    * @public
    */
   @arg(string)
-  tagName = 'div';
+  get tagName() {
+    return this.form?.fieldTagName || 'div';
+  }
 
   /**
    * The label for this field
@@ -450,7 +469,9 @@ export default class FieldForComponent extends Component {
    * @public
    */
   @arg(bool)
-  inlineEditing = false;
+  get inlineEditing() {
+    return this.form?.inlineEditing || false;
+  }
 
   /**
    * Whether or not this field requires confirmation to apply values to
@@ -461,7 +482,9 @@ export default class FieldForComponent extends Component {
    * @public
    */
   @arg(bool)
-  requireConfirm = false;
+  get requireConfirm() {
+    return this.form?.requireConfirm || false;
+  }
 
   /**
    * Whether or not this field is required
@@ -475,6 +498,32 @@ export default class FieldForComponent extends Component {
   required = false;
 
   /**
+   * Whether or not this field is disabled
+   * the model
+   * @property disabled
+   * @type boolean
+   * @default false
+   * @public
+   */
+  @arg(bool)
+  get disabled() {
+    return this.form?.disabled || false;
+  }
+
+  /**
+   * Whether or not this field is readonly
+   * the model
+   * @property readonly
+   * @type boolean
+   * @default false
+   * @public
+   */
+  @arg(bool)
+  get readonly() {
+    return this.form?.readonly || false;
+  }
+
+  /**
    * Wether or not the fields have control callouts (popups / popovers) when in
    * inline-edit mode
    * @property hasControlCallout
@@ -483,7 +532,9 @@ export default class FieldForComponent extends Component {
    * @public
    */
   @arg(bool)
-  hasControlCallout = false;
+  get hasControlCallout() {
+    return this.form?.hasControlCallout || false;
+  }
 
   /**
    * Tooltip to append to the value when inline editing
@@ -605,7 +656,9 @@ export default class FieldForComponent extends Component {
    * @public
    */
   @arg(string)
-  customLabelComponent;
+  get customLabelComponent() {
+    return this.form?._customLabelComponent || '';
+  }
 
   /**
    * Function for formatting the value override for custom behavior
@@ -708,14 +761,14 @@ export default class FieldForComponent extends Component {
     if (this._hasCompositeValue) {
       const keyValue = this._extractKeyValueMapping(this._value);
       const prevKeyValue = this.value && this._extractKeyValueMapping(this.value);
-      commitPromise = this.args
-        .commitValues(keyValue)
+      commitPromise = this.form
+        .updateValues(keyValue)
         .then(() => this.didCommitValues(keyValue, prevKeyValue));
     } else {
       const newValue = this._value;
       const prevValue = this.value;
-      commitPromise = this.args
-        .commitValue(this.params[0], this._value)
+      commitPromise = this.form
+        .updateValue(this.params[0], this._value)
         .then(() => this.didCommitValue(newValue, prevValue));
     }
 

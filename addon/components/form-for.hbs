@@ -6,6 +6,7 @@
       {{if this.disabled ' disabled'}}
       {{if this.readonly ' readonly'}}
       {{this._testingClass}}
+      {{this._bemClass}}
       "
     data-test-form-for={{this._modelName}}
     ...attributes
@@ -13,48 +14,27 @@
   >
     {{yield
       (hash
-        field=(component
-          "field-for"
-          form=this
-          tagName=this.fieldTagName
-          disabled=this.disabled
-          readonly=this.readonly
-          inlineEditing=this.inlineEditing
-          requireConfirm=this.requireConfirm
-          commitValue=this.updateValue
-          commitValues=this.updateValues
-          testingClassPrefix=this.testingClassPrefix
-          hasControlCallout=this.hasControlCallout
-          fieldForControlCalloutClasses=this.fieldForControlCalloutClasses
-          fieldClasses=this.fieldClasses
-          customLabelComponent=this._customLabelComponent
-        )
-        fieldFor=(component
-          "field-for"
-          form=this
-          tagName=this.fieldTagName
-          disabled=this.disabled
-          readonly=this.readonly
-          inlineEditing=this.inlineEditing
-          requireConfirm=this.requireConfirm
-          commitValue=this.updateValue
-          commitValues=this.updateValues
-          testingClassPrefix=this.testingClassPrefix
-          hasControlCallout=this.hasControlCallout
-          fieldForControlCalloutClasses=this.fieldForControlCalloutClasses
-          fieldClasses=this.fieldClasses
-        )
+        field=(component "field-for" form=this)
+        fieldFor=(component "field-for" form=this)
         button=(component
           this.buttonComponent
           text="Button"
-          class=this.buttonClasses
+          buttonClasses=(concat
+            this.buttonClasses " " (if this._bemClass (concat this._bemClass "__button"))
+          )
           buttonActingClass=this.buttonActingClass
           buttonType="button"
         )
         submit=(component
           this.buttonComponent
           text="Submit"
-          class=(concat this.submitButtonClasses " " this.buttonClasses)
+          buttonClasses=(concat
+            this.submitButtonClasses
+            " "
+            this.buttonClasses
+            " "
+            (if this._bemClass (concat this._bemClass "__submit-button"))
+          )
           buttonActingClass=this.buttonActingClass
           isActing=this.isSubmitting
           buttonType="submit"
@@ -64,7 +44,13 @@
         reset=(component
           this.buttonComponent
           text="Reset"
-          class=(concat this.resetButtonClasses " " this.buttonClasses)
+          buttonClasses=(concat
+            this.resetButtonClasses
+            " "
+            this.buttonClasses
+            " "
+            (if this._bemClass (concat this._bemClass "__reset-button"))
+          )
           buttonActingClass=this.buttonActingClass
           isActing=this.isResetting
           onClick=this.reset
@@ -73,7 +59,13 @@
         destroy=(component
           this.buttonComponent
           text="Delete"
-          class=(concat this.destroyButtonClasses " " this.buttonClasses)
+          buttonClasses=(concat
+            this.destroyButtonClasses
+            " "
+            this.buttonClasses
+            " "
+            (if this._bemClass (concat this._bemClass "__destroy-button"))
+          )
           buttonActingClass=this.buttonActingClass
           isActing=this.isDestroyingRecord
           onClick=(fn this.confirmDestroy this.model)
