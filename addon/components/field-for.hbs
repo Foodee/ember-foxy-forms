@@ -3,13 +3,15 @@
     @tagName={{this.tagName}}
     class={{concat
       "field-for "
-      @fieldClasses
+      this.fieldClasses
       (if this.errors.length " error")
-      (if @disabled " disabled")
-      (if @readonly " readonly")
+      (if this.disabled " disabled")
+      (if this.readonly " readonly")
       (if this.required " required")
       " "
       this._testingClass
+      " "
+      this._bemClass
       " "
       this.using
       "-field"
@@ -20,7 +22,7 @@
     {{did-insert this.registerElement}}
   >
     {{#unless this.hideDefaultLabel}}
-      <LabelFor @label={{@label}} @controlId={{this.controlId}} @infoText={{this.infoText}} />
+      <LabelFor @label={{this.label}} @controlId={{this.controlId}} @infoText={{this.infoText}} />
     {{/unless}}
     {{#if this._showValue}}
       {{#if this.displayValueComponent}}

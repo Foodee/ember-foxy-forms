@@ -22,6 +22,8 @@ module.exports = function (environment) {
         testingClassPrefix: '--',
         fieldClasses: 'field',
         formClasses: 'form',
+        bemClassPrefix: 'rd-',
+        useBemClass: false,
         fieldForControlCalloutClasses: 'field-for-control-callout',
         fieldForControlCalloutPosition: 'bottom left',
 

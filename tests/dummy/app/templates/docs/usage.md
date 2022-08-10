@@ -16,7 +16,8 @@ The various features can be toggled on / off below.
         @hasControlCallout={{this.hasControlCallout}} 
         @autoSubmit={{this.autoSubmit}} 
         @scrollToFirstVisibleError={{this.scrollToFirstVisibleError}}
-        
+        @useBemClass={{this.useBemClass}}
+
         @successfulSubmitMessage={{this.successfulSubmitMessage}}
         @failedSubmitMessage={{this.failedSubmitMessage}}
         @didNotSubmitMessage={{this.didNotSubmitMessage}}
@@ -115,6 +116,7 @@ The various features can be toggled on / off below.
          <form.submit/>
          <form.reset/>
          <form.destroy/>
+         <form.button/>
          <h2>Logs</h2>
          <ul>
           {{#each this.logs as |log|}}
@@ -154,6 +156,9 @@ The various features can be toggled on / off below.
         </form.field>
         <form.field @for="readonly" @using="checkbox" as |f|>
           <f.control @label="Readonly" />
+        </form.field>
+        <form.field @for="useBemClass" @using="checkbox" as |f|>
+          <f.control @label="Use bem class" />
         </form.field>
         <div class="columns">
           <div>

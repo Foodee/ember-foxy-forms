@@ -7,6 +7,8 @@ module.exports = function (/* environment, appConfig */) {
         testingClassPrefix: '--',
         fieldClasses: 'field',
         formClasses: 'form',
+        bemClassPrefix: '',
+        useBemClass: false,
         fieldForControlCalloutClasses: 'field-for-control-callout',
         fieldForControlCalloutPosition: 'bottom left',
 

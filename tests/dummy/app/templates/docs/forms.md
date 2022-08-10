@@ -244,4 +244,21 @@ fields: '--form-for\_\_model-name_key(s)'
 
 forms: ```[data-test-form-for] [data-test-resource-id=<model-name>]```
 
-fieldl: ```[data-test-field-for] [data-test-resource-id=<model-name>-<params>]```
+fields ```[data-test-field-for] [data-test-resource-id=<model-name>-<params>]```
+
+## Bem classes
+
+Form for will automatically generate [BEM style](http://getbem.com) classes on its elements.
+This feature can be turned on either by setting `useBemClass` to `true` in the config or passing it as an arg.
+
+{{#docs-snippet name="bemClass.js"}}
+  <Form @useBemClass={{true}} />
+{{/docs-snippet}}
+
+If `bemClassPrefix` is provided in the config, it will use it as a prefix of the classes.
+
+forms: ```form-for-model-name```
+
+fields: ```form-for-model-name__field-for-field-name```
+
+buttons: ```form-for-model-name__button-type-button```

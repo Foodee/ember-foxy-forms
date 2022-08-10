@@ -316,6 +316,85 @@ module('Integration | Component | form for', function (hooks) {
     assert.notEqual(findAll(`.--form-for__${this.model.modelName}`)[0], undefined);
   });
 
+  test('it should use the ember data model name to build bem class when use bem class is true', async function (assert) {
+    const modelName = faker.lorem.word();
+
+    const modelClass = Model.extend({});
+    this.owner.register(`model:${modelName}`, modelClass);
+    this.model = null;
+
+    run(() => {
+      this.model = this.owner.lookup('service:store').createRecord(modelName);
+    });
+
+    await render(hbs`<FormFor @model={{this.model}} />`);
+    assert.equal(findAll(`.rd-form-for-${modelName}`)[0], undefined);
+
+    await render(hbs`<FormFor @model={{this.model}} @useBemClass={{true}} />`);
+    assert.notEqual(findAll(`.rd-form-for-${modelName}`)[0], undefined);
+  });
+
+  test('it should use the object model name to build bem class when use bem class is true', async function (assert) {
+    this.model = {
+      modelName: faker.lorem.word(),
+    };
+
+    await render(hbs`<FormFor @model={{this.model}} />`);
+    assert.dom('[data-test-form-for]').doesNotHaveClass(`rd-form-for-${this.model.modelName}`);
+
+    await render(hbs`<FormFor @model={{this.model}} @useBemClass={{true}} />`);
+    assert.dom('[data-test-form-for]').hasClass(`rd-form-for-${this.model.modelName}`);
+  });
+
+  test('it renders form buttons with bem class when use bem class is true', async function (assert) {
+    this.model = {
+      modelName: faker.lorem.word(),
+    };
+
+    await render(hbs`
+      <FormFor @model={{this.model}} as |f|>
+        <f.submit/>
+        <f.reset/>
+        <f.destroy/>
+        <f.button/>
+      </FormFor>  
+    `);
+
+    assert
+      .dom('[data-test-form-button="submit"]')
+      .doesNotHaveClass(`rd-form-for-${this.model.modelName}__submit-button`);
+    assert
+      .dom('[data-test-form-button="reset"]')
+      .doesNotHaveClass(`rd-form-for-${this.model.modelName}__reset-button`);
+    assert
+      .dom('[data-test-form-button="destroy"]')
+      .doesNotHaveClass(`rd-form-for-${this.model.modelName}__destroy-button`);
+    assert
+      .dom('[data-test-form-button="button"]')
+      .doesNotHaveClass(`rd-form-for-${this.model.modelName}__button`);
+
+    await render(hbs`
+    <FormFor @model={{this.model}} @useBemClass={{true}} as |f|>
+      <f.submit/>
+      <f.reset/>
+      <f.destroy/>
+      <f.button/>
+    </FormFor>  
+  `);
+    assert
+      .dom('[data-test-form-button="submit"]')
+      .hasClass(`rd-form-for-${this.model.modelName}__submit-button`);
+    assert
+      .dom('[data-test-form-button="reset"]')
+      .hasClass(`rd-form-for-${this.model.modelName}__reset-button`);
+    assert
+      .dom('[data-test-form-button="destroy"]')
+      .hasClass(`rd-form-for-${this.model.modelName}__destroy-button`);
+    assert
+      .dom('[data-test-form-button="button"]')
+      .hasClass(`rd-form-for-${this.model.modelName}__button`);
+  });
+
   test('it has the ability to change the element type that the form renders as', async function (assert) {
     this.tagName = 'span';
 
