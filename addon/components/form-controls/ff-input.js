@@ -7,7 +7,7 @@ export default class FormControlsFfInputComponent extends Component {
   live = false;
 
   @arg(bool)
-  readonly = true;
+  readonly = false;
 
   @arg(string)
   inputType = 'text';
