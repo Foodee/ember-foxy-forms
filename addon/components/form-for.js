@@ -755,8 +755,8 @@ export default class FormForComponent extends Component {
    * @public
    */
   @arg(func)
-  clearValidations = () => {
-    const model = this.model;
+  clearValidations = (model) => {
+    model = model ?? this.model;
     return model.validate && model.validate({ only: [] });
   };
 
@@ -906,10 +906,10 @@ export default class FormForComponent extends Component {
     if (shouldReset) {
       try {
         this.isResetting = true;
-        await this.onReset();
+        await this.onReset(model);
         this.notifySuccess(this.successfulResetMessage);
-        this.didReset();
-        this._runFieldDidReset();
+        this.didReset(model);
+        this._runFieldDidReset(model);
         this._markClean();
       } catch (e) {
         this.notifyError(this.failedResetMessage);
@@ -981,18 +981,18 @@ export default class FormForComponent extends Component {
     });
   }
 
-  resetValues(keyValues) {
-    if (this.model.setProperties) {
-      this.model.setProperties(keyValues);
+  resetValues(keyValues, model) {
+    if (model.setProperties) {
+      model.setProperties(keyValues);
     } else {
-      setProperties(this.model, keyValues);
+      setProperties(model, keyValues);
     }
 
     this._checkClean();
   }
 
-  resetValue(key, value) {
-    this.resetValues({ [key]: value });
+  resetValue(key, value, model) {
+    this.resetValues({ [key]: value }, model);
   }
 
   /**
@@ -1068,8 +1068,8 @@ export default class FormForComponent extends Component {
    * @method _runFieldDidReset
    * @private
    */
-  _runFieldDidReset() {
-    (this.fields || []).forEach((_) => _.formDidReset());
+  _runFieldDidReset(model) {
+    (this.fields || []).forEach((_) => _.formDidReset(model));
   }
 
   /**
