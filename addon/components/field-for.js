@@ -371,21 +371,22 @@ export default class FieldForComponent extends Component {
   /**
    * Resets the field to the backup value by re-committing the value
    * @method _resetField
+   * @params {Object} model Optional model to use, useful for when
    * @private
    */
-  _resetField() {
+  _resetField(model) {
     const form = this.args.form;
 
     if (this._hasCompositeValue) {
       let values = this._extractKeyValueMapping(this._lastValidValue);
-      this.didResetValues(values);
-      form.resetValues(values);
+      this.didResetValues(values, model);
+      form.resetValues(values, model);
     } else {
-      this.didResetValue(this._lastValidValue);
-      form.resetValue(this.params[0], this._lastValidValue);
+      this.didResetValue(this._lastValidValue, model);
+      form.resetValue(this.params[0], this._lastValidValue, model);
     }
 
-    form.clearValidations();
+    form.clearValidations(model);
   }
 
   willDestroy() {
@@ -729,8 +730,8 @@ export default class FieldForComponent extends Component {
    * @public
    */
   @arg(func)
-  formDidReset = () => {
-    this._resetField();
+  formDidReset = (model) => {
+    this._resetField(model);
   };
 
   /**
@@ -788,7 +789,7 @@ export default class FieldForComponent extends Component {
   @action
   cancel() {
     this._value = this.value;
-    this._resetField();
+    this._resetField(this.form.model);
     this.isEditing = false;
   }
 
