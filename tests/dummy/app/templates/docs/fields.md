@@ -150,6 +150,18 @@ while you edit in a callout pane.
   {{demo.snippet "callout.hbs"}}
 {{/docs-demo}}
 
+## Using Live Updating controls
+
+Fields accept an argument called `live` which is passed down to controls. When `live` is set to true, the value of the model will be updated as users type when using text input or textarea. Also, when the form's `autoSubmit` is set to true, `live` will be set to false for fields and controls which can be overridden by passing the arguments to either fields or controls.
+
+{{#docs-snippet name="live.hbs"}}
+  <Form @for={{this.object}} @autoSubmit={{true}} as |f|>
+    <f.field @for='attribute' /> 
+    // internally fields are given @live={{false}} if autoSubmit is on
+    // which is then passed down to controls
+  </Form> 
+{{/docs-snippet}}
+
 ## Display Value Component 
 
 When editing in 'inline' mode you may provide a custom control for displaying the value, you do so by providing the 
@@ -172,4 +184,3 @@ fully qualified path a component that respects the display value component inter
   {{/demo.example}}
   {{demo.snippet "custom-display-component.hbs"}}
 {{/docs-demo}}
-
