@@ -33,7 +33,7 @@
           editText=this.editText
           placeholder=this.placeholder
           field=this
-          form=@form
+          form=this.form
         }}
       {{else}}
         <button
@@ -94,6 +94,7 @@
                     doSubmit=this.doSubmit
                     doReset=this.doReset
                     onChange=this.handleChange
+                    live=this.live
                   )
                   self=this
                 )
@@ -115,6 +116,7 @@
                 doSubmit=this.doSubmit
                 doReset=this.doReset
                 onChange=this.handleChange
+                live=this.live
               }}
             {{/if}}
 
@@ -156,6 +158,7 @@
                     doSubmit=this.doSubmit
                     doReset=this.doReset
                     onChange=this.handleChange
+                    live=this.live
                   )
                   label=(component
                     "label-for"
@@ -184,6 +187,7 @@
                 doSubmit=this.doSubmit
                 doReset=this.doReset
                 onChange=this.handleChange
+                live=this.live
               }}
             {{/if}}
 

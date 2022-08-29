@@ -475,6 +475,18 @@ export default class FieldForComponent extends Component {
   }
 
   /**
+   * Whether or not onChange is triggered on value change
+   * @property live
+   * @type boolean
+   * @default true
+   * @public
+   */
+  @arg(bool)
+  get live() {
+    return this.form?.autoSubmit ? false : true;
+  }
+
+  /**
    * Whether or not this field requires confirmation to apply values to
    * the model
    * @property requireConfirm
