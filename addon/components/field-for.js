@@ -63,7 +63,7 @@ export default class FieldForComponent extends Component {
       defineProperty(this, 'value', oneWay(`args.form.model.${propertyPath}`));
 
       // bind to errors
-      defineProperty(this, 'errors', oneWay(`args.form.model.errors.${propertyPath}`));
+      defineProperty(this, '_errors', oneWay(`args.form.model.errors.${propertyPath}`));
     }
 
     // Capture backup value that will allow full roll back if there are errors on cancel
@@ -115,11 +115,21 @@ export default class FieldForComponent extends Component {
 
   /**
    * Whether or not the current field mapping has any errors
-   * @property hasErrorsj
+   * @property hasErrors
    * @type boolean
    * @public
    */
   @notEmpty('errors') hasErrors;
+
+  /**
+   * Allowing for overriding existing errors from model
+   *
+   * @returns {String[]}
+   */
+  @arg(any)
+  get errors() {
+    return this._errors;
+  }
 
   /**
    * Either delegate the values down to the control, or transform them
