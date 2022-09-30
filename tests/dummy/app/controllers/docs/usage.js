@@ -21,15 +21,22 @@ export default class UsageController extends Controller {
     @tracked datetime: new Date().toString(),
     @tracked boolean: false,
     @tracked select: '1',
-    @tracked selectObject: { id: '1', label: 'One' },
+    @tracked selectObject: { id: '1', label: 'one' },
+    @tracked selectObjectWithDisabledOption: { id: '1', label: 'one' },
     @tracked checkboxSelect: A(['1']),
-    @tracked checkboxSelectObject: A([{ id: '1', label: 'One' }]),
+    @tracked checkboxSelectObject: A([{ id: '1', label: 'one' }]),
     @tracked radio: '1',
-    @tracked radioObject: { id: '1', label: 'One' },
+    @tracked radioObject: { id: '1', label: 'one' },
     @tracked start: '1',
     @tracked end: '1',
     @tracked errors: {},
   };
+
+  valuesForSelectObjectWithDisabledOption = [
+    { id: '1', label: 'one' },
+    { id: '2', label: 'two', disabled: true },
+    { id: '3', label: 'three' },
+  ];
 
   @tracked
   errors = false;

@@ -86,8 +86,9 @@ A checkbox can take an optional label attribute.
 ## Select 
 
 FoxyForms comes with two select controls out of the box that work with both primitive arrays (numbers and strings) or 
-ember objects. When working with objects you can specify an identifier key ```@idKey``` and a label key ```@labelKey```
+ember objects. When working with objects you can specify an identifier key `@idKey` and a label key `@labelKey`
 these will be used to identify your object and to label the drop down.
+Also you can disable an option by setting `disabled: true` in your value object in values array.
 
 {{#docs-demo as |demo|}}
   {{#demo.example name="select-control.hbs"}}
@@ -97,6 +98,12 @@ these will be used to identify your object and to label the drop down.
           @using="select" 
           @label="Object Select"
           @values="1:one,2:two,3:three"
+         />
+        <form.field 
+          @for="objectSelecttWithDisabledOption"
+          @using="select" 
+          @label="Object Select With Disabled Option"
+          @values={{this.valuesForSelectObjectWithDisabledOption}} {{!-- [{ id: '1', label: 'one' }, { id: '2', label: 'two', disabled: true }, { id: '3', label: 'three' }] --}}
          />
         <form.field 
           @for="primitiveSelect"
