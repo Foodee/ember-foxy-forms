@@ -229,6 +229,7 @@ The various features can be toggled on / off below.
           <pre class="hljs model"><code>{{json-pretty-print this.anObject}}</code></pre>
         </div>
       </div>
+      
   {{/demo.example}}
   {{demo.snippet "basic-usage.hbs"}}
 {{/docs-demo}}
