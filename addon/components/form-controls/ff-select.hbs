@@ -29,6 +29,7 @@
   {{#each this.values as |item index|}}
     <option
       value={{compute this.idFor item}}
+      disabled={{item.disabled}}
       data-test-ff-control-select-option={{index}}
       selected={{eq item this.selected}}
     >

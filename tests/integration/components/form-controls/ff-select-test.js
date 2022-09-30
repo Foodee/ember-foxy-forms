@@ -72,4 +72,28 @@ module('Integration | Component | form-controls/ff-select', function (hooks) {
     assert.dom('[data-tests-ff-control-select-unknown-value]').exists();
     assert.dom('select').hasValue('4');
   });
+
+  test('it renders disabled options if option has disabled true', async function (assert) {
+    this.model = { foo: 'bar', select: '4' };
+    this.values = [
+      { id: 1, label: 'one' },
+      { id: 2, label: 'two', disabled: true },
+      { id: 3, label: 'three' },
+    ];
+    await render(hbs`
+      <FormFor @model={{this.model}} as |form|>
+        <form.field
+          @for="select"
+          @using="select"
+          @label="Select"
+          @values={{this.values}}
+          @valueTooltip="An Select"
+        />
+      </FormFor>
+    `);
+
+    assert.dom('[data-test-field-for]').exists();
+    assert.dom('[data-test-ff-control-select]').exists();
+    assert.dom('[data-test-ff-control-select] option[value="2"]').hasAttribute('disabled');
+  });
 });

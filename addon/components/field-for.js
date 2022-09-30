@@ -330,10 +330,10 @@ export default class FieldForComponent extends Component {
    */
   valuesExtractor(value) {
     const chunks = value.split(':');
-    const [id, label, icon] = chunks;
+    const [id, label, icon, disabled] = chunks;
 
     // if we only have an ID we just pass the ID
-    return chunks.length === 1 ? id : { id, label, icon };
+    return chunks.length === 1 ? id : { id, label, icon, disabled };
   }
 
   /**

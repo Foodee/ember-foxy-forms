@@ -78,6 +78,13 @@ The various features can be toggled on / off below.
               @valueTooltip="An Select"
             />
             <form.field 
+              @for="selectObjectWithDisabledOption" 
+              @using="select" 
+              @label="Select Object With Disabled Option" 
+              @values={{this.valuesForSelectObjectWithDisabledOption}} {{!-- [{ id: '1', label: 'one' }, { id: '2', label: 'two', disabled: true }, { id: '3', label: 'three' }] --}}
+              @valueTooltip="An Select"
+            />
+            <form.field 
               @for="checkboxSelect" 
               @using="checkbox-select" 
               @label="Checkbox Select Primitive" 
