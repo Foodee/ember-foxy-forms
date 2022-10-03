@@ -19,6 +19,7 @@ module.exports = function (deployTarget) {
 
   if (deployTarget === 'production') {
     ENV.build.environment = 'production';
+    ENV.rootURL = 'https://foodee.github.io/ember-foxy-forms/';
     // configure other plugins for production deploy target here
   }
 
