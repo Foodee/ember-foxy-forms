@@ -4,16 +4,7 @@ const EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
 
 module.exports = function (defaults) {
   let app = new EmberAddon(defaults, {
-    'ember-cli-babel': {
-      includePolyfill: true,
-    },
-    babel: {
-      sourceMaps: 'inline',
-      plugins: [
-        '@babel/plugin-proposal-optional-chaining',
-        '@babel/plugin-proposal-nullish-coalescing-operator',
-      ],
-    },
+    sourcemaps: { enabled: true, extensions: ['js'] },
   });
 
   /*
