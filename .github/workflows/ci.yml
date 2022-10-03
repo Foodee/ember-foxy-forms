@@ -21,15 +21,15 @@ jobs:
       - name: Install Node
         uses: actions/setup-node@v1
         with:
-          node-version: 14.20.1
-      - name: Upgrade Yarn@1.22.19
-        run: npm install -g yarn@1.22.19
+          node-version: 14.x
+      - name: Upgrade NPM
+        run: npm install -g npm@8.13.2
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci
       - name: Lint JS
-        run: yarn run lint:js
+        run: npm run lint:js
       - name: Lint Handlebars
-        run: yarn run lint:hbs
+        run: npm run lint:hbs
 
   test:
     name: Tests
@@ -40,13 +40,13 @@ jobs:
       - name: Install Node
         uses: actions/setup-node@v1
         with:
-          node-version: 14.20.1
+          node-version: 14.x
       - name: Upgrade NPM
-        run: npm install -g yarn@1.22.19
+        run: npm install -g npm@8.13.2
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci
       - name: Test
-        run: yarn run test:ember
+        run: npm run test:ember
 
   try-scenarios:
     name: ${{ matrix.ember-try-scenario }}
@@ -59,10 +59,11 @@ jobs:
       fail-fast: true
       matrix:
         ember-try-scenario:
-          - ember-lts-3.24
+          - ember-lts-3.16
+          - ember-lts-3.20
           # - ember-release
           # - ember-beta
-          # - ember-canary
+          # - ember-default-with-jquery
           - ember-classic
 
     steps:
@@ -71,11 +72,11 @@ jobs:
       - name: Install Node
         uses: actions/setup-node@v1
         with:
-          node-version: 14.20.1
+          node-version: 14.x
       - name: Upgrade NPM
-        run: npm install -g yarn@1.22.19
+        run: npm install -g npm@8.13.2
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci
       - name: test
         env:
           EMBER_TRY_SCENARIO: ${{ matrix.ember-try-scenario }}
