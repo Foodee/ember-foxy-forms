@@ -1,4 +1,3 @@
-{{did-insert this.registerElement}}
 {{#let (element this.tagName) as |Tag|}}
   <Tag
     @tagName={{this.tagName}}
@@ -20,6 +19,7 @@
     {{on "change" (stop-propagation)}}
     ...attributes
     data-test-field-for={{this._testingSelector}}
+    {{did-insert this.registerElement}}
   >
     {{#unless this.hideDefaultLabel}}
       <LabelFor @label={{this.label}} @controlId={{this.controlId}} @infoText={{this.infoText}} />
@@ -44,9 +44,9 @@
           {{on "click" this.edit}}
         >
           {{#if @valueTooltip}}
-            <EmberTooltip>
+            <AttachTooltip>
               {{@valueTooltip}}
-            </EmberTooltip>
+            </AttachTooltip>
           {{/if}}
           {{#if (or this.displayValue (eq this.displayValue 0))}}
             {{this.displayValue}}
@@ -65,13 +65,14 @@
       {{/if}}
     {{/if}}
     {{#if (and this.hasControlCallout this._showControl)}}
-      <EmberPopover
+      <AttachPopover
         @id={{this.guid}}
         @isShown={{this._showControl}}
+        @showOn=""
+        @hideOn=""
         @showDuration="0"
         @hideDuration="0"
         @arrow={{true}}
-        @event="none"
       >
         <div class="field-for-control-container field-for-control-callout">
           <div class="field-for-control-and-commit-buttons">
@@ -134,7 +135,7 @@
             @customErrorComponent={{this.formFor.customErrorComponent}}
           />
         </div>
-      </EmberPopover>
+      </AttachPopover>
     {{else}}
       {{#if this._showControl}}
         <div class="field-for-control-container">
