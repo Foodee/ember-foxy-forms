@@ -1,3 +1,8 @@
 .form-controls-ff-checkbox label {
   cursor: pointer;
 }
+
+.tooltip.ember-popover {
+   padding: 0;
+   border: none;
+}
