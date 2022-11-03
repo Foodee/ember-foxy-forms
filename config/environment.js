@@ -26,6 +26,7 @@ module.exports = function (/* environment, appConfig */) {
 
         controlsFolder: 'form-controls',
         controlPrefix: 'ff-',
+        formActionDebounce: 200,
       },
     },
   };

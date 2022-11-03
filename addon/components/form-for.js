@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 import { arg, func } from 'ember-arg-types';
-import { bool, string, object, boolean } from 'prop-types';
+import { bool, string, object, boolean, number } from 'prop-types';
 import { next } from '@ember/runloop';
 import { dasherize } from '@ember/string';
 import { action, setProperties, notifyPropertyChange } from '@ember/object';
@@ -9,6 +9,7 @@ import { A } from '@ember/array';
 import { inject as service } from '@ember/service';
 import { Promise } from 'rsvp';
 import { tracked } from '@glimmer/tracking';
+import { debounce } from '@ember/runloop';
 
 export default class FormForComponent extends Component {
   @service formFor;
@@ -154,6 +155,19 @@ export default class FormForComponent extends Component {
     return this.useBemClassConfig || false;
   }
 
+
+  /**
+   * How long in ms to debounce the form submit, useful for autoSubmit situations
+   * @property formActionDebounce
+   * @type number
+   * @default 200
+   * @public
+   */
+  @arg(number)
+  get formActionDebounce() {
+    return this.formFor.formActionDebounce ?? 0;
+  }
+
   /**
    * A class which will be appended to the form for styling purposes using bem style
    * @property _bemClass
@@ -206,6 +220,7 @@ export default class FormForComponent extends Component {
       ? this.formFor.customButtonComponent
       : 'form-button';
   }
+
 
   // --------------------------------------------------------------------------------
   // This section is where the DSL syntax lives
@@ -798,7 +813,11 @@ export default class FormForComponent extends Component {
    * @method doSubmit
    * @public
    */
-  async doSubmit() {
+  doSubmit() {
+    return debounce(this, '_doSubmit', this.formActionDebounce);
+  }
+
+  async _doSubmit() {
     const lastDoSubmit = this.lastDoSubmit;
 
     const model = this.model;
@@ -1191,6 +1210,7 @@ export default class FormForComponent extends Component {
   updateValues(keyValues) {
     return this.updateValuesFn(keyValues);
   }
+
   @action testClass(type) {
     return `${type}-button`;
   }
