@@ -15,7 +15,7 @@ ember install ember-foxy-forms
 ## Usage
 
 ```hbs
-<Form @for={{this.model}} as |form|>
+<Form @for={{this.model}} as |f|>
    <f.field @for="attribute" @using="input" />
 </Form>
 ```
