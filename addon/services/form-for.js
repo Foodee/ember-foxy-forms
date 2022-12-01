@@ -30,6 +30,7 @@ export default class FormForService extends Service {
     this.customLabelComponent = this.config.customLabelComponent;
     this.customInfoTextComponent = this.config.customInfoTextComponent;
     this.preventsNavigationByDefault = this.config.preventsNavigationByDefault;
+    this.formActionDebounce = this.config.formActionDebounce;
 
     this.router.on('routeWillChange', (transition) => {
       if (
