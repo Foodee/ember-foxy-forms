@@ -85,6 +85,7 @@ export default class FormForComponent extends Component {
   @readOnly('formFor.useBemClass') useBemClassConfig;
   @readOnly('formFor.formClasses') formClasses;
   @readOnly('formFor.buttonClasses') buttonClasses;
+  @readOnly('formFor.submittingClass') _submittingClasses;
   @readOnly('formFor.buttonActingClass') buttonActingClass;
   @readOnly('formFor.submitButtonClasses') submitButtonClasses;
   @readOnly('formFor.resetButtonClasses') resetButtonClasses;
@@ -152,6 +153,11 @@ export default class FormForComponent extends Component {
   @arg(bool)
   get useBemClass() {
     return this.useBemClassConfig || false;
+  }
+
+  @arg(string)
+  get submittingClasses() {
+    return this._submittingClasses;
   }
 
   /**

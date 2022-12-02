@@ -6,6 +6,7 @@ module.exports = function (/* environment, appConfig */) {
       'ember-foxy-forms': {
         testingClassPrefix: '--',
         fieldClasses: 'field',
+        submittingClasses: 'submitting',
         formClasses: 'form',
         bemClassPrefix: '',
         useBemClass: false,
