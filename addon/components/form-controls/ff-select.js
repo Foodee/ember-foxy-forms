@@ -19,7 +19,10 @@ export default class FormControlsFfSelectComponent extends FormControlsAbstractS
 
   @action
   handleChange(event) {
-    let value = JSON.parse(event.target.value);
+    let value = event.target.value;
+    if (value === 'true' || value === 'false') {
+      value = JSON.parse(event.target.value);
+    }
 
     value = this.values.find((_) => this._compare(_, value));
 
