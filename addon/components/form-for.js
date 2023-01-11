@@ -478,7 +478,9 @@ export default class FormForComponent extends Component {
    * @public
    */
   @arg(object)
-  validationOptions = {};
+  get validationOptions() {
+    return { only: this.fields.mapBy('for') };
+  }
 
   /**
    * Allows multiple submit calls to be queued
@@ -1197,6 +1199,7 @@ export default class FormForComponent extends Component {
   updateValues(keyValues) {
     return this.updateValuesFn(keyValues);
   }
+
   @action testClass(type) {
     return `${type}-button`;
   }
