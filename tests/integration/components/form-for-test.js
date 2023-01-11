@@ -357,7 +357,7 @@ module('Integration | Component | form for', function (hooks) {
         <f.reset/>
         <f.destroy/>
         <f.button/>
-      </FormFor>  
+      </FormFor>
     `);
 
     assert
@@ -379,7 +379,7 @@ module('Integration | Component | form for', function (hooks) {
       <f.reset/>
       <f.destroy/>
       <f.button/>
-    </FormFor>  
+    </FormFor>
   `);
     assert
       .dom('[data-test-form-button="submit"]')
@@ -681,5 +681,26 @@ module('Integration | Component | form for', function (hooks) {
     assert.dom('[data-test-ff-control-input]').hasAttribute('aria-required');
     assert.dom('[data-test-form-button="submit"]').doesNotHaveClass('disabled');
     assert.dom('[data-test-form-button="submit"]').doesNotHaveAttribute('disabled');
+  });
+
+  test('builds its default validation options out of the fields that are registered', async function (assert) {
+    this.model = { foo: null, bar: null };
+
+    this.validationOptions = {};
+
+    this.registerForm = (form, _element) => {
+      this.validationOptions = form.validationOptions;
+    };
+
+    await render(hbs`
+      <Form @for={{this.model}} as |f|>
+        <f.field @for='foo' />
+        <f.submit />
+        <div {{did-insert (action this.registerForm f.self)}} ></div>
+      </Form>
+    `);
+
+    assert.equal(this.validationOptions.only[0], 'foo');
+    assert.equal(this.validationOptions.only.length, 1);
   });
 });

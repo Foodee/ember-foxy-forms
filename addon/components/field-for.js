@@ -122,6 +122,14 @@ export default class FieldForComponent extends Component {
   @notEmpty('errors') hasErrors;
 
   /**
+   * The property this field controls
+   *
+   * @returns {String}
+   */
+  @arg(string)
+  for = '';
+
+  /**
    * Allowing for overriding existing errors from model
    *
    * @returns {String[]}
