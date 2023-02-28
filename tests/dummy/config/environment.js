@@ -26,6 +26,7 @@ module.exports = function (environment) {
         useBemClass: false,
         fieldForControlCalloutClasses: 'field-for-control-callout',
         fieldForControlCalloutPosition: 'bottom left',
+        requiredText: '*',
 
         buttonClasses: 'a-button',
         buttonActingClass: 'acting',

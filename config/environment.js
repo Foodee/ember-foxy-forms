@@ -12,6 +12,8 @@ module.exports = function (/* environment, appConfig */) {
         useBemClass: false,
         fieldForControlCalloutClasses: 'field-for-control-callout',
         fieldForControlCalloutPosition: 'bottom left',
+        showRequiredIndicator: true,
+        requiredText: '*',
 
         buttonClasses: '',
         buttonActingClass: '',

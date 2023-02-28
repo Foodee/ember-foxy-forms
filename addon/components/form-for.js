@@ -501,6 +501,16 @@ export default class FormForComponent extends Component {
   @arg(bool)
   enforceRequiredFields = false;
 
+  @arg(bool)
+  get showRequiredIndicator() {
+    return this.formFor.showRequiredIndicator ?? false;
+  }
+
+  @arg(string)
+  get requiredText() {
+    return this.formFor.requiredText;
+  }
+
   /**
    * Resets the dirty model properties to their previous values on the form destruction. Turning this off will
    * leave the model in a dirty state, even when the user navigates away.

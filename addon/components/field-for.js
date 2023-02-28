@@ -526,7 +526,9 @@ export default class FieldForComponent extends Component {
    * @public
    */
   @arg(bool)
-  required = false;
+  get required() {
+    return get(this, `form.model.validations.${this.for}.presence`) ?? false;
+  }
 
   /**
    * Whether or not this field is disabled

@@ -2,7 +2,7 @@
   {{#if this.customLabelComponent}}
     {{component this.customLabelComponent for=@controlId label=@label}}
   {{else}}
-    <label for="{{@controlId}}" ...attributes>
+    <label for="{{@controlId}}" data-test-label-for ...attributes>
       {{#if (has-block)}}
         {{yield @controlId}}
       {{else}}
@@ -13,8 +13,12 @@
         {{#if this.formFor.customInfoTextComponent}}
           {{component this.formFor.customInfoTextComponent infoText=@infoText}}
         {{else}}
-          <span title="{{@infoText}}">ℹ️</span>
+          <span class="ff-info-text" title="{{@infoText}}">ℹ️</span>
         {{/if}}
+      {{/if}}
+
+      {{#if this.showRequiredIndicator}}
+        <span class="ff-required-text">{{this.requiredText}}</span>
       {{/if}}
     </label>
   {{/if}}

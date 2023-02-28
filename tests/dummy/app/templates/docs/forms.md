@@ -262,3 +262,9 @@ forms: ```form-for-model-name```
 fields: ```form-for-model-name__field-for-field-name```
 
 buttons: ```form-for-model-name__button-type-button```
+
+## Required Field Text
+
+If a form's model has validations (currently only ember-model-validator) then it can be configured to display a required 
+indicator in the label. This text can be configured at the environment level, and the form level. You can also override
+the required value as an argument.
