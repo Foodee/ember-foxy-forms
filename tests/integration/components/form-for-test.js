@@ -703,4 +703,39 @@ module('Integration | Component | form for', function (hooks) {
     assert.equal(this.validationOptions.only[0], 'foo');
     assert.equal(this.validationOptions.only.length, 1);
   });
+
+  test('displays the required text if the form is configured to do so and an attribute is marked required', async function (assert) {
+    this.model = { foo: null, bar: null, validations: { foo: { presence: true } } };
+
+    await render(hbs`
+      <Form
+      @for={{this.model}}
+      @enforceRequiredFields={{true}}
+      @showRequiredIndicator={{true}}
+      as |form|>
+        <form.field @for='foo' @label='test'/>
+        <form.submit />
+      </Form>
+    `);
+
+    assert.dom('[data-test-field-for="object_foo"] [data-test-label-for]').containsText('*');
+  });
+
+  test('lets you override the required text', async function (assert) {
+    this.model = { foo: null, bar: null, validations: { foo: { presence: true } } };
+
+    await render(hbs`
+      <Form
+      @for={{this.model}}
+      @enforceRequiredFields={{true}}
+      @showRequiredIndicator={{true}}
+      @requiredText="required"
+      as |form|>
+        <form.field @for='foo' @label='test'/>
+        <form.submit />
+      </Form>
+    `);
+
+    assert.dom('[data-test-field-for="object_foo"] [data-test-label-for]').containsText('required');
+  });
 });

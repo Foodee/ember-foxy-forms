@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { inject as service } from '@ember/service';
 import { arg } from 'ember-arg-types';
-import { object, string } from 'prop-types';
+import { object, string, boolean } from 'prop-types';
 import { next } from '@ember/runloop';
 
 export default class LabelFor extends Component {
@@ -19,6 +19,20 @@ export default class LabelFor extends Component {
 
   @arg(object)
   field;
+
+  @arg(object)
+  form;
+
+  @arg(string)
+  requiredText;
+
+  @arg(boolean)
+  required = false;
+
+  @arg(boolean)
+  get showRequiredIndicator() {
+    return this.required && this.form?.showRequiredIndicator;
+  }
 
   constructor() {
     super(...arguments);

@@ -31,6 +31,8 @@ export default class FormForService extends Service {
     this.customLabelComponent = this.config.customLabelComponent;
     this.customInfoTextComponent = this.config.customInfoTextComponent;
     this.preventsNavigationByDefault = this.config.preventsNavigationByDefault;
+    this.showRequiredIndicator = this.config.showRequiredIndicator;
+    this.requiredText = this.config.requiredText;
 
     this.router.on('routeWillChange', (transition) => {
       if (

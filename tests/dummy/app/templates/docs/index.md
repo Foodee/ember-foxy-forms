@@ -38,6 +38,14 @@ APP: {
     formClasses: 'form',
     fieldForControlCalloutClasses: 'field-for-control-callout',
     fieldForControlCalloutPosition: 'bottom left',
+      
+    // bem classes 
+    bemClassPrefix: '',
+    useBemClass: false,
+      
+    // required indicator 
+    showRequiredIndicator: true,
+    requiredText: '*',
 
     buttonClasses: '',
     submitButtonClasses: '',
