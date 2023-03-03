@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { arg } from 'ember-arg-types';
-import { array, func, bool, string, object, any } from 'prop-types';
+import { array, func, bool, string, object, any, oneOf } from 'prop-types';
 import { oneWay, notEmpty, gt, union, readOnly } from '@ember/object/computed';
 import { dasherize } from '@ember/string';
 import { isArray } from '@ember/array';
@@ -101,6 +101,7 @@ export default class FieldForComponent extends Component {
   @readOnly('formFor.buttonClasses') buttonClasses;
   @readOnly('formFor.fieldClasses') fieldClasses;
   @readOnly('formFor.testingClassPrefix') testingClassPrefix;
+  
 
   /**
    * Whether or not this field is a composite value, meaning
@@ -126,7 +127,7 @@ export default class FieldForComponent extends Component {
    *
    * @returns {String}
    */
-  @arg(string)
+  @arg(oneOf(array, string))
   for = '';
 
   /**
@@ -251,6 +252,17 @@ export default class FieldForComponent extends Component {
    */
   get isReallyDirty() {
     return !(this.isDestroyed && this.isDestroying) && this._valueIsDirty && this._valueIsNotBlank;
+  }
+
+  /**
+   * The name of the field's grid area
+   * @property gridArea
+   * @type String
+   * @default false
+   * @public
+   */
+  get gridArea () {
+    return `grid-area: ${this.args.gridAreaName ?? this._dasherizedParams}`
   }
 
   get _valueIsDirty() {
@@ -527,7 +539,7 @@ export default class FieldForComponent extends Component {
    */
   @arg(bool)
   get required() {
-    return get(this, `form.model.validations.${this.for}.presence`) ?? false;
+    return Boolean(get(this, `form.model.validations.${this.for}.presence`));
   }
 
   /**
@@ -765,6 +777,13 @@ export default class FieldForComponent extends Component {
   formDidReset = (model) => {
     this._resetField(model);
   };
+
+   /**
+   * The name of the field's grid area if passed in as a property
+   * @param {String} gridAreaName
+   * @public
+   */
+  @arg(string) gridAreaName;
 
   /**
    * Handles change method from the control, you can override this
