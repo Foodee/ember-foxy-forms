@@ -6,6 +6,7 @@ import { run } from '@ember/runloop';
 import hbs from 'htmlbars-inline-precompile';
 import faker from 'faker';
 import sinon from 'sinon';
+import { A } from '@ember/array';
 
 module('Integration | Component | field container', function (hooks) {
   setupRenderingTest(hooks);
@@ -291,5 +292,131 @@ module('Integration | Component | field container', function (hooks) {
 
     await click('[data-test-commit-buttons-cancel]');
     assert.equal(this.model.foo, initiaValue);
+  });
+
+  test('it can set default values on load if field is empty on form level', async function (assert) {
+    this.model = {
+      string: null,
+      number: null,
+      range: null,
+      color: null,
+      boolean: null,
+      radio: null,
+      select: null,
+      objectSelect: null,
+      checkboxSelect: A([]),
+      checkboxSelectObject: A([]),
+    };
+
+    this.defaultValues = {
+      string: 'string',
+      number: 5,
+      range: 5,
+      color: '#fff',
+      boolean: true,
+      radio: '2',
+      select: '2',
+      objectSelect: { id: '2', label: 'two ' },
+      checkboxSelect: A(['2']),
+      checkboxSelectObject: A([{ id: '2', label: 'two' }]),
+    };
+
+    this.values = ['1', '2', '3'];
+    this.objectValues = [
+      { id: '1', label: 'one' },
+      { id: '2', label: 'two' },
+    ];
+
+    await render(hbs`
+      <FormFor @model={{this.model}} @defaultValues={{this.defaultValues}} as |f|>
+        <f.fieldFor @for='string' @using='input'/>
+        <f.fieldFor @for='color' @using='number'/>
+        <f.fieldFor @for='number' @using='number'/>
+        <f.fieldFor @for='range' @using='range'/>
+        <f.fieldFor @for='boolean' @using='checkbox'/>
+        <f.fieldFor @for='radio' @using='radio' @values={{this.values}}/>
+        <f.fieldFor @for='select' @using='select' @values={{this.values}}/>
+        <f.fieldFor @for='objectSelect' @using='select' @values={{this.objectValues}}/>
+        <f.fieldFor @for='checkboxSelect' @using='checkbox-select' @values={{this.values}}/>
+        <f.fieldFor @for='checkboxSelectObject' @using='checkbox-select' @values={{this.objectValues}}/>
+      </FormFor>
+    `);
+
+    assert.equal(this.model.string, this.defaultValues.string);
+    assert.equal(this.model.number, this.defaultValues.number);
+    assert.equal(this.model.range, this.defaultValues.range);
+    assert.equal(this.model.color, this.defaultValues.color);
+    assert.equal(this.model.boolean, this.defaultValues.boolean);
+    assert.equal(this.model.radio, this.defaultValues.radio);
+    assert.equal(this.model.select, this.defaultValues.select);
+    assert.equal(this.model.objectSelect.id, this.defaultValues.objectSelect.id);
+    assert.equal(this.model.checkboxSelect, this.defaultValues.checkboxSelect);
+    assert.equal(
+      this.model.checkboxSelectObject.firstObject.id,
+      this.defaultValues.checkboxSelectObject.firstObject.id
+    );
+  });
+
+  test('it can set default values on field level', async function (assert) {
+    this.model = {
+      string: null,
+      number: null,
+      range: null,
+      color: null,
+      boolean: null,
+      radio: null,
+      select: null,
+      objectSelect: null,
+      checkboxSelect: A([]),
+      checkboxSelectObject: A([]),
+    };
+
+    this.defaultValues = {
+      string: 'string',
+      number: 5,
+      range: 5,
+      color: '#fff',
+      boolean: true,
+      radio: '2',
+      select: '2',
+      objectSelect: { id: '2', label: 'two ' },
+      checkboxSelect: A(['2']),
+      checkboxSelectObject: A([{ id: '2', label: 'two' }]),
+    };
+
+    this.values = ['1', '2', '3'];
+    this.objectValues = [
+      { id: '1', label: 'one' },
+      { id: '2', label: 'two' },
+    ];
+
+    await render(hbs`
+      <FormFor @model={{this.model}} as |f|>
+        <f.fieldFor @for='string' @using='input' @defaultValue={{this.defaultValues.string}} />
+        <f.fieldFor @for='color' @using='number' @defaultValue={{this.defaultValues.color}} />
+        <f.fieldFor @for='number' @using='number' @defaultValue={{this.defaultValues.number}} />
+        <f.fieldFor @for='range' @using='range' @defaultValue={{this.defaultValues.range}} />
+        <f.fieldFor @for='boolean' @using='checkbox' @defaultValue={{this.defaultValues.boolean}} />
+        <f.fieldFor @for='radio' @using='radio' @values={{this.values}} @defaultValue={{this.defaultValues.radio}} />
+        <f.fieldFor @for='select' @using='select' @values={{this.values}} @defaultValue={{this.defaultValues.select}} />
+        <f.fieldFor @for='objectSelect' @using='select' @values={{this.objectValues}} @defaultValue={{this.defaultValues.objectSelect}} />
+        <f.fieldFor @for='checkboxSelect' @using='checkbox-select' @values={{this.values}} @defaultValue={{this.defaultValues.checkboxSelect}} />
+        <f.fieldFor @for='checkboxSelectObject' @using='checkbox-select' @defaultValue={{this.defaultValues.checkboxSelectObject}}/>
+      </FormFor>
+    `);
+
+    assert.equal(this.model.string, this.defaultValues.string);
+    assert.equal(this.model.number, this.defaultValues.number);
+    assert.equal(this.model.range, this.defaultValues.range);
+    assert.equal(this.model.color, this.defaultValues.color);
+    assert.equal(this.model.boolean, this.defaultValues.boolean);
+    assert.equal(this.model.radio, this.defaultValues.radio);
+    assert.equal(this.model.select, this.defaultValues.select);
+    assert.equal(this.model.objectSelect.id, this.defaultValues.objectSelect.id);
+    assert.equal(this.model.checkboxSelect, this.defaultValues.checkboxSelect);
+    assert.equal(
+      this.model.checkboxSelectObject.firstObject.id,
+      this.defaultValues.checkboxSelectObject.firstObject.id
+    );
   });
 });

@@ -483,6 +483,16 @@ export default class FormForComponent extends Component {
   }
 
   /**
+   * Values that get committed on insert if the field is empty
+   * @property defaultValues
+   * @type Object
+   * @default {}
+   * @public
+   */
+  @arg(object)
+  defaultValues = {};
+
+  /**
    * Allows multiple submit calls to be queued
    * @property allow-submit-enqueue
    * @type Boolean

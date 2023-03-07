@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { arg } from 'ember-arg-types';
-import { array, func, bool, string, object, any } from 'prop-types';
+import { array, func, bool, string, object, any, oneOf } from 'prop-types';
 import { oneWay, notEmpty, gt, union, readOnly } from '@ember/object/computed';
 import { dasherize } from '@ember/string';
 import { isArray } from '@ember/array';
@@ -13,6 +13,7 @@ import { isBlank } from '@ember/utils';
 import { inject as service } from '@ember/service';
 import { getOwner } from '@ember/application';
 import { isPlainObject } from 'is-plain-object';
+import { isEmpty } from '@ember/utils';
 
 export default class FieldForComponent extends Component {
   @service formFor;
@@ -126,7 +127,7 @@ export default class FieldForComponent extends Component {
    *
    * @returns {String}
    */
-  @arg(string)
+  @arg(oneOf[(string, array)])
   for = '';
 
   /**
@@ -693,6 +694,14 @@ export default class FieldForComponent extends Component {
     return this.form?._customLabelComponent || '';
   }
 
+  @arg
+  get defaultValue() {
+    if (typeof this.for !== 'string' || !this.form?.defaultValues) {
+      return undefined;
+    }
+    return get(this.form.defaultValues, this.for);
+  }
+
   /**
    * Function for formatting the value override for custom behavior
    * @method formatValue
@@ -851,5 +860,11 @@ export default class FieldForComponent extends Component {
   @action
   doReset() {
     return this.args.form.doReset();
+  }
+
+  @action setDefault() {
+    if (isEmpty(this.value) && !isEmpty(this.defaultValue)) {
+      this.handleChange(this.defaultValue);
+    }
   }
 }

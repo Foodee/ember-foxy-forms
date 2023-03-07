@@ -17,6 +17,7 @@ The various features can be toggled on / off below.
         @autoSubmit={{this.autoSubmit}} 
         @scrollToFirstVisibleError={{this.scrollToFirstVisibleError}}
         @useBemClass={{this.useBemClass}}
+        @defaultValues={{this.defaultValues}}
 
         @successfulSubmitMessage={{this.successfulSubmitMessage}}
         @failedSubmitMessage={{this.failedSubmitMessage}}
