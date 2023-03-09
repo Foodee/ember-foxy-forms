@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { arg } from 'ember-arg-types';
-import { array, func, bool, string, object, any, oneOf } from 'prop-types';
+import { array, func, bool, string, object, any, oneOfType } from 'prop-types';
 import { oneWay, notEmpty, gt, union, readOnly } from '@ember/object/computed';
 import { dasherize } from '@ember/string';
 import { isArray } from '@ember/array';
@@ -101,7 +101,7 @@ export default class FieldForComponent extends Component {
   @readOnly('formFor.buttonClasses') buttonClasses;
   @readOnly('formFor.fieldClasses') fieldClasses;
   @readOnly('formFor.testingClassPrefix') testingClassPrefix;
-  
+
 
   /**
    * Whether or not this field is a composite value, meaning
@@ -127,7 +127,7 @@ export default class FieldForComponent extends Component {
    *
    * @returns {String}
    */
-  @arg(oneOf(array, string))
+  @arg(oneOfType([array, string]))
   for = '';
 
   /**
@@ -261,8 +261,10 @@ export default class FieldForComponent extends Component {
    * @default false
    * @public
    */
+  // NOTE: grid area names are plain strings so values like 'unset' or 'undefined' will be
+  // interpolated. To get around this, we pass a string with no value.
   get gridArea () {
-    return `grid-area: ${this.args.gridAreaName ?? this._dasherizedParams}`
+    return this.args.gridAreaDisabled ? '' : this._dasherizedParams;
   }
 
   get _valueIsDirty() {
@@ -778,12 +780,12 @@ export default class FieldForComponent extends Component {
     this._resetField(model);
   };
 
-   /**
-   * The name of the field's grid area if passed in as a property
+  /**
+   * Disable the default behaviour of the fields having named grid areas
    * @param {String} gridAreaName
    * @public
    */
-  @arg(string) gridAreaName;
+  @arg(string) gridAreaDisabled = false;
 
   /**
    * Handles change method from the control, you can override this

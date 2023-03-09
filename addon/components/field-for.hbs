@@ -16,7 +16,7 @@
       this.using
       "-field"
     }}
-    style={{html-safe this.gridArea}}
+    {{style grid-area=this.gridArea}}
     {{on "change" (stop-propagation)}}
     ...attributes
     data-test-field-for={{this._testingSelector}}
