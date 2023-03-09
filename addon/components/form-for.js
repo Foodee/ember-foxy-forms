@@ -533,6 +533,12 @@ export default class FormForComponent extends Component {
   @arg(bool)
   resetOnRejectedConfirm = true;
 
+  /**
+   * If true, checks isDirty to reset on destroy
+   */
+  @arg(bool)
+  resetIfDirtyOnly = true;
+
   // --------------------------------------------------------------------------------
   // Methods
   //
@@ -1139,7 +1145,8 @@ export default class FormForComponent extends Component {
   }
 
   willDestroy() {
-    if (this.isDirty && this.resetOnDestroy) {
+    const dirtyChecked = !this.resetIfDirtyOnly || this.isDirty;
+    if (this.resetOnDestroy && dirtyChecked) {
       this.doReset();
     }
 

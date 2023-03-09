@@ -476,7 +476,7 @@ module('Integration | Component | form for', function (hooks) {
     assert.dom('[data-test-field-for]').hasClass('readonly');
   });
 
-  test('it runs all lifecycle hoooks when reseting the form', async function (assert) {
+  test('it runs all lifecycle hooks when reseting the form', async function (assert) {
     sinon.stub(window, 'confirm').returns(true);
 
     this.model = { foo: 'bar' };
