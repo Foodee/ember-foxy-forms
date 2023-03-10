@@ -10,6 +10,8 @@ module.exports = function (/* environment, appConfig */) {
         formClasses: 'form',
         bemClassPrefix: '',
         useBemClass: false,
+        gridTemplatePrefix: '',
+        useGridTemplate: false,
         fieldForControlCalloutClasses: 'field-for-control-callout',
         fieldForControlCalloutPosition: 'bottom left',
         showRequiredIndicator: true,

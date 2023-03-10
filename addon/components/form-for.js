@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 import { arg, func } from 'ember-arg-types';
-import { bool, string, object, boolean } from 'prop-types';
+import { bool, string, object } from 'prop-types';
 import { next } from '@ember/runloop';
 import { dasherize } from '@ember/string';
 import { action, setProperties, notifyPropertyChange } from '@ember/object';
@@ -83,6 +83,8 @@ export default class FormForComponent extends Component {
   @readOnly('formFor.testingClassPrefix') testingClassPrefix;
   @readOnly('formFor.bemClassPrefix') bemClassPrefix;
   @readOnly('formFor.useBemClass') useBemClassConfig;
+  @readOnly('formFor.gridTemplatePrefix') gridTemplatePrefix;
+  @readOnly('formFor.useGridTemplate') useGridTemplateConfig;
   @readOnly('formFor.formClasses') formClasses;
   @readOnly('formFor.buttonClasses') buttonClasses;
   @readOnly('formFor.submittingClass') _submittingClasses;
@@ -153,6 +155,18 @@ export default class FormForComponent extends Component {
   @arg(bool)
   get useBemClass() {
     return this.useBemClassConfig || false;
+  }
+
+  /**
+   * Whether or not this form uses grid template areas in inline styles
+   * @property useGridTemplate
+   * @type boolean
+   * @default false
+   * @public
+   */
+  @arg(bool)
+  get useGridTemplate() {
+    return this.useGridTemplateConfig || false;
   }
 
   @arg(string)
@@ -405,7 +419,7 @@ export default class FormForComponent extends Component {
    * @default true
    * @public
    */
-  @arg(boolean)
+  @arg(bool)
   confirmsDestroy = true;
 
   /**
@@ -495,7 +509,7 @@ export default class FormForComponent extends Component {
   @arg(string)
   modelName = null;
 
-  @arg(boolean)
+  @arg(bool)
   useCustomButtonComponent = true;
 
   @arg(bool)

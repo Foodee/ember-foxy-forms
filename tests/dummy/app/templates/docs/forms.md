@@ -251,7 +251,7 @@ fields ```[data-test-field-for] [data-test-resource-id=<model-name>-<params>]```
 Form for will automatically generate [BEM style](http://getbem.com) classes on its elements.
 This feature can be turned on either by setting `useBemClass` to `true` in the config or passing it as an arg.
 
-{{#docs-snippet name="bemClass.js"}}
+{{#docs-snippet name="bemClass.hbs"}}
   <Form @useBemClass={{true}} />
 {{/docs-snippet}}
 
@@ -262,6 +262,43 @@ forms: ```form-for-model-name```
 fields: ```form-for-model-name__field-for-field-name```
 
 buttons: ```form-for-model-name__button-type-button```
+
+## CSS Grid Helpers
+
+{{#docs-snippet name="useGridTemplate.hbs"}}
+  <Form @useGridTemplate={{true}} as |f|>
+    <f.field  @name="email"     />
+    <f.field  @name="password" />
+    <f.submit                  />
+  </Form>
+{{/docs-snippet}}
+
+Form for will automatically generate [grid-areas](https://developer.mozilla.org/en-US/docs/Web/CSS/grid-area) defined 
+as inline styles on its elements. This feature can be turned on either by setting `useGridTemplate` to `true` in the 
+config or passing it as an arg. This allows you to define your form layout using the [grid-template](https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template)
+syntax. 
+
+With the above form, achieving a two-column layout for the email and password fields can be accomplished with the following CSS:
+
+```css
+.form-for {
+  display: grid;
+  grid-gap: 1rem;
+  grid-template-areas:
+    'email  password'
+    'submit submit  ';
+}
+```
+
+If `gridTemplatePrefix` is provided in the config, it will use it as a prefix for the grid area names.
+
+```css
+.form-for {
+  grid-template-areas:
+    'ff-email  ff-password'
+    'ff-submit ff-submit  ';
+}
+```
 
 ## Required Field Text
 
