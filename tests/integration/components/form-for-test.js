@@ -738,4 +738,52 @@ module('Integration | Component | form for', function (hooks) {
 
     assert.dom('[data-test-field-for="object_foo"] [data-test-label-for]').containsText('required');
   });
+
+  test('if the useGridTemplate option is enabled, form fields and buttons should render with their named inline styles', async function (assert) {
+    this.model = { foo: null };
+
+    await render(hbs`
+      <Form
+        @model={{this.model}}
+        @useGridTemplate={{true}}
+      as |form|>
+        <form.field @for='foo' @label='test'/>
+        <form.submit />
+      </Form>
+    `);
+
+    assert
+      .dom('[data-test-field-for="object_foo"]')
+      .hasStyle({ gridArea: 'foo / foo / foo / foo' });
+    assert
+      .dom('[data-test-form-button="submit"')
+      .hasStyle({ gridArea: 'submit / submit / submit / submit' });
+  });
+
+  test('it should append the gridTemplatePrefix to the grid areas for form fields and buttons', async function (assert) {
+    this.forForService = this.owner.lookup('service:form-for');
+
+    run(() => {
+      this.forForService.gridTemplatePrefix = 'ff-';
+      this.forForService.useGridTemplate = true;
+    });
+
+    this.model = { foo: null };
+
+    await render(hbs`
+      <Form
+        @model={{this.model}}
+      as |form|>
+        <form.field @for='foo' @label='test'/>
+        <form.submit />
+      </Form>
+    `);
+
+    assert
+      .dom('[data-test-field-for="object_foo"]')
+      .hasStyle({ gridArea: 'ff-foo / ff-foo / ff-foo / ff-foo' });
+    assert
+      .dom('[data-test-form-button="submit"')
+      .hasStyle({ gridArea: 'ff-submit / ff-submit / ff-submit / ff-submit' });
+  });
 });

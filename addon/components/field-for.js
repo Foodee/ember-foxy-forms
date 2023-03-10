@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { arg } from 'ember-arg-types';
-import { array, func, bool, string, object, any } from 'prop-types';
+import { array, func, bool, string, object, any, oneOfType } from 'prop-types';
 import { oneWay, notEmpty, gt, union, readOnly } from '@ember/object/computed';
 import { dasherize } from '@ember/string';
 import { isArray } from '@ember/array';
@@ -103,6 +103,16 @@ export default class FieldForComponent extends Component {
   @readOnly('formFor.testingClassPrefix') testingClassPrefix;
 
   /**
+   * Disable named grid areas at the prop level by default
+   * @param {String} gridAreaName
+   * @public
+   */
+  @arg(bool)
+  get useGridTemplate() {
+    return this.args?.form?.useGridTemplate ?? false;
+  }
+
+  /**
    * Whether or not this field is a composite value, meaning
    * that it exposes more than one value to the control layer
    * by way of a pojo mapping keys to values
@@ -126,7 +136,7 @@ export default class FieldForComponent extends Component {
    *
    * @returns {String}
    */
-  @arg(string)
+  @arg(oneOfType([array, string]))
   for = '';
 
   /**
@@ -251,6 +261,22 @@ export default class FieldForComponent extends Component {
    */
   get isReallyDirty() {
     return !(this.isDestroyed && this.isDestroying) && this._valueIsDirty && this._valueIsNotBlank;
+  }
+
+  /**
+   * The name of the field's grid area
+   * @property gridArea
+   * @type String
+   * @default false
+   * @public
+   */
+  get gridArea() {
+    return this.useGridTemplate ? this._gridAreaName : 'auto';
+  }
+
+  get _gridAreaName() {
+    const prefix = this.args.form.gridTemplatePrefix ?? '';
+    return `${prefix}${this._dasherizedParams}`;
   }
 
   get _valueIsDirty() {

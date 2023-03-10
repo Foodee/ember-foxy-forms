@@ -7,6 +7,7 @@
     "
   type={{if (eq this.buttonType "submit") "submit" "button"}}
   disabled={{@disabled}}
+  {{style grid-area=this.gridArea}}
   ...attributes
   data-test-form-button="{{this.buttonType}}"
   {{on "click" (stop-propagation this.handleClick)}}
