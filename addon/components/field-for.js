@@ -553,7 +553,7 @@ export default class FieldForComponent extends Component {
    */
   @arg(bool)
   get required() {
-    return get(this, `form.model.validations.${this.for}.presence`) ?? false;
+    return Boolean(get(this, `form.model.validations.${this.for}.presence`)) ?? false;
   }
 
   /**
