@@ -71,13 +71,34 @@ export default class FormForComponent extends Component {
 
   /**
    * Denotes when this particular form is submitting, an none of it's children
-   * @property _isSubmitting
+   * @property isSubmitting
    * @type Boolean
    * @default false
    */
-  @tracked _isSubmitting = false;
+  @tracked isSubmitting = false;
 
+  /**
+   * Denotes arbitrary information about the status of the submission
+   * @property status
+   * @type Status
+   * @default Status
+   */
+  @tracked status = { type: '', data: undefined };
+
+  /**
+   * Denotes whether the form is resetting
+   * @property isResetting
+   * @type Boolean
+   * @default false
+   */
   @tracked isResetting = false;
+
+  /**
+   * Denotes whether the form is in the process of destroying the record
+   * @property isDestroyingRecord
+   * @type Boolean
+   * @default false
+   */
   @tracked isDestroyingRecord = false;
 
   @readOnly('formFor.testingClassPrefix') testingClassPrefix;
@@ -95,6 +116,12 @@ export default class FormForComponent extends Component {
   @readOnly('formFor.customCommitCancelComponent') customCommitCancelComponent;
   @readOnly('formFor.customErrorComponent') customErrorComponent;
 
+  /**
+   * Denotes whether the form is resetting
+   * @property isResetting
+   * @type Boolean
+   * @default false
+   */
   /**
    * Custom Label Component for rendering all labels on this form
    * @property customLabelComponent
@@ -209,7 +236,7 @@ export default class FormForComponent extends Component {
    * @default false
    */
   get isSubmitting() {
-    return this._isSubmitting || (this.childForms || []).some((_) => _.isSubmitting);
+    return this.isSubmitting || (this.childForms || []).some((_) => _.isSubmitting);
   }
 
   /**
@@ -851,8 +878,8 @@ export default class FormForComponent extends Component {
 
       const onSubmit =
         this.allowSubmitQueue && lastDoSubmit
-          ? lastDoSubmit.then(() => this.onSubmit(model))
-          : this.onSubmit(model);
+          ? lastDoSubmit.then(() => this.onSubmit(model, this.foxySink))
+          : this.onSubmit(model, this.foxySink);
 
       const doSubmit = onSubmit
         .then(() => {
@@ -1063,7 +1090,7 @@ export default class FormForComponent extends Component {
    * @private
    */
   _markSubmitting() {
-    this._isSubmitting = true;
+    this.isSubmitting = true;
     this._recomputeIsSubmitting();
   }
 
@@ -1073,7 +1100,7 @@ export default class FormForComponent extends Component {
    * @private
    */
   _unmarkSubmitting() {
-    this._isSubmitting = false;
+    this.isSubmitting = false;
     this._recomputeIsSubmitting();
   }
 
@@ -1234,4 +1261,14 @@ export default class FormForComponent extends Component {
   @action testClass(type) {
     return `${type}-button`;
   }
+
+  foxySink = {
+    setStatus: (v) => (this.status = v),
+
+    // needed?
+
+    // setSubmitting: (v) => (this.isSubmitting = v),
+    // setResetting: (v) => (this.isResetting = v),
+    // setDestroyingRecord: (v) => (this.isDestroyingRecord = v),
+  };
 }
