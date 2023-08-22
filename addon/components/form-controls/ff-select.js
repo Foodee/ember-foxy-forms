@@ -8,15 +8,12 @@ export default class FormControlsFfSelectComponent extends FormControlsAbstractS
   @arg(string) placeholder = 'Please select an option...';
 
   @arg(bool) allowNone = false;
-
   get selected() {
-    return this.values.find((_) => this._compare(_, this.value));
+    return this.values?.find((_) => this._compare(_, this.value));
   }
-
   get isNoneSelected() {
     return !this.selected && !this.value;
   }
-
   @action
   handleChange(event) {
     let value = event.target.value;
