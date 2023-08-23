@@ -596,6 +596,32 @@ export default class FieldForComponent extends Component {
   }
 
   /**
+   * dom events that should hide popover
+   * inline-edit mode
+   * @property controlCalloutHideOn
+   * @type Boolean
+   * @default "blur escapekey"
+   * @public
+   */
+  @arg(string)
+  get controlCalloutHideOn() {
+    return this.form?.controlCalloutHideOn || 'blur escapekey';
+  }
+
+  /**
+   * dom events that should show popover
+   * inline-edit mode
+   * @property controlCalloutShowOn
+   * @type Boolean
+   * @default ""
+   * @public
+   */
+  @arg(string)
+  get controlCalloutShowOn() {
+    return this.form?.controlCalloutShowOn || '';
+  }
+
+  /**
    * Tooltip to append to the value when inline editing
    * @property valueTooltip
    * @type String
