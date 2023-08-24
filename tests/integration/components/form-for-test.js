@@ -704,6 +704,28 @@ module('Integration | Component | form for', function (hooks) {
     assert.equal(this.validationOptions.only.length, 1);
   });
 
+  test('builds its default validation options out of the fields that are registered for array fields', async function (assert) {
+    this.model = { foo: null, bar: null };
+
+    this.validationOptions = {};
+
+    this.registerForm = (form, _element) => {
+      this.validationOptions = form.validationOptions;
+    };
+
+    await render(hbs`
+      <Form @for={{this.model}} as |f|>
+        <f.field @for={{array 'foo' 'bar'}} />
+        <f.submit />
+        <div {{did-insert (action this.registerForm f.self)}} ></div>
+      </Form>
+    `);
+
+    assert.equal(this.validationOptions.only[0], 'foo');
+    assert.equal(this.validationOptions.only[1], 'bar');
+    assert.equal(this.validationOptions.only.length, 2);
+  });
+
   test('displays the required text if the form is configured to do so and an attribute is marked required', async function (assert) {
     this.model = { foo: null, bar: null, validations: { foo: { presence: true } } };
 
