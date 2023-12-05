@@ -776,10 +776,10 @@ module('Integration | Component | form for', function (hooks) {
 
     assert
       .dom('[data-test-field-for="object_foo"]')
-      .hasStyle({ gridArea: 'foo / foo / foo / foo' });
+      .hasStyle({ gridArea: 'foo' });
     assert
       .dom('[data-test-form-button="submit"')
-      .hasStyle({ gridArea: 'submit / submit / submit / submit' });
+      .hasStyle({ gridArea: 'submit' });
   });
 
   test('it should append the gridTemplatePrefix to the grid areas for form fields and buttons', async function (assert) {
@@ -803,9 +803,9 @@ module('Integration | Component | form for', function (hooks) {
 
     assert
       .dom('[data-test-field-for="object_foo"]')
-      .hasStyle({ gridArea: 'ff-foo / ff-foo / ff-foo / ff-foo' });
+      .hasStyle({ gridArea: 'ff-foo' });
     assert
       .dom('[data-test-form-button="submit"')
-      .hasStyle({ gridArea: 'ff-submit / ff-submit / ff-submit / ff-submit' });
+      .hasStyle({ gridArea: 'ff-submit' });
   });
 });
