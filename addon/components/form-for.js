@@ -9,8 +9,6 @@ import { A } from '@ember/array';
 import { inject as service } from '@ember/service';
 import { Promise } from 'rsvp';
 import { tracked } from '@glimmer/tracking';
-import { isArray } from '@ember/array';
-
 export default class FormForComponent extends Component {
   @service formFor;
   @service router;
