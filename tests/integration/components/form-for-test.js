@@ -774,12 +774,8 @@ module('Integration | Component | form for', function (hooks) {
       </Form>
     `);
 
-    assert
-      .dom('[data-test-field-for="object_foo"]')
-      .hasStyle({ gridArea: 'foo' });
-    assert
-      .dom('[data-test-form-button="submit"')
-      .hasStyle({ gridArea: 'submit' });
+    assert.dom('[data-test-field-for="object_foo"]').hasStyle({ gridArea: 'foo' });
+    assert.dom('[data-test-form-button="submit"').hasStyle({ gridArea: 'submit' });
   });
 
   test('it should append the gridTemplatePrefix to the grid areas for form fields and buttons', async function (assert) {
@@ -801,11 +797,7 @@ module('Integration | Component | form for', function (hooks) {
       </Form>
     `);
 
-    assert
-      .dom('[data-test-field-for="object_foo"]')
-      .hasStyle({ gridArea: 'ff-foo' });
-    assert
-      .dom('[data-test-form-button="submit"')
-      .hasStyle({ gridArea: 'ff-submit' });
+    assert.dom('[data-test-field-for="object_foo"]').hasStyle({ gridArea: 'ff-foo' });
+    assert.dom('[data-test-form-button="submit"').hasStyle({ gridArea: 'ff-submit' });
   });
 });

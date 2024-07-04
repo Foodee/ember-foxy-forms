@@ -1,12 +1,9 @@
 # Form Features in detail
 
-FoxyForms is a fully featured form framework, mostly designed for dealing with ember-data models. It comes with a number
-of features that make composing UIs very simple.
+## Error Mapping
 
-## Value & Error Mapping
-
-The primary role of FoxyForms is to map errors / values from a model to various form controls. The assume structure of
-the model looks something like this:
+`ember-foxy-forms` will automatically map error (messages) from a model to form controls. It assumes the structure of
+the model is the following:
 
 {{#docs-snippet name="model.js"}}
   {
@@ -20,11 +17,11 @@ the model looks something like this:
   }
 {{/docs-snippet}}
 
-
 This schema is consistent with ember-data, JSON:API spec, and ember-model-validator.
 
-When an error is present ember foxy-forms will add error classes to the forms / fields.
+### scrollToFirstVisibleError
 
+You can configure a form to scroll its first field with an error into view on failed submission. Using the scrollToFirstVisibleError options.
 ## Automatic Submission Mode
 
 When in automatic submission mode, the form will automatically trigger the submission action when a change is committed
@@ -85,7 +82,7 @@ the confirm button. If you click the reject button the changes will be rolled ba
   {{demo.snippet "inline.hbs"}}
 {{/docs-demo}}
 
-## Notification
+## Notifications
 
 Forms can be configured to notify the user when a form either succeeds or fails. This behaviour is configurable as follows:
 
@@ -127,14 +124,6 @@ Forms can be configured to notify the user when a form either succeeds or fails.
 
 The form-for service can be extended to provide custom popups, or messages by injecting it into your application.
 
-## Errors
-
-By default ember-foxy-forms wires errors from ember-data models. 
-
-
-### scrollToFirstVisibleError
-
-You can configure a form to scroll its first field with an error into view on failed submission. Using the scrollToFirstVisibleError options.
 
 ## Navigation Guards
 
@@ -273,7 +262,7 @@ buttons: ```form-for-model-name__button-type-button```
   </Form>
 {{/docs-snippet}}
 
-Form for will automatically generate [grid-areas](https://developer.mozilla.org/en-US/docs/Web/CSS/grid-area) defined 
+Form will automatically generate [grid-areas](https://developer.mozilla.org/en-US/docs/Web/CSS/grid-area) defined 
 as inline styles on its elements. This feature can be turned on either by setting `useGridTemplate` to `true` in the 
 config or passing it as an arg. This allows you to define your form layout using the [grid-template](https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template)
 syntax. 
