@@ -1,6 +1,6 @@
 # Fields
 
-Fields are responsible for connecting form-controls to fields.
+Fields are responsible for connecting form controls to model/object values.
 
 ## Standard and Composite Values
 
@@ -22,7 +22,7 @@ controlling a date range. This can be done by simply passing an array of keys to
 ## Specifying the control
 
 FieldFor accepts a @using parameter, which instructs it to use a particular form control for the field. It uses the following
-rubric to lookup your component based on that name.FieldFor
+rubric to lookup your component based on that name:
 
 1. It looks for a custom control in your application with a path matching ```form-controls/<@using>```
 2. It looks for a custom control in your application with a path matching ```form-controls/<@using>-control``` this affordance is for legacy projects and will be removed in version 3.0.0

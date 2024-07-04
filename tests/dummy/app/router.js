@@ -13,6 +13,7 @@ Router.map(function () {
     this.route('forms');
     this.route('fields');
     this.route('controls');
+    this.route('advanced');
   });
 
   this.route('not-found', { path: '/*path' });

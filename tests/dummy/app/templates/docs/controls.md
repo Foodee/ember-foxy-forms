@@ -1,7 +1,7 @@
 # Controls
 
-Ember foxy forms comes packed with support with the default set of html5 controls, as well as a few 'emberized' ones that
-make interacting with ember-data / ember-objects a little more straight forward. They can be selected using the 'using' 
+`ember-foxy-form` comes packed with support with the default set of html5 controls, as well as a few 'emberized' ones that
+make interacting with ember-data / Ember objects a little more straight forward. They can be selected using the '@using' 
 attribute. If you provide no ```@using``` or ```@control``` attribute the form will default to using the text type. 
 
 ## Text Input Variants 
@@ -85,10 +85,10 @@ A checkbox can take an optional label attribute.
 
 ## Select 
 
-FoxyForms comes with two select controls out of the box that work with both primitive arrays (numbers and strings) or 
-ember objects. When working with objects you can specify an identifier key `@idKey` and a label key `@labelKey`
-these will be used to identify your object and to label the drop down.
-Also you can disable an option by setting `disabled: true` in your value object in values array.
+`ember-foxy-form` comes with two select controls out of the box that work with both primitive arrays (numbers and strings) or 
+Ember objects. When working with objects you can specify an identifier key `@idKey` and a label key `@labelKey`
+these will be used to identify your object and to label the drop down. Also you can disable an option by setting `disabled: true` 
+in your value object in values array.
 
 {{#docs-demo as |demo|}}
   {{#demo.example name="select-control.hbs"}}
@@ -162,9 +162,8 @@ Also you can disable an option by setting `disabled: true` in your value object 
 
 ## Custom Controls
 
-You can extend form for to provide custom controls, your component must simply conform to the control interface:
-
-A form control is any component which implements the following interface.
+You can extend your form to provide your own custom controls, your component must simply conform to the 
+control interface:
 
 {{#docs-snippet name="custom-controls.js"}}
   interface FormControl {
@@ -185,16 +184,16 @@ A form control is any component which implements the following interface.
   }
 {{/docs-snippet}}
 
-If you follow this convention values will be seamlessly managed by the field / form layers. Some examples of custom controls
-we have built are: 
+If you follow this convention, values will be seamlessly managed by the field / form layers. Some examples of 
+custom controls we have built are: 
 
-- Image Select Control
-- Map Editor Control
-- Price Range Select
-- Rich Text editor
+- Image select Control
+- Map editor Control
+- Price range Select
+- Rich text editor
 - JSON editor
 
-By default Foxy Forms looks for your custom controls in the component directory form-controls of your application, 
+By default, Foxy Forms looks for your custom controls in the `components/form-controls` directory of your application, 
 but you can also specify the full path to the control.
 
 {{#docs-demo as |demo|}}

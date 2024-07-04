@@ -1,8 +1,27 @@
 # Introduction
 
-Hey, welcome to the docs for ember-foxy-forms, this addon was built to do away with a lot of the needless plumbing when
-building forms over data in ember. Common use cases like displaying validation errors, notifying the user on successful
-submission, can all be very tedious in a typical ember application, with ember foxy forms this is trivial!
+Forms can get *tedious*. Common use cases like displaying validation errors, or notifying the user on a successful submission
+start to not not only feel repetitive, but also error prone. 
+
+At [Food.ee](https://food.ee), we decided to get sly about this problem with `ember-foxy-forms`, an Ember form library that makes the 
+everyday use cases trivial, while providing the flexibility to handle highly unique user requirements.
+
+*💡 `ember-foxy-forms` was built with `ember-data` and `ember-model-validator` in mind, but it is not intrinsically tied to either of 
+these libraries. You can use `ember-foxy-forms` with any data store that conforms to the JSON:API spec, or without any data store at all.*
+
+
+## Overview
+
+Generally speaking, using `ember-foxy-forms` is a quick, three-step process:
+
+Supply an model or object to the form.
+
+Then, specify to the fields which values they represent.
+
+Finally, choose which form control to use for each field.
+
+
+## Basic Example
 
 ```js
 class MyRoute extends Route {
@@ -14,7 +33,7 @@ class MyRoute extends Route {
 
 ```hbs
 <Form
-  @for={{this.model}}
+  @for={{this.model}} 
   @successfulSubmitMessage="We did it!"
   @successfulDestroyMessage="Oh noes!"
   as |f|>
@@ -22,11 +41,16 @@ class MyRoute extends Route {
 </Form>
 ```
 
-## Custom Configurations
 
-## Site-wide `environment.js` overrides
+## Getting Started
 
-You can customize the way foxy forms handles various options by adding your override to your environment file.
+```bash
+yarn add -D ember-foxy-forms
+```
+
+## Global Settings
+
+You can customize the way `ember-foxy-forms` handles various options by adding your override to your environment file.
 
 ```javascript
 //environment.js
