@@ -1,0 +1,30 @@
+{{#let (element this.tagName) as |Tag|}}
+  <Tag
+    @tagName={{this.tagName}}
+    class={{concat
+    "field-for "
+    this.fieldClasses
+    (if this.errors.length " error")
+    (if this.disabled " disabled")
+    (if this.readonly " readonly")
+    (if this.required " required")
+    " "
+    this._testingClass
+    " "
+    this._bemClass
+    " "
+    this.using
+    "-field"
+  }}
+    {{style grid-area=this.gridArea}}
+    {{on "change" (stop-propagation)}}
+    ...attributes
+    data-test-field-for={{this._testingSelector}}
+    {{did-insert this.registerElement}}
+  >
+    <ErrorsFor
+      @errors={{this.errors}}
+      @customErrorComponent={{this.formFor.customErrorComponent}}
+    />
+  </Tag>
+{{/let}}
