@@ -861,7 +861,7 @@ export default class FormForComponent extends Component {
         })
         .then(() => {
           this.notifySuccess(this.successfulSubmitMessage);
-          this.didSubmit();
+          this.didSubmit(model);
           this.notifyChildDidSubmit(false);
           this._markClean();
           this._runFieldDidSubmit();
